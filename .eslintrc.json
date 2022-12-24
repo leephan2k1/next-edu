@@ -10,7 +10,7 @@
     "no-console": [
       "error",
       {
-        "allow": ["time", "timeEnd", "error"]
+        "allow": ["time", "timeEnd", "error", "warn"]
       }
     ],
     "@typescript-eslint/no-unused-vars": [
