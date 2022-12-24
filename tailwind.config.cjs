@@ -1,12 +1,24 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ['./src/**/*.{js,ts,jsx,tsx}'],
-  theme: {
-    extend: {},
-  },
-  plugins: [
-    require('@tailwindcss/line-clamp'),
-    require('@tailwindcss/aspect-ratio'),
-    require('daisyui'),
-  ],
+	darkMode: "class",
+	content: ["./src/**/*.{js,ts,jsx,tsx}"],
+	theme: {
+		extend: {
+			colors: {
+				["light-background"]: "#f8f3ef",
+				["dark-background"]: "#1f1f1f",
+				highlight: "#3f3f3f",
+				primary: "#fce36c",
+			},
+			fontFamily: {
+				logo: "Nabla, cursive",
+			},
+		},
+	},
+	plugins: [
+		require("@tailwindcss/line-clamp"),
+		require("@tailwindcss/aspect-ratio"),
+		require("daisyui"),
+		require("tailwindcss-highlights"),
+	],
 };
