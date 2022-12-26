@@ -70,3 +70,11 @@ input::-webkit-inner-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+//thanks to: https://9elements.github.io/fancy-border-radius
+.random-border-radius-var-1 {
+  border-radius: 30% 70% 70% 30% / 38% 36% 64% 62%;
+}
+.random-border-radius-var-2 {
+  border-radius: 43% 57% 53% 47% / 38% 32% 68% 62%;
+}
