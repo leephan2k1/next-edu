@@ -1,11 +1,9 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 interface ContainerProps {
-	children: ReactNode;
+  children: ReactNode;
 }
 
 export default function Container({ children }: ContainerProps) {
-	return (
-		<div className="flex h-fit min-h-screen flex-col pt-32">{children}</div>
-	);
+  return <div className="flex h-fit min-h-screen flex-col">{children}</div>;
 }

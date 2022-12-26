@@ -1,21 +1,24 @@
-import dynamic from "next/dynamic";
-import { nunito } from "~/constants";
+import dynamic from 'next/dynamic';
+import { nunito } from '~/constants';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 interface MainLayoutProps {
-	children: ReactNode;
-	showHeader?: boolean;
-	showFooter?: boolean;
+  children: ReactNode;
+  showHeader?: boolean;
+  showFooter?: boolean;
 }
 
-const Header = dynamic(() => import("../partials/Header"));
+const Header = dynamic(() => import('../partials/Header'));
+const Sidebar = dynamic(() => import('../partials/Sidebar'));
 
-export default function MainLayout({ children }: MainLayoutProps) {
-	return (
-		<div className={`${nunito.className} bg-light-background dark:bg-black`}>
-			<Header />
+export default function MainLayout({ showHeader, children }: MainLayoutProps) {
+  return (
+    <div className={`${nunito.className} bg-light-background dark:bg-black`}>
+      {showHeader && <Header />}
 
-			<main>{children}</main>
-		</div>
-	);
+      <Sidebar />
+
+      <main>{children}</main>
+    </div>
+  );
 }
