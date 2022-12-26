@@ -1,32 +1,41 @@
-import SwitchTheme from "../buttons/SwitchTheme";
-import Search from "../shared/Search";
-import Logo from "./Logo";
-import UserAvatar from "./UserAvatar";
-import Menu from "../buttons/Menu";
+import SwitchTheme from '../buttons/SwitchTheme';
+import Search from '../shared/Search';
+import Logo from './Logo';
+import UserAvatar from './UserAvatar';
+import Menu from '../buttons/Menu';
+import Categories from '~/components/partials/Categories';
 
 export default function Header() {
-	return (
-		<header className="fixed py-4 relative-x-center lg:max-w-[1200px] w-full md:max-w-[720px] min-h-[50px] px-4 z-[99]">
-			<nav className="navbar flex items-center justify-between">
-				<div className="space-x-6">
-					<Menu />
-					<Logo />
-				</div>
+  return (
+    <header className="mx-auto w-full py-4 px-4  md:max-w-[720px] lg:max-w-[1200px]">
+      <nav className="flex min-h-[50px] w-full items-center justify-between">
+        {/* left header  */}
+        <div className="space-x-6">
+          <Menu />
+          <Logo />
+        </div>
 
-				<div className="md:w-1/2 h-fit md:block hidden">
-					<Search />
-				</div>
+        {/* desktop & tablet search bar  */}
+        <div className="relative z-40 hidden h-fit md:block md:w-1/2">
+          <Search />
+          <span className="absolute top-2 left-[2px] -z-10 h-full w-full rounded-full bg-gray-600 dark:bg-primary" />
+        </div>
 
-				<div className="flex space-x-8">
-					<SwitchTheme />
+        {/* right header  */}
+        <div className="flex space-x-8">
+          <SwitchTheme />
 
-					<UserAvatar />
-				</div>
-			</nav>
+          <UserAvatar />
+        </div>
+      </nav>
 
-			<div className="mt-6 md:hidden">
-				<Search />
-			</div>
-		</header>
-	);
+      <Categories />
+
+      {/* mobile search bar */}
+      <div className="relative z-40 mx-auto mt-4 h-fit w-[95%] md:hidden">
+        <Search />
+        <span className="absolute top-2 left-[2px] -z-10 h-full w-full rounded-full bg-gray-600 dark:bg-primary" />
+      </div>
+    </header>
+  );
 }
