@@ -2,6 +2,7 @@
   "name": "next-edu",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "author": {
     "name": "Lee Phan",
     "email": "pttl2k1@gmail.com"
@@ -15,6 +16,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^1.0.0-beta.5",
     "@headlessui/react": "^1.7.7",
     "@heroicons/react": "^2.0.13",
     "@next-auth/prisma-adapter": "^1.0.5",
@@ -26,14 +28,17 @@
     "@trpc/react-query": "^10.0.0",
     "@trpc/server": "^10.0.0",
     "daisyui": "^2.46.0",
+    "jotai": "^1.12.0",
     "modern-normalize": "^1.1.0",
-    "next": "13.0.2",
+    "next": "13.1.1",
     "next-auth": "^4.18.3",
     "next-themes": "^0.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-icons": "^4.7.1",
     "react-if": "^4.1.4",
     "superjson": "1.9.1",
+    "usehooks-ts": "^2.9.1",
     "zod": "^3.18.0"
   },
   "devDependencies": {
