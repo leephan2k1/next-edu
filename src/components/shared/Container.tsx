@@ -5,5 +5,9 @@ interface ContainerProps {
 }
 
 export default function Container({ children }: ContainerProps) {
-  return <div className="flex h-fit min-h-screen flex-col">{children}</div>;
+  return (
+    <div className="mx-auto flex h-fit min-h-screen max-w-[1300px] flex-col">
+      {children}
+    </div>
+  );
 }

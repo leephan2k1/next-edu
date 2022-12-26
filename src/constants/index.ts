@@ -1,7 +1,8 @@
-import { Nunito, Preahvihear } from '@next/font/google';
+import { Nunito, Preahvihear, Inter } from '@next/font/google';
 
 // Fonts
 export const nunito = Nunito({ subsets: ['vietnamese'], weight: '400' });
+export const inter = Inter({ weight: '700' });
 export const preahvihear = Preahvihear({ weight: '400' });
 
 export const categories = [
