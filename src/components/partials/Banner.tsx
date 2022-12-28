@@ -5,8 +5,9 @@ import {
   ArrowTrendingUpIcon,
   ArrowsRightLeftIcon,
 } from '@heroicons/react/24/solid';
+import { memo } from 'react';
 
-export default function Banner() {
+function Banner() {
   return (
     <div className="my-6 h-fit w-full text-gray-800 dark:text-white">
       <div className="mx-auto flex h-full max-w-[1300px] flex-col md:flex-row">
@@ -16,7 +17,7 @@ export default function Banner() {
               style={{
                 fontFamily: inter.style.fontFamily,
               }}
-              className="font-mono text-4xl font-semibold capitalize  md:text-7xl md:leading-[5rem] lg:text-8xl"
+              className="text-6xl font-semibold capitalize md:w-full md:text-7xl md:leading-[5rem] lg:text-8xl"
             >
               <Balancer>
                 Giáo dục không cần sửa đổi, giáo dục cần{' '}
@@ -126,3 +127,5 @@ export default function Banner() {
     </div>
   );
 }
+
+export default memo(Banner);

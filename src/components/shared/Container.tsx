@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { nunito } from '~/constants';
 
 interface ContainerProps {
   children: ReactNode;
@@ -6,7 +7,12 @@ interface ContainerProps {
 
 export default function Container({ children }: ContainerProps) {
   return (
-    <div className="mx-auto flex h-fit min-h-screen max-w-[1300px] flex-col">
+    <div
+      style={{
+        fontFamily: nunito.style.fontFamily,
+      }}
+      className="mx-auto flex h-fit min-h-screen max-w-[1300px] flex-col"
+    >
       {children}
     </div>
   );
