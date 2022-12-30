@@ -9,9 +9,14 @@ interface MainLayoutProps {
 }
 
 const Header = dynamic(() => import('../partials/Header'));
+const Footer = dynamic(() => import('../partials/Footer'));
 const Sidebar = dynamic(() => import('../partials/Sidebar'));
 
-export default function MainLayout({ showHeader, children }: MainLayoutProps) {
+export default function MainLayout({
+  showHeader,
+  showFooter,
+  children,
+}: MainLayoutProps) {
   return (
     <div className={`${nunito.className} bg-light-background dark:bg-black`}>
       {showHeader && <Header />}
@@ -19,6 +24,8 @@ export default function MainLayout({ showHeader, children }: MainLayoutProps) {
       <Sidebar />
 
       <main>{children}</main>
+
+      {showFooter && <Footer />}
     </div>
   );
 }
