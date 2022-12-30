@@ -16,7 +16,7 @@ export default function TeacherBanner() {
       <div className="space-y- flex h-full flex-1 flex-col items-center p-6 text-gray-600 dark:text-white">
         <div className="flex w-full flex-col items-center lg:w-3/4">
           <h1
-            className="my-2 text-center lg:text-4xl"
+            className="my-2 text-center font-bold lg:text-4xl"
             style={{ fontFamily: inter.style.fontFamily }}
           >
             Trở thành người hướng dẫn

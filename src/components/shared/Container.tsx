@@ -11,7 +11,7 @@ export default function Container({ children }: ContainerProps) {
       style={{
         fontFamily: nunito.style.fontFamily,
       }}
-      className="mx-auto flex h-fit min-h-screen max-w-[1300px] flex-col"
+      className="mx-auto flex h-fit max-w-[1300px] flex-col"
     >
       {children}
     </div>

@@ -54,7 +54,7 @@ const TopCategoryItem = ({
 
 export default function TopCategories() {
   return (
-    <div className="w-full space-y-4 text-gray-600 dark:text-white">
+    <div className="my-10 w-full space-y-4 text-gray-600 dark:text-white">
       <h1
         style={{
           fontFamily: inter.style.fontFamily,
