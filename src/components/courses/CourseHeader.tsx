@@ -2,7 +2,7 @@ import { ClockIcon, HeartIcon, UserIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from 'next/link';
 import { BsStarFill } from 'react-icons/bs';
-import CourseSidebar from '~/components/partials/CourseSidebar';
+import CourseSidebar from '~/components/courses/CourseSidebar';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
 export default function CourseHeader() {
@@ -78,7 +78,7 @@ export default function CourseHeader() {
             <button className="btn-primary btn-lg btn w-[80%] grow">
               Thêm vào giỏ hàng
             </button>
-            <button className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60">
+            <button className="btn-ghost btn-active btn-lg btn flex-1 text-gray-600 dark:text-white/60">
               <HeartIcon className="h-8 w-8" />
             </button>
           </div>
