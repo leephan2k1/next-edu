@@ -3,33 +3,33 @@
  * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
  * This is especially useful for Docker builds.
  */
-!process.env.SKIP_ENV_VALIDATION && (await import("./src/env/server.mjs"));
+!process.env.SKIP_ENV_VALIDATION && (await import('./src/env/server.mjs'));
 
 /** @type {import("next").NextConfig} */
 const config = {
-	reactStrictMode: true,
+  reactStrictMode: true,
 
-	swcMinify: true,
+  swcMinify: true,
 
-	i18n: {
-		locales: ["en"],
-		defaultLocale: "en",
-	},
+  i18n: {
+    locales: ['en'],
+    defaultLocale: 'en',
+  },
 
-	experimental: {
-		fontLoaders: [
-			{ loader: "@next/font/google", options: { subsets: ["latin"] } },
-		],
-	},
+  experimental: {
+    fontLoaders: [
+      { loader: '@next/font/google', options: { subsets: ['latin'] } },
+    ],
+  },
 
-	images: {
-		unoptimized: true,
-	},
+  images: {
+    unoptimized: true,
+  },
 
-	eslint: {
-		ignoreDuringBuilds: true,
-	},
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 
-	staticPageGenerationTimeout: 5 * 6 * 1000,
+  staticPageGenerationTimeout: 5 * 6 * 1000,
 };
 export default config;
