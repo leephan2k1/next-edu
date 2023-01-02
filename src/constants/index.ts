@@ -1,8 +1,8 @@
-import { Nunito, Preahvihear, Inter } from '@next/font/google';
+import { Inter, Nunito, Preahvihear } from '@next/font/google';
 
 // Fonts
 export const nunito = Nunito({ subsets: ['vietnamese'], weight: '400' });
-export const inter = Inter({ weight: '700' });
+export const inter = Inter({ subsets: ['vietnamese'], weight: '700' });
 export const preahvihear = Preahvihear({ weight: '400' });
 
 export const categories = [
@@ -12,6 +12,28 @@ export const categories = [
   'Giáo viên',
   'Tổ chức',
 ];
+
+export const swiperBreakPoints = {
+  1: {
+    slidesPerView: 2,
+    spaceBetween: 2,
+  },
+  320: {
+    spaceBetween: 5,
+    slidesPerView: 3,
+  },
+  480: {
+    slidesPerView: 4,
+  },
+  640: {
+    slidesPerView: 5,
+    spaceBetween: 10,
+  },
+  1300: {
+    spaceBetween: 20,
+    slidesPerView: 7,
+  },
+};
 
 export const development_ctg = {
   title: 'Lập trình',
