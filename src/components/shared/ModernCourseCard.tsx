@@ -10,7 +10,7 @@ function ModernCourseCard() {
   return (
     <div className="aspect-h-6 aspect-w-5 relative mt-16 rounded-2xl bg-white shadow-xl dark:bg-dark-background">
       <div className="absolute -top-[10%] left-0 mx-auto max-h-[30%] max-w-[85%]">
-        <figure className="relative overflow-hidden rounded-2xl bg-red-500 pb-[56.25%]">
+        <figure className="relative overflow-hidden rounded-2xl pb-[56.25%]">
           <Image
             ref={imageRef}
             className=""

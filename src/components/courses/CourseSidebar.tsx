@@ -26,7 +26,7 @@ function CourseSidebar() {
       className={`glass hidden h-[80vh] max-w-[30rem] flex-1 space-y-8 overflow-hidden rounded-2xl text-gray-600 dark:text-white/60 lg:block`}
     >
       <div className="w-full">
-        <div className="relative overflow-hidden rounded-2xl bg-red-500 pb-[56.25%]">
+        <div className="relative overflow-hidden rounded-2xl pb-[56.25%]">
           <Image
             className="absolute inset-0 bg-center bg-no-repeat"
             fill
