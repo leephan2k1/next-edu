@@ -12,6 +12,9 @@
 }
 
 @layer utilities {
+  .btn-follow-theme {
+    @apply text-gray-700  hover:text-white dark:border-white/70 dark:text-white/70 dark:hover:bg-dark-background;
+  }
   .smooth-effect {
     @apply transition-all duration-300;
   }

@@ -49,7 +49,7 @@ function CourseSidebar() {
         <button className="btn-primary btn-lg btn w-[70%]">
           Thêm vào giỏ hàng
         </button>
-        <button className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60">
+        <button className="btn-ghost btn-active btn-lg btn flex-1 text-gray-600 dark:text-white/60">
           <HeartIcon className="h-8 w-8" />
         </button>
       </div>

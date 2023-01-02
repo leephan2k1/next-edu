@@ -7,7 +7,7 @@ export default function BuyOnly() {
 
   return (
     <div
-      className={`smooth-effect fixed bottom-0 left-0 flex h-[7rem] w-screen justify-between bg-dark-background px-4 py-2 text-white/80 animate-in fade-in zoom-in dark:bg-white dark:text-gray-600 ${
+      className={`smooth-effect fixed bottom-0 left-0 z-50 flex h-[7rem] w-screen justify-between bg-dark-background px-4 py-2 text-white/80 animate-in fade-in zoom-in dark:bg-white dark:text-gray-600 ${
         sidebarInViewport ? 'lg:hidden ' : ''
       }`}
     >

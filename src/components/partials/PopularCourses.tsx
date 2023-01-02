@@ -1,36 +1,15 @@
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { memo, useRef } from 'react';
 import { FreeMode, Pagination } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import type { Swiper as SwiperCore } from 'swiper/types';
 import CourseCard from '~/components/shared/CourseCard';
-// import SwiperButton from '../buttons/SwiperButton';
+import { swiperBreakPoints } from '~/constants';
 
-const swiperBreakPoints = {
-  1: {
-    slidesPerView: 2,
-    spaceBetween: 2,
-  },
-  320: {
-    spaceBetween: 5,
-    slidesPerView: 3,
-  },
-  480: {
-    slidesPerView: 4,
-  },
-  640: {
-    slidesPerView: 5,
-    spaceBetween: 10,
-  },
-  1300: {
-    spaceBetween: 20,
-    slidesPerView: 7,
-  },
-};
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
+import type { Swiper as SwiperCore } from 'swiper/types';
 function PopularCourses() {
   // use navigate without useSwiper hook https://github.com/nolimits4web/swiper/issues/3855#issuecomment-1287871054
   const swiperRef = useRef<SwiperCore>();
