@@ -1,16 +1,20 @@
-import Link from "next/link";
-import { preahvihear } from "~/constants";
+import Link from 'next/link';
+import { preahvihear } from '~/constants';
 
-export default function Logo() {
-	return (
-		<Link
-			href={"/"}
-			className="text-3xl font-bold md:text-5xl text-yellow-400 dark:text-primary"
-			style={{
-				fontFamily: preahvihear.style.fontFamily,
-			}}
-		>
-			Next Edu
-		</Link>
-	);
+interface LogoProps {
+  customStyles?: string;
+}
+
+export default function Logo({ customStyles }: LogoProps) {
+  return (
+    <Link
+      href={'/'}
+      className={`${customStyles} text-3xl font-bold text-yellow-400 dark:text-primary md:text-5xl`}
+      style={{
+        fontFamily: preahvihear.style.fontFamily,
+      }}
+    >
+      Next Edu
+    </Link>
+  );
 }
