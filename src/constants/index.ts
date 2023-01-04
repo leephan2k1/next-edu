@@ -5,6 +5,33 @@ export const nunito = Nunito({ subsets: ['vietnamese'], weight: '400' });
 export const inter = Inter({ subsets: ['vietnamese'], weight: '700' });
 export const preahvihear = Preahvihear({ weight: '400' });
 
+export const playerOptions = {
+  theme: '#ffad00',
+  setting: true,
+
+  autoPlayback: true,
+
+  screenshot: true,
+  moreVideoAttr: {
+    crossOrigin: '*',
+  },
+
+  hotkey: true,
+
+  // fullscreenWeb: true,
+
+  fullscreen: true,
+
+  // pip: true,
+
+  playbackRate: true,
+
+  autoSize: true,
+  autoMini: true,
+  // poster:
+  //   'https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg',
+};
+
 export const categories = [
   'Khoá học',
   'Chứng chỉ',
