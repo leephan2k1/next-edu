@@ -20,7 +20,7 @@ function LearningVideo() {
   }, [artPlayer]);
 
   return (
-    <div className="h-[25rem] w-full bg-green-500/0 px-4 md:h-[50vh] lg:h-[80vh]">
+    <div className="h-[20rem] w-full bg-green-500/0 px-4 md:h-[45vh] lg:h-[80vh]">
       <Player
         option={{
           ...playerOptions,
