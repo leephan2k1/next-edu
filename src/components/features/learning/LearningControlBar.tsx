@@ -19,7 +19,7 @@ function LearningControlBar() {
   const [selectIndex, setSelectIndex] = useState(0);
 
   return (
-    <div className="h-[20rem] w-full  lg:h-[20vh]">
+    <div className="w-full lg:h-[20vh]">
       <div className="mx-auto w-full overflow-x-scroll py-4 md:max-w-[720px] lg:max-w-[1200px]">
         <div className="tabs mx-auto flex h-fit w-fit flex-nowrap justify-start space-y-6">
           {Array.from([
