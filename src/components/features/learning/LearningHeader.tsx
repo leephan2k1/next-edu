@@ -1,10 +1,14 @@
-import { DocumentMinusIcon } from '@heroicons/react/20/solid';
-import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { Tooltip, TooltipAnchor, useTooltipState } from 'ariakit/tooltip';
+import { useSetAtom } from 'jotai';
+import { courseContentBarState } from '~/atoms/courseContentBarState';
+
+import { DocumentMinusIcon } from '@heroicons/react/20/solid';
+import { Bars3Icon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 import Logo from '../../partials/Logo';
 
 export default function LearningHeader() {
+  const setCourseContentsBarOpen = useSetAtom(courseContentBarState);
   const tooltip = useTooltipState();
 
   return (
@@ -41,10 +45,16 @@ export default function LearningHeader() {
           </TooltipAnchor>
           <Tooltip
             state={tooltip}
-            className="tooltip rounded-xl bg-dark-background p-2 dark:bg-white dark:text-black"
+            className="tooltip z-[100] rounded-xl bg-primary p-2 text-gray-600"
           >
             Ghi chú
           </Tooltip>
+          <button
+            onClick={() => setCourseContentsBarOpen(true)}
+            className="hidden px-3 py-2 lg:block"
+          >
+            <Bars3Icon className="h-6 text-gray-700 dark:text-white/70 md:h-8 md:w-8" />
+          </button>
         </div>
       </nav>
     </header>
