@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import LearningVideo from './LearningVideo';
 import LearningControlBar from './LearningControlBar';
+import LearningFooter from './LearningFooter';
 
 function LearningBody() {
   return (
@@ -9,6 +10,8 @@ function LearningBody() {
         <LearningVideo />
 
         <LearningControlBar />
+
+        <LearningFooter />
       </div>
     </div>
   );
