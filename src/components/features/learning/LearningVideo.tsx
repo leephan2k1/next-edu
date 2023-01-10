@@ -3,6 +3,8 @@
 import { memo, useEffect, useState } from 'react';
 import { playerOptions } from '~/constants';
 import Player from '../videoPlayer/Player';
+import { useSetAtom } from 'jotai';
+import { videoCurrentTime } from '~/atoms/videoCurrentTime';
 
 function LearningVideo() {
   /*
@@ -10,13 +12,18 @@ function LearningVideo() {
   Please contact me if you have any information :U Thanks!
   */
   const [artPlayer, setArtPlayer] = useState<unknown>();
+  const setVideoCurrentTime = useSetAtom(videoCurrentTime);
 
   useEffect(() => {
     if (artPlayer) {
       artPlayer.on('video:timeupdate', () => {
-        // console.log('currentTime:: ', artPlayer?.currentTime);
+        setVideoCurrentTime(Math.floor(artPlayer?.currentTime));
       });
     }
+
+    return () => {
+      setVideoCurrentTime(0);
+    };
   }, [artPlayer]);
 
   return (
