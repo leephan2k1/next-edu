@@ -40,6 +40,7 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.7.1",
     "react-if": "^4.1.4",
+    "react-quill": "^2.0.0",
     "react-wrap-balancer": "^0.2.3",
     "superjson": "1.9.1",
     "swiper": "^8.4.5",

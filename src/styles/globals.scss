@@ -85,3 +85,11 @@ input[type='number'] {
 .tab-active {
   background-color: #ffffff !important;
 }
+
+.quill {
+  .ql-toolbar {
+    top: 0;
+    position: sticky;
+    background-color: #ffffff;
+  }
+}
