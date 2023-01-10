@@ -1,11 +1,15 @@
 import { memo, useState } from 'react';
+
 import {
-  PencilSquareIcon,
-  ChatBubbleBottomCenterIcon,
-  WrenchIcon,
-  DocumentChartBarIcon,
   BellIcon,
+  ChatBubbleBottomCenterIcon,
+  DocumentChartBarIcon,
+  PencilSquareIcon,
+  WrenchIcon,
 } from '@heroicons/react/24/outline';
+
+import type { Dispatch, SetStateAction } from 'react';
+import type { LearningOptions } from '~/types';
 
 const Mapping_Icon: { [key: string]: JSX.Element } = {
   'Ghi chú': <PencilSquareIcon className="h-6 w-6" />,
@@ -15,11 +19,23 @@ const Mapping_Icon: { [key: string]: JSX.Element } = {
   'Thông báo': <BellIcon className="h-6 w-6" />,
 } as const;
 
-function LearningControlBar() {
+const Mapping_Lables: { [key: string]: LearningOptions } = {
+  'Ghi chú': 'note',
+  'Thảo luận': 'discuss',
+  'Công cụ học': 'tools',
+  'Tài nguyên': 'resources',
+  'Thông báo': 'announce',
+} as const;
+
+interface LearningControlBarProps {
+  setOption: Dispatch<SetStateAction<LearningOptions>>;
+}
+
+function LearningControlBar({ setOption }: LearningControlBarProps) {
   const [selectIndex, setSelectIndex] = useState(0);
 
   return (
-    <div className="w-full lg:h-[20vh]">
+    <div className="w-full lg:h-[15vh]">
       <div className="mx-auto w-full overflow-x-scroll py-4 md:max-w-[720px] lg:max-w-[1200px]">
         <div className="tabs mx-auto flex h-fit w-fit flex-nowrap justify-start space-y-6">
           {Array.from([
@@ -31,7 +47,10 @@ function LearningControlBar() {
           ]).map((btnContent, index) => {
             return (
               <button
-                onClick={() => setSelectIndex(index)}
+                onClick={() => {
+                  setOption(Mapping_Lables[btnContent]!);
+                  setSelectIndex(index);
+                }}
                 key={btnContent}
                 style={{
                   color: selectIndex === index ? '#4b5563' : '',
