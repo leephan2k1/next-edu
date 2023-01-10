@@ -27,7 +27,7 @@ export const playerOptions = {
   playbackRate: true,
 
   autoSize: true,
-  autoMini: true,
+  // autoMini: true,
   // poster:
   //   'https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-HD.jpg',
 };
