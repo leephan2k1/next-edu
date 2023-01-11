@@ -4,16 +4,20 @@ import MainLayout from '~/components/layouts/MainLayout';
 import LearningHeader from '~/components/features/learning/LearningHeader';
 import LearningBody from '~/components/features/learning/LearningBody';
 import CourseContentsBar from '~/components/features/learning/CourseContentsBar';
+import ListNoteModal from '~/components/features/note/ListNoteModal';
 
 const LearningPage: NextPage = () => {
   return (
-    <div className="flex min-h-screen flex-col text-gray-600 dark:text-white/60">
-      <CourseContentsBar />
+    <>
+      <ListNoteModal />
+      <div className="flex min-h-screen flex-col text-gray-600 dark:text-white/60">
+        <CourseContentsBar />
 
-      <LearningHeader />
+        <LearningHeader />
 
-      <LearningBody />
-    </div>
+        <LearningBody />
+      </div>
+    </>
   );
 };
 

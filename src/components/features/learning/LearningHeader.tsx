@@ -4,12 +4,13 @@ import { courseContentBarState } from '~/atoms/courseContentBarState';
 
 import { DocumentMinusIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, ChevronLeftIcon } from '@heroicons/react/24/outline';
-
+import { listNoteModalState } from '~/atoms/listNoteModal';
 import Logo from '../../partials/Logo';
 
 export default function LearningHeader() {
-  const setCourseContentsBarOpen = useSetAtom(courseContentBarState);
   const tooltip = useTooltipState();
+  const setListNodeOpen = useSetAtom(listNoteModalState);
+  const setCourseContentsBarOpen = useSetAtom(courseContentBarState);
 
   return (
     <header className="w-full bg-white p-4 dark:bg-dark-background">
@@ -39,7 +40,10 @@ export default function LearningHeader() {
             70%
           </div>
           <TooltipAnchor state={tooltip} className="button secondary">
-            <button className="btn-link btn py-2">
+            <button
+              onClick={() => setListNodeOpen(true)}
+              className="btn-link btn py-2"
+            >
               <DocumentMinusIcon className="h-6 text-yellow-500 md:h-8 md:w-8" />
             </button>
           </TooltipAnchor>
