@@ -93,3 +93,7 @@ input[type='number'] {
     background-color: #ffffff;
   }
 }
+
+.excalidraw.excalidraw-modal-container {
+  z-index: 500 !important;
+}
