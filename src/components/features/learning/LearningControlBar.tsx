@@ -1,4 +1,6 @@
+import { useSetAtom } from 'jotai';
 import { memo, useState } from 'react';
+import { quillEditorState } from '~/atoms/quillEditorState';
 
 import {
   BellIcon,
@@ -32,10 +34,22 @@ interface LearningControlBarProps {
 }
 
 function LearningControlBar({ setOption }: LearningControlBarProps) {
+  const setGoToEditor = useSetAtom(quillEditorState);
+
   const [selectIndex, setSelectIndex] = useState(0);
 
+  const handleClickOption = (btnContent: string, index: number) => {
+    setOption(Mapping_Lables[btnContent]!);
+    setSelectIndex(index);
+    switch (btnContent) {
+      case 'Ghi chú':
+        setGoToEditor(true);
+        break;
+    }
+  };
+
   return (
-    <div className="w-full lg:h-[15vh]">
+    <div className="w-full lg:h-[10vh]">
       <div className="mx-auto w-full overflow-x-scroll py-4 md:max-w-[720px] lg:max-w-[1200px]">
         <div className="tabs mx-auto flex h-fit w-fit flex-nowrap justify-start space-y-6">
           {Array.from([
@@ -47,10 +61,7 @@ function LearningControlBar({ setOption }: LearningControlBarProps) {
           ]).map((btnContent, index) => {
             return (
               <button
-                onClick={() => {
-                  setOption(Mapping_Lables[btnContent]!);
-                  setSelectIndex(index);
-                }}
+                onClick={() => handleClickOption(btnContent, index)}
                 key={btnContent}
                 style={{
                   color: selectIndex === index ? '#4b5563' : '',

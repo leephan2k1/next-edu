@@ -1,10 +1,13 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
 import Artplayer from 'artplayer';
+import { useSetAtom } from 'jotai';
 import { useRef } from 'react';
 import { useEffectOnce } from 'usehooks-ts';
+import { quillEditorState } from '~/atoms/quillEditorState';
 
 export default function Player({ option, getInstance, ...rest }) {
+  const setGoToEditor = useSetAtom(quillEditorState);
   const artRef = useRef<HTMLDivElement | null>(null);
 
   useEffectOnce(() => {
@@ -24,6 +27,9 @@ export default function Player({ option, getInstance, ...rest }) {
           tooltip: 'Ghi chú',
           style: {
             color: 'white',
+          },
+          click: () => {
+            setGoToEditor(true);
           },
         },
       ],
