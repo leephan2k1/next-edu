@@ -3,6 +3,7 @@
 import { useAtom } from 'jotai';
 import { useEffect, useRef, useState } from 'react';
 import { whiteBoardData, whiteBoardState } from '~/atoms/whiteBoardData';
+import Loading from '~/components/buttons/Loading';
 import ClientOnly from '~/components/shared/ClientOnly';
 
 export default function WhiteBoard() {
@@ -27,13 +28,15 @@ export default function WhiteBoard() {
 
   return (
     <ClientOnly>
-      <div className="h-[50rem] w-full">
-        {Excalidraw && (
+      <div className="absolute-center h-[50rem] w-full">
+        {Excalidraw ? (
           <Excalidraw
             ref={excalidrawRef}
             initialData={{ elements: drawData, appState: stateData }}
             onChange={onChange}
           />
+        ) : (
+          <Loading styles="w-10 h-10" />
         )}
       </div>
     </ClientOnly>
