@@ -34,7 +34,7 @@ function BodyOptions() {
     <div className="full-size mb-6">
       <LearningControlBar setOption={selectOption} />
 
-      <div className="mx-auto min-h-[15rem] w-full md:max-w-[720px] lg:max-w-[1000px]">
+      <div className="mx-auto min-h-[20rem] w-full pb-[10rem] md:max-w-[720px] lg:max-w-[1000px]">
         {SELECT_OPTIONS[option]}
       </div>
     </div>

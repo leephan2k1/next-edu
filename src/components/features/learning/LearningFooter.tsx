@@ -11,7 +11,7 @@ export default function LearningFooter() {
   const setCourseContentsBarOpen = useSetAtom(courseContentBarState);
 
   return (
-    <div className="fixed bottom-0 left-0 w-screen lg:hidden">
+    <div className="fixed bottom-0 left-0 w-screen bg-white dark:bg-black lg:hidden">
       <div className="flex w-full items-center justify-between py-6 px-4 md:px-6 md:py-8">
         <div className="flex w-fit max-w-[25%] items-center space-x-4 md:max-w-[40%]">
           <button
