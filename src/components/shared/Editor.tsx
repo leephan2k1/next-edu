@@ -10,11 +10,15 @@ import { quillEditorState } from '~/atoms/quillEditorState';
 const ReactQuill =
   typeof window === 'object' ? require('react-quill') : () => false;
 
-function Editor() {
+interface EditorProps {
+  contents?: string;
+  handleCancel?: () => void;
+}
+
+function Editor({ contents, handleCancel }: EditorProps) {
   const [editorState, setEditorState] = useAtom(quillEditorState);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState<string>(contents || '');
   const quillRef = useRef<QuillComponent | null>(null);
-  const btnRef = useRef<HTMLButtonElement | null>(null);
 
   if (editorState) {
     window.scrollTo(0, document.body.scrollHeight);
@@ -43,14 +47,24 @@ function Editor() {
         value={value}
         onChange={setValue}
       />
-
-      <button
-        ref={btnRef}
-        className="absolute-center h-[4rem] w-[5rem] rounded-xl bg-white py-3 px-4 text-gray-600 shadow-lg"
-      >
-        {/* <span>Lưu</span> */}
-        <Loading />
-      </button>
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={() => {
+            if (handleCancel) {
+              handleCancel();
+            } else {
+              setValue('');
+            }
+          }}
+          className="absolute-center h-[4rem] w-fit rounded-xl bg-white py-3 px-4 text-gray-600 shadow-lg"
+        >
+          <span>Huỷ bỏ</span>
+        </button>
+        <button className="absolute-center h-[4rem] w-[5rem] rounded-xl bg-white py-3 px-4 text-gray-600 shadow-lg">
+          {/* <span>Lưu</span> */}
+          <Loading />
+        </button>
+      </div>
     </div>
   );
 }
