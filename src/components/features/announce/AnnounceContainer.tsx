@@ -1,3 +1,12 @@
+// import DiscussStandalone from '../discussion/DiscussStandalone';
+import AnnouncementsList from './AnnouncementsList';
+
 export default function AnnounceContainer() {
-  return <div className="min-h-[500px] bg-yellow-500">DiscussionContainer</div>;
+  return (
+    <div className="p-4">
+      {/* <DiscussStandalone /> */}
+
+      <AnnouncementsList />
+    </div>
+  );
 }
