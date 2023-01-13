@@ -32,6 +32,38 @@ export default function Player({ option, getInstance, ...rest }) {
             setGoToEditor(true);
           },
         },
+        {
+          disable: false,
+          name: 'button2',
+          index: 10,
+          position: 'right',
+          html: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+        </svg>`,
+          tooltip: 'Bài tiếp theo',
+          style: {
+            color: 'white',
+          },
+          click: () => {
+            alert('Den bai tiep theo');
+          },
+        },
+        {
+          disable: false,
+          name: 'button3',
+          index: 10,
+          position: 'right',
+          html: `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+        </svg>`,
+          tooltip: 'Bài trước',
+          style: {
+            color: 'white',
+          },
+          click: () => {
+            alert('Den bai truoc do');
+          },
+        },
       ],
       container: artRef.current,
     });
@@ -47,5 +79,5 @@ export default function Player({ option, getInstance, ...rest }) {
     };
   });
 
-  return <div ref={artRef} {...rest}></div>;
+  return <div className="relative" ref={artRef} {...rest}></div>;
 }
