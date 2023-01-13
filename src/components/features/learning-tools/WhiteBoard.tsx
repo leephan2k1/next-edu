@@ -31,7 +31,7 @@ export default function WhiteBoard() {
         {Excalidraw ? (
           <Excalidraw
             ref={excalidrawRef}
-            initialData={{ elements: drawData, appState: stateData }}
+            initialData={{ elements: drawData }}
             onChange={onChange}
           />
         ) : (
