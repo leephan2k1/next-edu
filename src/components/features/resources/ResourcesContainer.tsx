@@ -1,3 +1,9 @@
+import ResourcesList from './ResourcesList';
+
 export default function ResourcesContainer() {
-  return <div className="min-h-[500px] bg-green-500">DiscussionContainer</div>;
+  return (
+    <div className="my-auto mt-4">
+      <ResourcesList />
+    </div>
+  );
 }
