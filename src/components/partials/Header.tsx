@@ -4,6 +4,7 @@ import Logo from './Logo';
 import UserAvatar from './UserAvatar';
 import Menu from '../buttons/Menu';
 import Categories from '~/components/partials/Categories';
+import Cart from './Cart';
 
 export default function Header() {
   return (
@@ -22,7 +23,9 @@ export default function Header() {
         </div>
 
         {/* right header  */}
-        <div className="flex space-x-8">
+        <div className="flex items-center space-x-8 text-gray-600 dark:text-white">
+          <Cart />
+
           <SwitchTheme />
 
           <UserAvatar />
