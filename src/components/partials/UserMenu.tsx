@@ -142,7 +142,10 @@ function UserMenu({ show, setShow }: UserMenuProps) {
         <hr className="mx-auto my-4 w-[80%] dark:border-white/30" />
 
         <button
-          onClick={() => signOut({ redirect: false })}
+          onClick={() => {
+            setShow(false);
+            signOut({ redirect: false });
+          }}
           className="smooth-effect flex w-full cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
         >
           <ArrowLeftOnRectangleIcon className="h-6 w-6" />{' '}
