@@ -1,17 +1,18 @@
+import 'nprogress/nprogress.css';
 import '~/styles/globals.scss';
 
+import { Provider as JotaiProvider } from 'jotai';
 import { SessionProvider } from 'next-auth/react';
 import { ThemeProvider } from 'next-themes';
+import Router from 'next/router';
+import NProgress from 'nprogress';
 import MainLayout from '~/components/layouts/MainLayout';
 import { trpc } from '~/utils/trpc';
-import { Provider as JotaiProvider } from 'jotai';
 
-import type { ReactElement, ReactNode } from 'react';
-import type { Session } from 'next-auth';
-import type { AppType } from 'next/app';
-import type { AppProps } from 'next/app';
 import type { NextPage } from 'next';
-
+import type { Session } from 'next-auth';
+import type { AppProps, AppType } from 'next/app';
+import type { ReactElement, ReactNode } from 'react';
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -19,6 +20,10 @@ type NextPageWithLayout = NextPage & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
+
+Router.events.on('routeChangeStart', () => NProgress.start());
+Router.events.on('routeChangeComplete', () => NProgress.done());
+Router.events.on('routeChangeError', () => NProgress.done());
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
