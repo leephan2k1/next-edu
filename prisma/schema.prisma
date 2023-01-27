@@ -49,10 +49,41 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
+  bio           Bio?      @relation(fields: [bioId], references: [id])
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  role          Role      @default(STUDENT)
+  bioId         String?
+
+  @@index([bioId])
+}
+
+model Bio {
+  id             String          @id @default(cuid())
+  specialist     String
+  bioDescription String
+  socialContacts SocialContact[]
+  User           User[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model SocialContact {
+  id    String @id @default(cuid())
+  title String
+  url   String
+  Bio   Bio    @relation(fields: [bioId], references: [id])
+  bioId String
+
+  @@index([bioId])
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
 }
 
 model VerificationToken {
