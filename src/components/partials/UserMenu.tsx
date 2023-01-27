@@ -10,10 +10,13 @@ import {
 } from '@heroicons/react/24/outline';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Fragment, memo, useRef } from 'react';
 import { FaChalkboardTeacher } from 'react-icons/fa';
 import { MdSupervisorAccount } from 'react-icons/md';
-import { useOnClickOutside } from 'usehooks-ts';
+import { useEffectOnce, useOnClickOutside } from 'usehooks-ts';
+import { PATHS } from '~/constants';
 
 import Teleport from '../shared/Teleport';
 
@@ -24,12 +27,26 @@ interface UserMenuProps {
 }
 
 function UserMenu({ show, setShow }: UserMenuProps) {
+  const router = useRouter();
   const { data: auth } = useSession();
 
   const ref = useRef<HTMLDivElement | null>(null);
 
   useOnClickOutside(ref, () => {
     setShow(false);
+  });
+
+  //effect turn off the UI when user navigate
+  useEffectOnce(() => {
+    const handleRouteChange = () => {
+      setShow(false);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
   });
 
   return (
@@ -88,9 +105,12 @@ function UserMenu({ show, setShow }: UserMenuProps) {
           <ChartBarIcon className="h-6 w-6" /> <span>Quá trình học</span>
         </h2>
 
-        <h2 className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black">
+        <Link
+          href={`/${PATHS.TEACHING}/${PATHS.TEACHING_DASHBOARD}`}
+          className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
+        >
           <FaChalkboardTeacher className="h-6 w-6" /> <span>Giảng dạy</span>
-        </h2>
+        </Link>
 
         <h2 className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black">
           <BookmarkIcon className="h-6 w-6" /> <span>Khoá học theo dõi</span>

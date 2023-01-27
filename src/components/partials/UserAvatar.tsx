@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Case, Switch } from 'react-if';
 import UserMenu from './UserMenu';
 import { useState } from 'react';
+import { PATHS } from '~/constants';
 
 export default function UserAvatar() {
   const { status, data: auth } = useSession();
@@ -14,7 +15,7 @@ export default function UserAvatar() {
       <Switch>
         <Case condition={status === 'unauthenticated'}>
           <Link
-            href={'/login'}
+            href={`/${PATHS.LOGIN}`}
             className="smooth-effect rounded-full border border-gray-500 bg-primary p-4 text-lg text-gray-500 hover:bg-primary/50 dark:border-2 dark:border-yellow-400 md:text-xl"
           >
             Đăng nhập

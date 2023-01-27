@@ -2,6 +2,7 @@ import { memo } from 'react';
 import Image from 'next/image';
 import { BsStarFill } from 'react-icons/bs';
 import Link from 'next/link';
+import { PATHS } from '~/constants';
 
 function CourseCard() {
   return (
@@ -10,7 +11,7 @@ function CourseCard() {
         <h1 className="text-lg text-black md:text-xl">Được mua nhiều</h1>
       </div> */}
       <Link
-        href={'/'}
+        href={`/${PATHS.COURSE}/courseId`}
         className="flex h-full flex-col overflow-hidden px-2 py-3"
       >
         <figure className="aspect-w-5 aspect-h-3 relative overflow-hidden rounded-2xl">

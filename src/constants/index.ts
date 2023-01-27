@@ -5,6 +5,14 @@ export const nunito = Nunito({ subsets: ['vietnamese'], weight: '400' });
 export const inter = Inter({ subsets: ['vietnamese'], weight: '700' });
 export const preahvihear = Preahvihear({ weight: '400' });
 
+export const PATHS = {
+  LEARNING: 'learning',
+  COURSE: 'course',
+  TEACHING: 'teaching',
+  TEACHING_DASHBOARD: 'dashboard',
+  LOGIN: 'login',
+};
+
 export const playerOptions = {
   theme: '#ffad00',
   setting: true,
