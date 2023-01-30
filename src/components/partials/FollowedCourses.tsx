@@ -3,7 +3,7 @@ import ModernCourseCard from '../shared/ModernCourseCard';
 
 function FollowedCourses() {
   return (
-    <div className="w-full">
+    <section className="w-full">
       <button className="smooth-effect my-4 w-fit rounded-xl bg-rose-400 p-4 text-xl text-white">
         Huỷ yêu thích tất cả
       </button>
@@ -24,7 +24,7 @@ function FollowedCourses() {
           <ModernCourseCard />
         </li>
       </ul>
-    </div>
+    </section>
   );
 }
 

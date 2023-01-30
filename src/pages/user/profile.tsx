@@ -1,5 +1,6 @@
 import type { NextPage } from 'next';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import MainLayout from '~/components/layouts/MainLayout';
 import ProfileInfo from '~/components/partials/ProfileInfo';
 
@@ -7,13 +8,24 @@ const ProfileForms = dynamic(
   () => import('~/components/partials/ProfileForms'),
 );
 
+const FollowedCourses = dynamic(
+  () => import('~/components/partials/FollowedCourses'),
+);
+
+const SECTION_MAPPING: { [key: string]: JSX.Element } = {
+  info: <ProfileForms />,
+  'followed-courses': <FollowedCourses />,
+};
+
 const ProfilePage: NextPage = () => {
+  const router = useRouter();
+
   return (
     <div className="flex min-h-screen flex-col text-gray-600 dark:text-white">
       <div className="mx-auto mt-10 flex h-fit w-full max-w-[1300px] flex-col space-x-4 md:flex-row">
         <ProfileInfo />
 
-        <ProfileForms />
+        {SECTION_MAPPING[String(router.query?.section || 'info')]}
       </div>
     </div>
   );
