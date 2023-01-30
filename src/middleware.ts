@@ -7,6 +7,7 @@ import type { NextRequest } from 'next/server';
 export async function middleware(req: NextRequest) {
   if (
     req.nextUrl.pathname.includes(PATHS.TEACHING) ||
+    req.nextUrl.pathname.includes(PATHS.USER_PROFILE) ||
     req.nextUrl.pathname.includes(PATHS.LEARNING) ||
     req.nextUrl.pathname.includes(PATHS.LOGIN)
   ) {
