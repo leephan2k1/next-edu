@@ -11,11 +11,22 @@ const ReactQuill =
   typeof window === 'object' ? require('react-quill') : () => false;
 
 interface EditorProps {
+  getInstance?: (editor: QuillComponent) => void;
+  onEditorChange?: (value: string) => void;
+  onSubmit?: () => void;
+  styles?: string;
   contents?: string;
   handleCancel?: () => void;
 }
 
-function Editor({ contents, handleCancel }: EditorProps) {
+function Editor({
+  contents,
+  handleCancel,
+  styles,
+  getInstance,
+  onEditorChange,
+  onSubmit,
+}: EditorProps) {
   const [editorState, setEditorState] = useAtom(quillEditorState);
   const [value, setValue] = useState<string>(contents || '');
   const quillRef = useRef<QuillComponent | null>(null);
@@ -31,8 +42,18 @@ function Editor({ contents, handleCancel }: EditorProps) {
     }
   }, [editorState]);
 
+  useEffect(() => {
+    if (getInstance && quillRef.current && typeof getInstance === 'function') {
+      getInstance(quillRef.current);
+    }
+  }, [quillRef.current]);
+
   return (
-    <div className="full-size flex flex-col items-end space-y-4 px-2">
+    <div
+      className={`${
+        styles ? styles : ''
+      } full-size flex flex-col items-end space-y-4 px-2`}
+    >
       <ReactQuill
         ref={quillRef}
         modules={{
@@ -45,7 +66,13 @@ function Editor({ contents, handleCancel }: EditorProps) {
         className="w-full"
         theme="snow"
         value={value}
-        onChange={setValue}
+        onChange={(value: string) => {
+          setValue(value);
+
+          if (onEditorChange && typeof onEditorChange === 'function') {
+            onEditorChange(value);
+          }
+        }}
       />
       <div className="flex items-center space-x-4">
         <button
@@ -58,12 +85,14 @@ function Editor({ contents, handleCancel }: EditorProps) {
           }}
           className="absolute-center h-[4rem] w-fit rounded-xl bg-white py-3 px-4 text-gray-600 shadow-lg"
         >
-          <span>Huỷ bỏ</span>
+          <span>Xoá</span>
         </button>
-        <button className="absolute-center h-[4rem] w-[5rem] rounded-xl bg-white py-3 px-4 text-gray-600 shadow-lg">
-          {/* <span>Lưu</span> */}
-          <Loading />
-        </button>
+        {onSubmit && (
+          <button className="absolute-center h-[4rem] w-[5rem] rounded-xl bg-white py-3 px-4 text-gray-600 shadow-lg">
+            {/* <span>Lưu</span> */}
+            <Loading />
+          </button>
+        )}
       </div>
     </div>
   );
