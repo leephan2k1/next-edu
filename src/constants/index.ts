@@ -6,6 +6,8 @@ export const inter = Inter({ subsets: ['vietnamese'], weight: '700' });
 export const preahvihear = Preahvihear({ weight: '400' });
 
 export const PATHS = {
+  USER: 'user',
+  USER_PROFILE: 'profile',
   LEARNING: 'learning',
   COURSE: 'course',
   TEACHING: 'teaching',

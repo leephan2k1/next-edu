@@ -78,7 +78,10 @@ function UserMenu({ show, setShow }: UserMenuProps) {
           </Transition.Child>
         </Teleport>
 
-        <div className="smooth-effect flex cursor-pointer space-x-3 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black">
+        <Link
+          href={`/${PATHS.USER}/${PATHS.USER_PROFILE}`}
+          className="smooth-effect flex cursor-pointer space-x-3 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
+        >
           <figure className="min-h-20 min-w-20 relative h-20 w-20 rounded-full">
             <Image
               fill
@@ -93,7 +96,7 @@ function UserMenu({ show, setShow }: UserMenuProps) {
             <h1 className="font-semibold">{auth?.user?.name}</h1>
             <h2>{auth?.user?.email}</h2>
           </div>
-        </div>
+        </Link>
 
         <hr className="mx-auto my-4 w-[80%] dark:border-white/30" />
 
