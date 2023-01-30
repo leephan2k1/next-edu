@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 interface MainLayoutProps {
   children: ReactNode;
   showHeader?: boolean;
+  showCategoriesHeader?: boolean;
   showFooter?: boolean;
 }
 
@@ -15,11 +16,12 @@ const Sidebar = dynamic(() => import('../partials/Sidebar'));
 export default function MainLayout({
   showHeader,
   showFooter,
+  showCategoriesHeader,
   children,
 }: MainLayoutProps) {
   return (
     <div className={`${nunito.className} bg-light-background dark:bg-black`}>
-      {showHeader && <Header />}
+      {showHeader && <Header showCategories={showCategoriesHeader} />}
 
       <Sidebar />
 

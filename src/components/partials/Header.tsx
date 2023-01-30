@@ -6,7 +6,11 @@ import Menu from '../buttons/Menu';
 import Categories from '~/components/partials/Categories';
 import Cart from './Cart';
 
-export default function Header() {
+interface HeaderProps {
+  showCategories?: boolean;
+}
+
+export default function Header({ showCategories = true }: HeaderProps) {
   return (
     <header className="mx-auto w-full py-4 px-4  md:max-w-[720px] lg:max-w-[1200px]">
       <nav className="flex min-h-[50px] w-full items-center justify-between">
@@ -32,7 +36,7 @@ export default function Header() {
         </div>
       </nav>
 
-      <Categories />
+      {showCategories && <Categories />}
 
       {/* mobile search bar */}
       <div className="relative z-40 mx-auto mt-4 h-fit w-[95%] md:hidden">
