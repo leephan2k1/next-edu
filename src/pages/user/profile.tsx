@@ -17,6 +17,9 @@ const Notifications = dynamic(
 const ParentsOversee = dynamic(
   () => import('~/components/partials/ParentsOversee'),
 );
+const PaymentHistory = dynamic(
+  () => import('~/components/partials/PaymentHistory'),
+);
 
 const SECTION_MAPPING: { [key: string]: JSX.Element } = {
   info: <ProfileForms />,
@@ -24,6 +27,7 @@ const SECTION_MAPPING: { [key: string]: JSX.Element } = {
   message: <Messages />,
   notifications: <Notifications />,
   'parent-control': <ParentsOversee />,
+  'payment-history': <PaymentHistory />,
 };
 
 const ProfilePage: NextPage = () => {
