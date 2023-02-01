@@ -7,17 +7,19 @@ import ProfileInfo from '~/components/partials/ProfileInfo';
 const ProfileForms = dynamic(
   () => import('~/components/partials/ProfileForms'),
 );
-
 const FollowedCourses = dynamic(
   () => import('~/components/partials/FollowedCourses'),
 );
-
 const Messages = dynamic(() => import('~/components/partials/Messages'));
+const Notifications = dynamic(
+  () => import('~/components/partials/Notifications'),
+);
 
 const SECTION_MAPPING: { [key: string]: JSX.Element } = {
   info: <ProfileForms />,
   'followed-courses': <FollowedCourses />,
   message: <Messages />,
+  notifications: <Notifications />,
 };
 
 const ProfilePage: NextPage = () => {
