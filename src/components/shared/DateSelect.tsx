@@ -30,7 +30,7 @@ interface DateSelectProps {
 
 export default function DateSelect({ data }: DateSelectProps) {
   return (
-    <div className="flex space-x-4">
+    <div className="my-4 flex space-x-4">
       {data.map((time) => {
         return (
           <DayItem

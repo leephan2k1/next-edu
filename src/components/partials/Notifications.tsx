@@ -9,7 +9,7 @@ export default function Notifications() {
   const setModalOpen = useSetAtom(notificationModalState);
 
   return (
-    <section className="flex w-full flex-col">
+    <section className="mt-4 flex w-full flex-col">
       <NotificationModal />
 
       <button className="w-fit rounded-xl bg-rose-400 p-3 text-white">
