@@ -69,7 +69,7 @@ function ProfileInfo() {
   const { data: auth } = useSession();
 
   return (
-    <section className="flex w-full flex-col items-center space-y-4 px-4 md:w-[25%] lg:w-[20%]">
+    <section className="flex w-full flex-col items-center space-y-4 px-4 md:w-[25%] md:min-w-[25%] lg:w-[20%] lg:min-w-[20%]">
       <figure className="rounded-ful relative h-36 w-36">
         <Image
           fill

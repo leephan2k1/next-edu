@@ -12,9 +12,12 @@ const FollowedCourses = dynamic(
   () => import('~/components/partials/FollowedCourses'),
 );
 
+const Messages = dynamic(() => import('~/components/partials/Messages'));
+
 const SECTION_MAPPING: { [key: string]: JSX.Element } = {
   info: <ProfileForms />,
   'followed-courses': <FollowedCourses />,
+  message: <Messages />,
 };
 
 const ProfilePage: NextPage = () => {
