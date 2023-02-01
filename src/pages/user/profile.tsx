@@ -14,12 +14,16 @@ const Messages = dynamic(() => import('~/components/partials/Messages'));
 const Notifications = dynamic(
   () => import('~/components/partials/Notifications'),
 );
+const ParentsOversee = dynamic(
+  () => import('~/components/partials/ParentsOversee'),
+);
 
 const SECTION_MAPPING: { [key: string]: JSX.Element } = {
   info: <ProfileForms />,
   'followed-courses': <FollowedCourses />,
   message: <Messages />,
   notifications: <Notifications />,
+  'parent-control': <ParentsOversee />,
 };
 
 const ProfilePage: NextPage = () => {
