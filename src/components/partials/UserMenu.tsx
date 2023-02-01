@@ -115,32 +115,47 @@ function UserMenu({ show, setShow }: UserMenuProps) {
           <FaChalkboardTeacher className="h-6 w-6" /> <span>Giảng dạy</span>
         </Link>
 
-        <h2 className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black">
+        <Link
+          href={`/${PATHS.USER}/${PATHS.USER_PROFILE}?section=followed-courses`}
+          className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
+        >
           <BookmarkIcon className="h-6 w-6" /> <span>Khoá học theo dõi</span>
-        </h2>
+        </Link>
 
         <hr className="mx-auto my-4 w-[80%] dark:border-white/30" />
 
-        <h2 className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black">
+        <Link
+          href={`/${PATHS.USER}/${PATHS.USER_PROFILE}?section=parent-control`}
+          className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
+        >
           <MdSupervisorAccount className="h-6 w-6" />{' '}
           <span>Phụ huynh quản lý</span>
-        </h2>
+        </Link>
 
         <hr className="mx-auto my-4 w-[80%] dark:border-white/30" />
 
-        <h2 className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black">
+        <Link
+          href={`/${PATHS.USER}/${PATHS.USER_PROFILE}?section=message`}
+          className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
+        >
           <EnvelopeIcon className="h-6 w-6" /> <span>Tin nhắn</span>
-        </h2>
+        </Link>
 
-        <h2 className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black">
+        <Link
+          href={`/${PATHS.USER}/${PATHS.USER_PROFILE}?section=notifications`}
+          className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
+        >
           <BellIcon className="h-6 w-6" /> <span>Thông báo</span>
-        </h2>
+        </Link>
 
         <hr className="mx-auto my-4 w-[80%] dark:border-white/30" />
 
-        <h2 className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black">
+        <Link
+          href={`/${PATHS.USER}/${PATHS.USER_PROFILE}?section=payment-history`}
+          className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
+        >
           <CreditCardIcon className="h-6 w-6" /> <span>Lịch sử thanh toán</span>
-        </h2>
+        </Link>
 
         <hr className="mx-auto my-4 w-[80%] dark:border-white/30" />
 
