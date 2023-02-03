@@ -2,7 +2,7 @@ import { Transition } from '@headlessui/react';
 import {
   Bars3Icon,
   ChartBarIcon,
-  ChatBubbleBottomCenterIcon,
+  InformationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { Fragment, useRef, useState } from 'react';
 import { AiOutlineFundProjectionScreen } from 'react-icons/ai';
@@ -59,11 +59,6 @@ export default function TeachingDashBoardSidebar() {
         </button>
 
         <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl p-4 hover:bg-slate-200 hover:dark:bg-black">
-          <ChatBubbleBottomCenterIcon className="h-10 w-10" />
-          <span>Giao tiếp</span>
-        </button>
-
-        <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl p-4 hover:bg-slate-200 hover:dark:bg-black">
           <ChartBarIcon className="h-10 w-10" />
           <span>Phân tích</span>
         </button>
@@ -71,6 +66,11 @@ export default function TeachingDashBoardSidebar() {
         <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl p-4 hover:bg-slate-200 hover:dark:bg-black">
           <VscOrganization className="h-10 w-10" />
           <span>Tổ chức</span>
+        </button>
+
+        <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl p-4 hover:bg-slate-200 hover:dark:bg-black">
+          <InformationCircleIcon className="h-10 w-10" />
+          <span>Trách nhiệm</span>
         </button>
       </aside>
     </>
