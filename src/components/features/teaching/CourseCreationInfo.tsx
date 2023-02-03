@@ -91,8 +91,8 @@ export default function CourseCreationInfo() {
           {...register('category')}
           className="my-4 max-w-md rounded-xl p-4"
         >
-          <option disabled selected>
-            Danh mục
+          <option disabled defaultValue="Danh mục:">
+            Danh mục:
           </option>
           {categories_detail.map((category) => {
             return (
@@ -105,8 +105,8 @@ export default function CourseCreationInfo() {
 
         {watch('category') && (
           <select className="my-4 max-w-md rounded-xl p-4">
-            <option disabled selected>
-              Danh mục chi tiết
+            <option disabled defaultValue="Danh mục chi tiết">
+              Danh mục chi tiết:
             </option>
             {categories_detail
               .find((e) => e.title === watch('category'))
