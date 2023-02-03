@@ -460,6 +460,11 @@
     "@typescript-eslint/types" "5.47.0"
     eslint-visitor-keys "^3.3.0"
 
+"@upload-io/upload-api-client-upload-js@^2.14.0":
+  version "2.14.0"
+  resolved "https://registry.yarnpkg.com/@upload-io/upload-api-client-upload-js/-/upload-api-client-upload-js-2.14.0.tgz#d2fd23c8607ad60ef5328ef27c748b2f80f68c18"
+  integrity sha512-mlEqPNhnZQh87EPuYAEPjeRtbg8LaaK2ronwDQomYmc9HGLU4pEBy20JJlIQ4wbfc9v5P7oskS87zRL3gIwVsg==
+
 acorn-jsx@^5.3.2:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
@@ -719,6 +724,11 @@ chalk@^4.0.0:
     readdirp "~3.6.0"
   optionalDependencies:
     fsevents "~2.3.2"
+
+classnames@^2.2.6:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.3.2.tgz#351d813bf0137fcc6a76a16b88208d2560a0d924"
+  integrity sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==
 
 client-only@0.0.1, client-only@^0.0.1:
   version "0.0.1"
@@ -2152,7 +2162,7 @@ preact-render-to-string@^5.1.19:
   dependencies:
     pretty-format "^3.8.0"
 
-preact@^10.6.3:
+preact@^10.6.3, preact@^10.6.5:
   version "10.11.3"
   resolved "https://registry.yarnpkg.com/preact/-/preact-10.11.3.tgz#8a7e4ba19d3992c488b0785afcc0f8aa13c78d19"
   integrity sha512-eY93IVpod/zG3uMF22Unl8h9KkrcKIRs2EGar8hwLZZDU1lkjph303V9HZBwufh2s736U6VXuhD109LYqPoffg==
@@ -2183,6 +2193,11 @@ prisma@^4.5.0:
   integrity sha512-DWIhxvxt8f4h6MDd35mz7BJff+fu7HItW3WPDIEpCR3RzcOWyiHBbLQW5/DOgmf+pRLTjwXQob7kuTZVYUAw5w==
   dependencies:
     "@prisma/engines" "4.8.0"
+
+progress-smoother@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/progress-smoother/-/progress-smoother-1.4.0.tgz#6a865c5c788118082aca5514f72a3f46227e0f3c"
+  integrity sha512-ctIG/KF/3DQ1zQHMWbXjcnicggTsEzZEA2JEnJNrPtK88tmqN9cfQf01yfLWGCBF93R5XN1EUe/z/IV5NKrmCw==
 
 prop-types@^15.8.1:
   version "15.8.1"
@@ -2270,6 +2285,13 @@ react-ssr-prepass@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/react-ssr-prepass/-/react-ssr-prepass-1.5.0.tgz#bc4ca7fcb52365e6aea11cc254a3d1bdcbd030c5"
   integrity sha512-yFNHrlVEReVYKsLI5lF05tZoHveA5pGzjFbFJY/3pOqqjGOmMmqx83N4hIjN2n6E1AOa+eQEUxs3CgRnPmT0RQ==
+
+react-uploader@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/react-uploader/-/react-uploader-3.4.0.tgz#737eb5e398b8c1fa84db85fb1b3285c54a1b66ad"
+  integrity sha512-hxnSKsokP5G/Y3GxpGtIKxe6yjG1eTaKZP2yBtJYKzhcEcyZ4FC/VK6eNo4iJTG763zLahQ/yIeL5u7YOJBKnw==
+  dependencies:
+    uploader "^3.3.0"
 
 react-wrap-balancer@^0.2.3:
   version "0.2.3"
@@ -2645,6 +2667,23 @@ update-browserslist-db@^1.0.9:
   dependencies:
     escalade "^3.1.1"
     picocolors "^1.0.0"
+
+upload-js@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/upload-js/-/upload-js-2.8.0.tgz#44daa51f553feae0ea1b019e78ab43c4c91fc7f7"
+  integrity sha512-an/f11ilO8W4XKkhapywE9uBIV75TZefdHYF6k0P9gCCu2KB8z9pRO64I4JpNfR0wJmTx1wb1uynK8NEHo6+Fg==
+  dependencies:
+    "@upload-io/upload-api-client-upload-js" "^2.14.0"
+    progress-smoother "^1.4.0"
+
+uploader@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/uploader/-/uploader-3.3.0.tgz#9c502937defc4ec3c6580c219ebe33a0c5b5d1a8"
+  integrity sha512-Px1AMX8FKPB2aBdBejZQEUksn9djaG69skjl0ue0VkuF+R9/pLQ8ltFKhIMTphY6MmmIi03jezNIsxW9P2h8/Q==
+  dependencies:
+    classnames "^2.2.6"
+    preact "^10.6.5"
+    upload-js "^2.8.0"
 
 uri-js@^4.2.2:
   version "4.4.1"

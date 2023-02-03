@@ -94,6 +94,18 @@ input[type='number'] {
   }
 }
 
+.btn.btn--file.btn--primary.btn--upload {
+  height: fit-content;
+}
+
+.uploader__main-screen {
+  .btn {
+    height: fit-content;
+  }
+  .btn-group {
+    align-items: center;
+  }
+}
 .excalidraw.excalidraw-modal-container {
   z-index: 500 !important;
 }

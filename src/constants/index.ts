@@ -15,6 +15,11 @@ export const PATHS = {
   LOGIN: 'login',
 };
 
+import { Uploader } from 'uploader';
+export const UPLOADER_PB_KEY = process.env.NEXT_PUBLIC_UPLOADER_KEY as string;
+// Initialize once (at the start of your app).
+export const uploader = Uploader({ apiKey: UPLOADER_PB_KEY });
+
 export const playerOptions = {
   theme: '#ffad00',
   setting: true,
