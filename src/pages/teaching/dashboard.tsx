@@ -1,17 +1,10 @@
 import { useAtomValue } from 'jotai';
 import type { NextPage } from 'next';
-import dynamic from 'next/dynamic';
 import { teachingSections } from '~/atoms/teachingSections';
 import MainLayout from '~/components/layouts/MainLayout';
+import CourseCreation from '~/components/partials/CourseCreation';
+import CourseSummary from '~/components/partials/CourseSummary';
 import TeachingDashBoardSidebar from '~/components/partials/TeachingDashboardSideBar';
-
-const CourseSummary = dynamic(
-  () => import('~/components/partials/CourseSummary'),
-);
-
-const CourseCreation = dynamic(
-  () => import('~/components/partials/CourseCreation'),
-);
 
 const TEACHING_DASHBOARD_SECTIONS = {
   CourseSummary: <CourseSummary />,
