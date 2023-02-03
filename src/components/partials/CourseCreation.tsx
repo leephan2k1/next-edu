@@ -4,6 +4,7 @@ import { teachingSections } from '~/atoms/teachingSections';
 import { PencilIcon } from '@heroicons/react/24/outline';
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
 import CourseCreationInfo from '../features/teaching/CourseCreationInfo';
+import CourseCreationContents from '../features/teaching/CourseCreationContents';
 
 export default function CourseCreation() {
   const setSection = useSetAtom(teachingSections);
@@ -26,13 +27,15 @@ export default function CourseCreation() {
           </button>
         </div>
 
-        <ul className="steps sticky top-0 mx-auto mb-4 w-full gap-x-4 overflow-x-scroll rounded-xl bg-white dark:bg-dark-background">
+        <ul className="steps sticky top-0 z-[300] mx-auto mb-4 w-full gap-x-4 overflow-x-scroll rounded-xl bg-white dark:bg-dark-background">
           <li className="step-primary step">Thông tin cơ bản</li>
           <li className="step">Thiết kế nội dung</li>
           <li className="step">Phát hành khoá học</li>
         </ul>
 
         <CourseCreationInfo />
+
+        <CourseCreationContents />
       </div>
     </div>
   );
