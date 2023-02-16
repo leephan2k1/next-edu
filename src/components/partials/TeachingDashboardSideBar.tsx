@@ -49,7 +49,7 @@ export default function TeachingDashBoardSidebar() {
         ref={ref}
         className={`${
           showSidebar ? 'flex animate-in slide-in-from-left' : 'hidden'
-        } slide-out-from-right fixed left-0 top-0 z-[200] h-screen w-[15rem] flex-col items-center space-y-10 bg-white px-4  pt-10 dark:bg-dark-background md:flex`}
+        } slide-out-from-right fixed left-0 top-0 z-[301] h-screen w-[15rem] flex-col items-center space-y-10 bg-white px-4  pt-10 dark:bg-dark-background md:flex`}
       >
         <Logo customStyles="md:text-3xl" />
 
