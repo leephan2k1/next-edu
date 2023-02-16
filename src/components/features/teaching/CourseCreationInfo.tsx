@@ -1,17 +1,17 @@
+import { memo } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { BiCategoryAlt } from 'react-icons/bi';
 import { FiTrash } from 'react-icons/fi';
 import { GiArcheryTarget } from 'react-icons/gi';
 import { GrUserExpert } from 'react-icons/gr';
 import { MdDriveFileRenameOutline, MdOutlineDraw } from 'react-icons/md';
+import Editor from '~/components/shared/Editor';
 import { categories_detail } from '~/constants';
 
-import { LinkIcon, CheckIcon } from '@heroicons/react/20/solid';
+import { CheckIcon, LinkIcon } from '@heroicons/react/20/solid';
 import { PlusIcon } from '@heroicons/react/24/outline';
 
-import type { SubmitHandler } from 'react-hook-form';
-
-interface IFormInput {
+export interface IFormInput {
   courseName: string;
   courseTargets: string[];
   courseRequirements: string[];
@@ -22,12 +22,11 @@ interface IFormInput {
   category_details: string;
 }
 
-export default function CourseCreationInfo() {
+function CourseCreationInfo() {
   const {
     control,
     register,
     watch,
-    handleSubmit,
     formState: {},
   } = useForm<IFormInput>({
     defaultValues: { courseTargets: [' '], courseRequirements: [' '] },
@@ -55,12 +54,8 @@ export default function CourseCreationInfo() {
     name: 'courseRequirements',
   });
 
-  const onSubmit: SubmitHandler<IFormInput> = () => {
-    // console.log(data);
-  };
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mt-4 flex flex-col">
+    <form className="mt-4 flex flex-col">
       <h1 className="text-3xl">1. Thông tin cơ bản</h1>
 
       <div className="my-4 flex w-full flex-col px-6">
@@ -140,6 +135,22 @@ export default function CourseCreationInfo() {
       <div className="my-4 flex w-full flex-col px-6">
         <div className="flex flex-col">
           <h2 className="flex items-center space-x-3">
+            <MdOutlineDraw className="h-8 w-8" /> <span>Mô tả chi tiết</span>
+          </h2>
+          <span className="text-xl italic">(Tối đa 5000 ký tự)</span>
+        </div>
+
+        <Editor
+          styles="lg:max-w-[70%] px-0 my-2"
+          onSubmit={() => {
+            //
+          }}
+        />
+      </div>
+
+      <div className="my-4 flex w-full flex-col px-6">
+        <div className="flex flex-col">
+          <h2 className="flex items-center space-x-3">
             <LinkIcon className="h-8 w-8" />{' '}
             <span>Liên kết nền tảng họp trực tuyến</span>
           </h2>
@@ -201,7 +212,7 @@ export default function CourseCreationInfo() {
             <CheckIcon className="h-8 w-8 dark:fill-white" />{' '}
             <span>Yêu cầu của khoá học</span>
           </h2>
-          <span className="text-xl italic">
+          <span className="text-xl italic md:w-3/4">
             (Danh sách công cụ, thiết bị, kinh nghiệm,... yêu cầu người học cần
             có. Nếu không có, hãy bỏ trống để phủ rộng đối tượng người học!)
           </span>
@@ -265,3 +276,5 @@ export default function CourseCreationInfo() {
     </form>
   );
 }
+
+export default memo(CourseCreationInfo);
