@@ -33,8 +33,6 @@ function LectureCreation({
     { fileId: string; fileName: string; fileURL: string }[]
   >([]);
 
-  // console.log('files:: ', fileUrls);
-
   return (
     <div className="flex w-full flex-col rounded-lg bg-slate-200 p-4 dark:bg-black">
       <div className="flex justify-between">
@@ -87,6 +85,13 @@ function LectureCreation({
               //
             }}
           />
+          <label className="mt-6 flex items-center space-x-4">
+            <h3 className="italic">Bài học được xem trước (Preview)</h3>
+            <input
+              type="checkbox"
+              className="checkbox-success checkbox checkbox-lg md:checkbox-md"
+            />
+          </label>
         </>
       )}
 
@@ -108,7 +113,10 @@ function LectureCreation({
                     }),
                   ),
                 );
-                setShouldVideoUpload(false);
+
+                if (fileUrls.find((elem) => elem.fileURL.includes('.mp4'))) {
+                  setShouldVideoUpload(false);
+                }
               }}
             >
               {({ onClick }) => (
