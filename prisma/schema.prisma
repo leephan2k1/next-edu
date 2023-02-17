@@ -34,8 +34,7 @@ enum COURSE_STATE {
 model Course {
   id                 String              @id @default(cuid())
   name               String?             @db.VarChar(60)
-  categories         Category            @relation(fields: [categoryId], references: [id])
-  categoryId         String
+  categories         Category[]
   password           String?             @db.Text
   slug               String?             @db.Text
   thumbnail          String?             @db.Text
@@ -58,7 +57,6 @@ model Course {
   verified           Boolean             @default(false)
 
   @@index([userId])
-  @@index([categoryId])
 }
 
 model Student {
