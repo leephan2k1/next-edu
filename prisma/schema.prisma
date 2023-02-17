@@ -15,6 +15,185 @@ datasource db {
   relationMode = "prisma"
 }
 
+enum Role {
+  STUDENT
+  INSTRUCTOR
+  ADMIN
+}
+
+enum PUBLISH_MODE {
+  PUBLIC
+  PRIVATE
+}
+
+enum COURSE_STATE {
+  FINALIZATION
+  ACCUMULATION
+}
+
+model Course {
+  id                 String              @id @default(cuid())
+  name               String?             @db.VarChar(60)
+  categories         Category            @relation(fields: [categoryId], references: [id])
+  categoryId         String
+  password           String?             @db.Text
+  slug               String?             @db.Text
+  thumbnail          String?             @db.Text
+  instructor         User                @relation(fields: [userId], references: [id])
+  rating             Float?
+  userId             String
+  briefDescription   String?             @db.Text
+  detailDescription  String?             @db.Text
+  meetingPlatform    String?             @db.Text
+  courseTargets      CourseTarget[]
+  courseRequirements CourseRequirement[]
+  chapters           Chapter[]
+  publishMode        PUBLISH_MODE        @default(PUBLIC)
+  coursePrice        Int?
+  courseState        COURSE_STATE        @default(FINALIZATION)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  reviews            Review[]
+  students           Student[]
+  verified           Boolean             @default(false)
+
+  @@index([userId])
+  @@index([categoryId])
+}
+
+model Student {
+  id       String   @id @default(cuid())
+  userId   String   @unique
+  progress Int      @default(0)
+  courses  Course[]
+}
+
+model User {
+  id            String       @id @default(cuid())
+  name          String?
+  email         String?      @unique
+  bio           Bio?         @relation(fields: [bioId], references: [id])
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  role          Role         @default(STUDENT)
+  bioId         String?
+  Review        Review[]
+  courseId      String?
+  Course        Course[]
+  Discussion    Discussion[]
+
+  @@index([bioId])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  content   String
+  rating    Int
+  author    User     @relation(fields: [userId], references: [id])
+  userId    String
+  Course    Course?  @relation(fields: [courseId], references: [id])
+  courseId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([courseId])
+}
+
+model Category {
+  id               String     @id @default(cuid())
+  name             String     @unique
+  parentCategoryId String
+  parentCategory   Category   @relation("ParentSubCategories", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subCategories    Category[] @relation("ParentSubCategories")
+  Course           Course[]
+
+  @@index([parentCategoryId])
+}
+
+model Chapter {
+  id       String    @id @default(cuid())
+  title    String    @db.VarChar(60)
+  order    Int
+  Course   Course?   @relation(fields: [courseId], references: [id])
+  courseId String?
+  lectures Lecture[]
+
+  @@index([courseId])
+}
+
+model Lecture {
+  id          String             @id @default(cuid())
+  title       String             @db.VarChar(60)
+  description String             @db.Text
+  isPreview   Boolean            @default(false)
+  resources   Resource[]
+  discussions Discussion[]
+  order       Int
+  learnedBy   LearningProgress[]
+  Chapter     Chapter?           @relation(fields: [chapterId], references: [id])
+  chapterId   String?
+
+  @@index([chapterId])
+}
+
+model Discussion {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  author    User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parentDiscussionId String
+  parentCategory     Discussion   @relation("ParentDiscussion", fields: [parentDiscussionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reply              Discussion[] @relation("ParentDiscussion")
+  Lecture            Lecture?     @relation(fields: [lectureId], references: [id])
+  lectureId          String?
+
+  @@index([userId])
+  @@index([parentDiscussionId])
+  @@index([lectureId])
+}
+
+model Resource {
+  id        String   @id @default(cuid())
+  name      String   @db.Text
+  url       String   @db.Text
+  createdAt DateTime @default(now())
+  Lecture   Lecture? @relation(fields: [lectureId], references: [id])
+  lectureId String?
+
+  @@index([lectureId])
+}
+
+model LearningProgress {
+  id      String    @id @default(cuid())
+  userId  String
+  Lecture Lecture[]
+}
+
+model CourseRequirement {
+  id      String @id @default(cuid())
+  content String
+
+  Course   Course? @relation(fields: [courseId], references: [id])
+  courseId String?
+
+  @@index([courseId])
+}
+
+model CourseTarget {
+  id       String  @id @default(cuid())
+  content  String
+  Course   Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String?
+
+  @@index([courseId])
+}
+
 // Necessary for Next auth
 model Account {
   id                String  @id @default(cuid())
@@ -45,21 +224,6 @@ model Session {
   @@index([userId])
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  bio           Bio?      @relation(fields: [bioId], references: [id])
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  role          Role      @default(STUDENT)
-  bioId         String?
-
-  @@index([bioId])
-}
-
 model Bio {
   id             String          @id @default(cuid())
   specialist     String
@@ -78,12 +242,6 @@ model SocialContact {
   bioId String
 
   @@index([bioId])
-}
-
-enum Role {
-  STUDENT
-  INSTRUCTOR
-  ADMIN
 }
 
 model VerificationToken {
