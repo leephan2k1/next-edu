@@ -3,6 +3,7 @@ import { FiSave } from 'react-icons/fi';
 import { HiOutlineSpeakerphone } from 'react-icons/hi';
 import { createCourseSteps } from '~/atoms/createCourseSteps';
 import { teachingSections } from '~/atoms/teachingSections';
+import useCourse from '~/contexts/CourseContext';
 
 import { PencilIcon } from '@heroicons/react/24/outline';
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
@@ -14,6 +15,7 @@ import CoursePublishing from '../features/teaching/CoursePublishing';
 export default function CourseCreation() {
   const createSteps = useAtomValue(createCourseSteps);
   const setSection = useSetAtom(teachingSections);
+  const courseCtx = useCourse();
 
   return (
     <div className="flex min-h-screen flex-col space-y-14 pt-[7rem] pb-[10rem] md:pb-[7rem] md:pt-[5rem]">
@@ -61,7 +63,12 @@ export default function CourseCreation() {
       </div>
 
       <div className="fixed bottom-10 right-10 flex items-center space-x-4">
-        <button className="smooth-effect group flex items-center space-x-4 rounded-xl border border-gray-600 bg-gray-600 p-4 text-white dark:border-white dark:bg-dark-background dark:text-white">
+        <button
+          onClick={() => {
+            courseCtx?.dispatch();
+          }}
+          className="smooth-effect group flex items-center space-x-4 rounded-xl border border-gray-600 bg-gray-600 p-4 text-white dark:border-white dark:bg-dark-background dark:text-white"
+        >
           <FiSave className="smooth-effect h-8 w-8 group-hover:scale-125" />
           <span>Lưu tiến trình</span>
         </button>

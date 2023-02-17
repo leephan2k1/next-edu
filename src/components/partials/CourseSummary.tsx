@@ -3,6 +3,7 @@ import ModernCourseCard from '../shared/ModernCourseCard';
 import { useSetAtom } from 'jotai';
 import { teachingSections } from '~/atoms/teachingSections';
 import { RiDraftLine } from 'react-icons/ri';
+import { VscTasklist } from 'react-icons/vsc';
 
 export default function CourseCreation() {
   const setSection = useSetAtom(teachingSections);
@@ -51,6 +52,31 @@ export default function CourseCreation() {
           <span className="font-bold">Khoá học đang soạn</span>
         </h1>
         {/* <h4 className="my-4 italic">Bạn chưa soạn khoá học nào!</h4> */}
+        <ul className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+          <li>
+            <ModernCourseCard />
+          </li>
+          <li>
+            <ModernCourseCard />
+          </li>
+          <li>
+            <ModernCourseCard />
+          </li>
+          <li>
+            <ModernCourseCard />
+          </li>
+          <li>
+            <ModernCourseCard />
+          </li>
+        </ul>
+      </div>
+
+      <div className="mx-auto flex w-[90%] flex-col md:w-[80%]">
+        <h1 className="flex space-x-4 text-3xl">
+          <VscTasklist className="h-8 w-8" />{' '}
+          <span className="font-bold">Khoá học đang chờ phê duyệt</span>
+        </h1>
+        {/* <h4 className="my-4 italic">Bạn chưa hướng dẫn khoá học nào!</h4> */}
         <ul className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
           <li>
             <ModernCourseCard />

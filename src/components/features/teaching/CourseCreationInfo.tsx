@@ -1,4 +1,6 @@
-import { memo } from 'react';
+import { CheckIcon, LinkIcon } from '@heroicons/react/20/solid';
+import { PlusIcon } from '@heroicons/react/24/outline';
+import { memo, useEffect, useRef } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { BiCategoryAlt } from 'react-icons/bi';
 import { FiTrash } from 'react-icons/fi';
@@ -7,9 +9,11 @@ import { GrUserExpert } from 'react-icons/gr';
 import { MdDriveFileRenameOutline, MdOutlineDraw } from 'react-icons/md';
 import Editor from '~/components/shared/Editor';
 import { categories_detail } from '~/constants';
+import useCourse from '~/contexts/CourseContext';
+import { useIsFirstRender } from 'usehooks-ts';
+import { LEVELS_LABEL, MAPPING_LEVEL_LANGUAGE } from '~/constants';
 
-import { CheckIcon, LinkIcon } from '@heroicons/react/20/solid';
-import { PlusIcon } from '@heroicons/react/24/outline';
+import type QuillComponent from 'react-quill';
 
 export interface IFormInput {
   courseName: string;
@@ -23,11 +27,19 @@ export interface IFormInput {
 }
 
 function CourseCreationInfo() {
+  const courseCtx = useCourse();
+  const isFirst = useIsFirstRender();
+
+  const editorRef = useRef<QuillComponent | null>(null);
+
   const {
+    getValues,
     control,
     register,
     watch,
-    formState: {},
+    setError,
+    clearErrors,
+    formState: { errors },
   } = useForm<IFormInput>({
     defaultValues: { courseTargets: [' '], courseRequirements: [' '] },
   });
@@ -54,8 +66,51 @@ function CourseCreationInfo() {
     name: 'courseRequirements',
   });
 
+  // //update form value to context:
+  useEffect(() => {
+    const {
+      courseName,
+      category,
+      category_details,
+      briefDescCourse,
+      meetingPlatform,
+      courseTargets,
+      courseRequirements,
+      courseLevel,
+    } = getValues();
+
+    if (!courseName && !isFirst) {
+      setError('courseName', {
+        type: 'required',
+        message: 'Tên khoá học bắt buộc phải có trước tiên!',
+      });
+    }
+
+    if (courseName) {
+      courseCtx?.updateCourse({
+        name: courseName,
+        category: { name: category, subCategory: category_details },
+        briefDescription: briefDescCourse.trim(),
+        detailDescription: editorRef.current?.value
+          ? (editorRef.current.value as string)
+          : '',
+        meetingPlatform,
+        courseTargets: courseTargets.map((elem) => elem.trim()),
+        courseRequirements: courseRequirements.map((elem) => elem.trim()),
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        courseLevel: MAPPING_LEVEL_LANGUAGE[courseLevel],
+      });
+    }
+  }, [courseCtx?.dispatchUpdate]);
+
   return (
-    <form className="mt-4 flex flex-col">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+      }}
+      className="mt-4 flex flex-col"
+    >
       <h1 className="text-3xl">1. Thông tin cơ bản</h1>
 
       <div className="my-4 flex w-full flex-col px-6">
@@ -67,11 +122,19 @@ function CourseCreationInfo() {
           <span className="text-xl italic">(Tối đa 60 ký tự)</span>
         </div>
 
+        <span className="my-2 italic text-rose-400">
+          {errors?.courseName?.message}
+        </span>
         <input
-          {...register('courseName', { maxLength: 60 })}
+          onFocus={() => {
+            clearErrors('courseName');
+          }}
+          {...register('courseName', { maxLength: 60, required: true })}
           type="text"
           placeholder="Khoá học từ hero về zero..."
-          className="my-2 rounded-xl p-4 focus:ring-1 focus:ring-gray-200 md:w-1/2"
+          className={`my-2 rounded-xl ${
+            errors?.courseName ? 'border border-rose-500' : ''
+          } p-4 focus:ring-1 focus:ring-gray-200 md:w-1/2`}
         />
       </div>
 
@@ -99,7 +162,10 @@ function CourseCreationInfo() {
         </select>
 
         {watch('category') && (
-          <select className="my-4 max-w-md rounded-xl p-4">
+          <select
+            {...register('category_details')}
+            className="my-4 max-w-md rounded-xl p-4"
+          >
             <option disabled defaultValue="Danh mục chi tiết">
               Danh mục chi tiết:
             </option>
@@ -142,8 +208,8 @@ function CourseCreationInfo() {
 
         <Editor
           styles="lg:max-w-[70%] px-0 my-2"
-          onSubmit={() => {
-            //
+          getInstance={(editor) => {
+            editorRef.current = editor;
           }}
         />
       </div>
@@ -191,7 +257,7 @@ function CourseCreationInfo() {
 
         <div className="flex items-center justify-between md:w-1/2">
           <button
-            onClick={() => courseTargetsAppend(' ')}
+            onClick={() => courseTargetsAppend(' ', { shouldFocus: false })}
             className="smooth-effect my-4 flex w-fit items-center space-x-2 hover:text-primary"
           >
             <PlusIcon className="h-8 w-8" /> <span>Thêm mục tiêu</span>{' '}
@@ -231,10 +297,12 @@ function CourseCreationInfo() {
 
         <div className="flex items-center justify-between md:w-1/2">
           <button
-            onClick={() => courseRequirementsAppend(' ')}
+            onClick={() =>
+              courseRequirementsAppend(' ', { shouldFocus: false })
+            }
             className="smooth-effect my-4 flex w-fit items-center space-x-2 hover:text-primary"
           >
-            <PlusIcon className="h-8 w-8" /> <span>Thêm mục tiêu</span>{' '}
+            <PlusIcon className="h-8 w-8" /> <span>Thêm yêu cầu</span>{' '}
           </button>
 
           <button
@@ -261,10 +329,10 @@ function CourseCreationInfo() {
           {...register('courseLevel')}
           className="my-4 max-w-md rounded-xl p-4"
         >
-          <option disabled selected>
+          <option disabled defaultValue={'Đối tượng:'}>
             Đối tượng:
           </option>
-          {['Sơ cấp', 'Trung cấp', 'Chuyên gia'].map((level) => {
+          {LEVELS_LABEL.map((level) => {
             return (
               <option value={level} key={level}>
                 {level}
