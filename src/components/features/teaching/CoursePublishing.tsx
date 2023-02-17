@@ -1,11 +1,30 @@
 import { useSetAtom } from 'jotai';
-import { useEffect, useRef, useState, memo } from 'react';
-import { useIntersectionObserver } from 'usehooks-ts';
+import { memo, useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useIntersectionObserver, useIsFirstRender } from 'usehooks-ts';
 import { createCourseSteps } from '~/atoms/createCourseSteps';
+import {
+  MAPPING_COURSE_STATE_LANGUAGE,
+  MAPPING_PUBLISH_MODE_LANGUAGE,
+} from '~/constants';
+import useCourse from '~/contexts/CourseContext';
 
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
-function PasswordInput() {
+import type { UseFormRegister } from 'react-hook-form';
+interface IFormInput {
+  publishMode: string;
+  courseState: string;
+  password: string;
+  coursePriceSelect: string;
+  coursePrice: number;
+}
+
+function PasswordInput({
+  register,
+}: {
+  register: UseFormRegister<IFormInput>;
+}) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -13,6 +32,8 @@ function PasswordInput() {
       <h3>Mật khẩu khoá học</h3>
       <div className="my-2 flex items-center">
         <input
+          autoComplete="new-password"
+          {...register('password')}
           className="rounded-xl p-4 focus:ring-1 focus:ring-gray-200 md:w-1/2"
           type={showPassword ? 'text' : 'password'}
         />
@@ -32,26 +53,18 @@ function PasswordInput() {
   );
 }
 
-function CoursePriceInput() {
-  return (
-    <div className="flex items-center space-x-4">
-      <input
-        type="number"
-        placeholder="10 000"
-        className="rounded-xl p-4 focus:ring-1 focus:ring-gray-200 md:w-[40%]"
-      />
-      <span>VNĐ</span>
-    </div>
-  );
-}
-
 function CoursePublishing() {
-  const [isPrivate, setIsPrivate] = useState(false);
-  const [isPaidCourse, setIsPaidCourse] = useState(false);
-
   const ref = useRef<HTMLDivElement | null>(null);
   const entry = useIntersectionObserver(ref, {});
   const setStep = useSetAtom(createCourseSteps);
+
+  const courseCtx = useCourse();
+
+  const isFirst = useIsFirstRender();
+
+  const { getValues, register, watch } = useForm<IFormInput>({
+    defaultValues: { coursePrice: 0 },
+  });
 
   useEffect(() => {
     if (!!entry?.isIntersecting) {
@@ -61,8 +74,36 @@ function CoursePublishing() {
     }
   }, [entry]);
 
+  useEffect(() => {
+    const {
+      publishMode,
+      courseState,
+      coursePriceSelect,
+      coursePrice,
+      password,
+    } = getValues();
+
+    if (!isFirst) {
+      courseCtx?.updateCourse({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        publishMode: MAPPING_PUBLISH_MODE_LANGUAGE[publishMode],
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        courseState: MAPPING_COURSE_STATE_LANGUAGE[courseState],
+        coursePrice: coursePriceSelect === 'Miễn phí' ? 0 : coursePrice,
+        password: publishMode === 'Công khai' ? null : password,
+      });
+    }
+  }, [courseCtx?.dispatchUpdate]);
+
   return (
-    <div className="mt-6 flex flex-col space-y-6">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+      }}
+      className="mt-6 flex flex-col space-y-6"
+    >
       <h1 ref={ref} className="text-3xl">
         3. Phát hành khoá học
       </h1>
@@ -70,41 +111,47 @@ function CoursePublishing() {
       <h3>Chế độ riêng tư</h3>
 
       <select
-        onChange={(e) => {
-          setIsPrivate(e.currentTarget.value.toLowerCase() === 'riêng tư');
-        }}
+        {...register('publishMode')}
         className="my-4 max-w-md rounded-xl p-4"
       >
         <option defaultChecked>Công khai</option>
         <option>Riêng tư</option>
       </select>
 
-      {isPrivate && <PasswordInput />}
+      {watch('publishMode')?.toLowerCase() === 'riêng tư' && (
+        <PasswordInput register={register} />
+      )}
 
       <h3>Học phí</h3>
       <select
-        onChange={(e) => {
-          setIsPaidCourse(e.currentTarget.value.toLowerCase() === 'có phí');
-        }}
+        {...register('coursePriceSelect')}
         className="my-4 max-w-md rounded-xl p-4"
       >
         <option defaultChecked>Miễn phí</option>
         <option>Có phí</option>
       </select>
 
-      {isPaidCourse && <CoursePriceInput />}
+      {watch('coursePriceSelect')?.toLocaleLowerCase() === 'có phí' && (
+        <div className="flex items-center space-x-4">
+          <input
+            {...register('coursePrice')}
+            type="number"
+            placeholder="10 000"
+            className="rounded-xl p-4 focus:ring-1 focus:ring-gray-200 md:w-[40%]"
+          />
+          <span>VNĐ</span>
+        </div>
+      )}
 
       <h3>Nội dung khoá học ở dạng</h3>
       <select
-        onChange={(e) => {
-          setIsPaidCourse(e.currentTarget.value.toLowerCase() === 'có phí');
-        }}
+        {...register('courseState')}
         className="my-4 max-w-md rounded-xl p-4"
       >
         <option defaultChecked>Hoàn thiện</option>
         <option>Tích luỹ</option>
       </select>
-    </div>
+    </form>
   );
 }
 
