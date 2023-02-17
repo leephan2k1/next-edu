@@ -1,17 +1,22 @@
-import { CheckIcon, LinkIcon } from '@heroicons/react/20/solid';
-import { PlusIcon } from '@heroicons/react/24/outline';
 import { memo, useEffect, useRef } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { BiCategoryAlt } from 'react-icons/bi';
 import { FiTrash } from 'react-icons/fi';
 import { GiArcheryTarget } from 'react-icons/gi';
 import { GrUserExpert } from 'react-icons/gr';
 import { MdDriveFileRenameOutline, MdOutlineDraw } from 'react-icons/md';
-import Editor from '~/components/shared/Editor';
-import { categories_detail } from '~/constants';
-import useCourse from '~/contexts/CourseContext';
 import { useIsFirstRender } from 'usehooks-ts';
-import { LEVELS_LABEL, MAPPING_LEVEL_LANGUAGE } from '~/constants';
+import Editor from '~/components/shared/Editor';
+import {
+  categories_detail,
+  LEVELS_LABEL,
+  MAPPING_LEVEL_LANGUAGE,
+} from '~/constants';
+import useCourse from '~/contexts/CourseContext';
+
+import { CheckIcon, LinkIcon } from '@heroicons/react/20/solid';
+import { PlusIcon } from '@heroicons/react/24/outline';
 
 import type QuillComponent from 'react-quill';
 
@@ -80,10 +85,18 @@ function CourseCreationInfo() {
     } = getValues();
 
     if (!courseName && !isFirst) {
-      setError('courseName', {
-        type: 'required',
-        message: 'Tên khoá học bắt buộc phải có trước tiên!',
-      });
+      setError(
+        'courseName',
+        {
+          type: 'required',
+          message: 'Tên khoá học bắt buộc phải có trước tiên!',
+        },
+        { shouldFocus: true },
+      );
+
+      toast.error('Lưu không thành công, vui lòng xem lại các trường!');
+
+      return;
     }
 
     if (courseName) {
@@ -101,6 +114,8 @@ function CourseCreationInfo() {
         //@ts-ignore
         courseLevel: MAPPING_LEVEL_LANGUAGE[courseLevel],
       });
+
+      toast.success('Lưu tiến trình thành công!');
     }
   }, [courseCtx?.dispatchUpdate]);
 
@@ -126,7 +141,7 @@ function CourseCreationInfo() {
           {errors?.courseName?.message}
         </span>
         <input
-          onFocus={() => {
+          onClick={() => {
             clearErrors('courseName');
           }}
           {...register('courseName', { maxLength: 60, required: true })}
