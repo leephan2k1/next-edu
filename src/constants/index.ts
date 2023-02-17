@@ -27,6 +27,16 @@ export const LEVELS_LABEL = [
   'Tất cả đối tượng',
 ];
 
+export const MAPPING_PUBLISH_MODE_LANGUAGE = {
+  'Công khai': 'PUBLIC',
+  'Riêng tư': 'PRIVATE',
+};
+
+export const MAPPING_COURSE_STATE_LANGUAGE = {
+  'Hoàn thiện': 'FINALIZATION',
+  'Tích luỹ': 'ACCUMULATION',
+};
+
 export const MAPPING_LEVEL_LANGUAGE = {
   [LEVELS_LABEL[0] as string]: 'BEGINNER',
   [LEVELS_LABEL[1] as string]: 'INTERMEDIATE',
