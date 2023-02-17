@@ -34,7 +34,7 @@ enum COURSE_STATE {
 model Course {
   id                 String              @id @default(cuid())
   name               String?             @db.VarChar(60)
-  categories         Category            @relation(fields: [categoryId], references: [id])
+  category           Category            @relation(fields: [categoryId], references: [id])
   password           String?             @db.Text
   slug               String?             @db.Text
   thumbnail          String?             @db.Text
