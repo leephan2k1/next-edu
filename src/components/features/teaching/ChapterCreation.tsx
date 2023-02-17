@@ -1,5 +1,6 @@
-import { memo, useState } from 'react';
-
+import { memo, useState, useEffect } from 'react';
+import useCourse from '~/contexts/CourseContext';
+import { useIsFirstRender } from 'usehooks-ts';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
@@ -23,6 +24,39 @@ function ChapterCreation({
   const [chapterTitle, setChapterTitle] = useState(() =>
     chapterIndex === 1 ? 'Giới thiệu' : '',
   );
+  const isFirst = useIsFirstRender();
+
+  const courseCtx = useCourse();
+
+  const [isUpdated, setIsUpdated] = useState(false);
+
+  //hook update course values
+  useEffect(() => {
+    if (!isFirst) {
+      const payload = { title: chapterTitle, order: chapterIndex };
+
+      if (courseCtx?.course?.chapters) {
+        // if chapter exists in global value => return
+        if (
+          courseCtx?.course?.chapters.find(
+            (elem) => elem.order === payload.order,
+          )
+        ) {
+          return;
+        }
+
+        courseCtx?.updateCourse({
+          chapters: [...courseCtx.course?.chapters, payload],
+        });
+        setIsUpdated(true);
+      } else {
+        courseCtx?.updateCourse({
+          chapters: [payload],
+        });
+        setIsUpdated(true);
+      }
+    }
+  }, [courseCtx?.dispatchUpdate]);
 
   return (
     <div
@@ -77,6 +111,8 @@ function ChapterCreation({
         {numberLecture.map((item) => {
           return (
             <LectureCreation
+              chapterUpdated={isUpdated}
+              chapterIndex={chapterIndex}
               removeLecture={setNumberLecture}
               lectureIndex={item}
               key={item}
