@@ -4,6 +4,8 @@ import { HiOutlineSpeakerphone } from 'react-icons/hi';
 import { createCourseSteps } from '~/atoms/createCourseSteps';
 import { teachingSections } from '~/atoms/teachingSections';
 import useCourse from '~/contexts/CourseContext';
+import { useIsFirstRender } from 'usehooks-ts';
+import { useEffect } from 'react';
 
 import { PencilIcon } from '@heroicons/react/24/outline';
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
@@ -16,6 +18,13 @@ export default function CourseCreation() {
   const createSteps = useAtomValue(createCourseSteps);
   const setSection = useSetAtom(teachingSections);
   const courseCtx = useCourse();
+  const firstMount = useIsFirstRender();
+
+  useEffect(() => {
+    if (firstMount) {
+      courseCtx?.resetCourse();
+    }
+  }, [firstMount]);
 
   return (
     <div className="flex min-h-screen flex-col space-y-14 pt-[7rem] pb-[10rem] md:pb-[7rem] md:pt-[5rem]">
