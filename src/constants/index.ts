@@ -20,6 +20,20 @@ export const UPLOADER_PB_KEY = process.env.NEXT_PUBLIC_UPLOADER_KEY as string;
 // Initialize once (at the start of your app).
 export const uploader = Uploader({ apiKey: UPLOADER_PB_KEY });
 
+export const LEVELS_LABEL = [
+  'Sơ cấp',
+  'Trung cấp',
+  'Chuyên gia',
+  'Tất cả đối tượng',
+];
+
+export const MAPPING_LEVEL_LANGUAGE = {
+  [LEVELS_LABEL[0] as string]: 'BEGINNER',
+  [LEVELS_LABEL[1] as string]: 'INTERMEDIATE',
+  [LEVELS_LABEL[2] as string]: 'EXPERT',
+  [LEVELS_LABEL[3] as string]: 'ALL',
+};
+
 export const playerOptions = {
   theme: '#ffad00',
   setting: true,
