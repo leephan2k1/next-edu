@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic';
 import { nunito } from '~/constants';
+import { Toaster } from 'react-hot-toast';
 
 import type { ReactNode } from 'react';
 interface MainLayoutProps {
@@ -21,6 +22,8 @@ export default function MainLayout({
 }: MainLayoutProps) {
   return (
     <div className={`${nunito.className} bg-light-background dark:bg-black`}>
+      <Toaster toastOptions={{ duration: 3500 }} />
+
       {showHeader && <Header showCategories={showCategoriesHeader} />}
 
       <Sidebar />
