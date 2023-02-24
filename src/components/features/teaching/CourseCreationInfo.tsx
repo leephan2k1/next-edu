@@ -14,11 +14,14 @@ import {
   MAPPING_LEVEL_LANGUAGE,
 } from '~/constants';
 import useCourse from '~/contexts/CourseContext';
-
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { PATHS } from '~/constants';
+import { useSession } from 'next-auth/react';
 import { CheckIcon, LinkIcon } from '@heroicons/react/20/solid';
 import { PlusIcon } from '@heroicons/react/24/outline';
-
 import type QuillComponent from 'react-quill';
+import type { Course } from '@prisma/client';
 
 export interface IFormInput {
   courseName: string;
@@ -31,13 +34,36 @@ export interface IFormInput {
   category_details: string;
 }
 
-function CourseCreationInfo() {
+interface CourseType extends Course {
+  category: { id: string; name: string };
+  courseTargets: {
+    id: string;
+    content: string;
+    courseSlug: string;
+    courseId: string;
+  }[];
+  courseRequirements: {
+    id: string;
+    content: string;
+    courseSlug: string;
+    courseId: string;
+  }[];
+}
+
+interface CourseCreationInfoProps {
+  course?: CourseType | null;
+}
+
+function CourseCreationInfo({ course }: CourseCreationInfoProps) {
+  const { data: session } = useSession();
   const courseCtx = useCourse();
+  const router = useRouter();
   const isFirst = useIsFirstRender();
 
   const editorRef = useRef<QuillComponent | null>(null);
 
   const {
+    reset,
     getValues,
     control,
     register,
@@ -46,8 +72,35 @@ function CourseCreationInfo() {
     clearErrors,
     formState: { errors },
   } = useForm<IFormInput>({
-    defaultValues: { courseTargets: [' '], courseRequirements: [' '] },
+    defaultValues: {
+      courseName: course?.name || '',
+      courseTargets: [' '],
+      courseRequirements: [' '],
+    },
   });
+
+  useEffect(() => {
+    if (course) {
+      reset({
+        courseName: course.name,
+        category: course.category.name,
+        category_details: course.subCategory || undefined,
+        briefDescCourse: course.briefDescription || undefined,
+        meetingPlatform: course.meetingPlatform || undefined,
+        courseTargets:
+          course.courseTargets.length > 0
+            ? course.courseTargets.map((target) => target.content)
+            : [' '],
+        courseRequirements:
+          course.courseRequirements.length > 0
+            ? course.courseRequirements.map((target) => target.content)
+            : [' '],
+        courseLevel: Object.keys(MAPPING_LEVEL_LANGUAGE).find(
+          (key) => MAPPING_LEVEL_LANGUAGE[key] === course.courseLevel,
+        ),
+      });
+    }
+  }, [course]);
 
   const {
     fields: courseTargetsFields,
@@ -71,7 +124,7 @@ function CourseCreationInfo() {
     name: 'courseRequirements',
   });
 
-  // //update form value to context:
+  // update form value to context:
   useEffect(() => {
     const {
       courseName,
@@ -84,6 +137,7 @@ function CourseCreationInfo() {
       courseLevel,
     } = getValues();
 
+    //validate course name
     if (!courseName && !isFirst) {
       setError(
         'courseName',
@@ -99,23 +153,59 @@ function CourseCreationInfo() {
       return;
     }
 
-    if (courseName) {
-      courseCtx?.updateCourse({
-        name: courseName,
-        category: { name: category, subCategory: category_details },
-        briefDescription: briefDescCourse.trim(),
-        detailDescription: editorRef.current?.value
-          ? (editorRef.current.value as string)
-          : '',
-        meetingPlatform,
-        courseTargets: courseTargets.map((elem) => elem.trim()),
-        courseRequirements: courseRequirements.map((elem) => elem.trim()),
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
-        courseLevel: MAPPING_LEVEL_LANGUAGE[courseLevel],
-      });
+    //validate meeting platform
+    if (
+      meetingPlatform &&
+      !meetingPlatform?.includes('meet.google.com') &&
+      !meetingPlatform?.includes('zoom.us') &&
+      !meetingPlatform?.includes('teams.microsoft')
+    ) {
+      setError(
+        'meetingPlatform',
+        {
+          type: 'pattern',
+          message: 'Không đúng nền tảng hỗ trợ',
+        },
+        { shouldFocus: true },
+      );
+      toast.error('Lưu không thành công, vui lòng xem lại các trường!');
+      return;
+    }
 
-      toast.success('Lưu tiến trình thành công!');
+    if (courseName && !isFirst) {
+      (async function () {
+        try {
+          // check duplicate name if create mode
+          if (router.asPath.includes(PATHS.CREATE_COURSE)) {
+            const { data } = await axios.get(`/api/course/${courseName}`);
+
+            if (
+              data?.coursesResult &&
+              data?.coursesResult.userId !== session?.user?.id
+            ) {
+              toast.error('Tên khoá học đã tồn tại!');
+              return;
+            }
+          }
+
+          courseCtx?.updateCourse({
+            name: courseName,
+            category: { name: category, subCategory: category_details },
+            briefDescription: briefDescCourse.trim(),
+            detailDescription: editorRef.current?.value
+              ? (editorRef.current.value as string)
+              : '',
+            meetingPlatform,
+            courseTargets: courseTargets.map((elem) => elem.trim()),
+            courseRequirements: courseRequirements.map((elem) => elem.trim()),
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            courseLevel: MAPPING_LEVEL_LANGUAGE[courseLevel],
+          });
+
+          toast.success('Lưu tiến trình thành công!');
+        } catch (error) {}
+      })();
     }
   }, [courseCtx?.dispatchUpdate]);
 
@@ -222,6 +312,7 @@ function CourseCreationInfo() {
         </div>
 
         <Editor
+          contents={course?.detailDescription || ''}
           styles="lg:max-w-[70%] px-0 my-2"
           getInstance={(editor) => {
             editorRef.current = editor;
@@ -240,11 +331,20 @@ function CourseCreationInfo() {
           </span>
         </div>
 
+        <span className="my-2 italic text-rose-400">
+          {errors?.meetingPlatform?.message}
+        </span>
+
         <input
           {...register('meetingPlatform')}
+          onClick={() => {
+            clearErrors('meetingPlatform');
+          }}
           type="text"
           placeholder="meet.google.com/abc-degf-xyz"
-          className="my-2 max-w-md rounded-xl p-4 focus:ring-1 focus:ring-gray-200"
+          className={`${
+            errors.meetingPlatform ? 'border border-rose-500' : ''
+          } my-2 max-w-md rounded-xl p-4 focus:ring-1 focus:ring-gray-200`}
         />
       </div>
 

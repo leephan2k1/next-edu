@@ -1,24 +1,29 @@
-import { useAtomValue, useSetAtom } from 'jotai';
-import { FiSave } from 'react-icons/fi';
-import { HiOutlineSpeakerphone } from 'react-icons/hi';
-import { createCourseSteps } from '~/atoms/createCourseSteps';
-import { teachingSections } from '~/atoms/teachingSections';
-import useCourse from '~/contexts/CourseContext';
-import { useIsFirstRender } from 'usehooks-ts';
-import { useEffect } from 'react';
-
 import { PencilIcon } from '@heroicons/react/24/outline';
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
-
+import { useAtomValue } from 'jotai';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { FiSave } from 'react-icons/fi';
+import { HiOutlineSpeakerphone } from 'react-icons/hi';
+import { useIsFirstRender } from 'usehooks-ts';
+import { createCourseSteps } from '~/atoms/createCourseSteps';
+import { PATHS } from '~/constants';
+import useCourse from '~/contexts/CourseContext';
 import CourseCreationContents from '../features/teaching/CourseCreationContents';
 import CourseCreationInfo from '../features/teaching/CourseCreationInfo';
 import CoursePublishing from '../features/teaching/CoursePublishing';
+import { trpc } from '~/utils/trpc';
 
 export default function CourseCreation() {
   const createSteps = useAtomValue(createCourseSteps);
-  const setSection = useSetAtom(teachingSections);
   const courseCtx = useCourse();
+  const router = useRouter();
   const firstMount = useIsFirstRender();
+
+  const { data: course } = trpc.course.findCourseBySlug.useQuery(
+    { slug: router.query?.slug as string },
+    { enabled: !!router.query?.slug },
+  );
 
   useEffect(() => {
     if (firstMount) {
@@ -36,7 +41,9 @@ export default function CourseCreation() {
           </h1>
 
           <button
-            onClick={() => setSection('CourseSummary')}
+            onClick={() => {
+              router.push(`/${PATHS.TEACHING}/${PATHS.TEACHING_DASHBOARD}`);
+            }}
             className="smooth-effect flex w-fit items-center space-x-2 rounded-xl bg-yellow-400 px-4 py-3 text-gray-600"
           >
             <span>Trở về</span>
@@ -64,7 +71,9 @@ export default function CourseCreation() {
           </li>
         </ul>
 
-        <CourseCreationInfo />
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore */}
+        <CourseCreationInfo course={course} />
 
         <CourseCreationContents />
 
