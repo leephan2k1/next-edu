@@ -1,11 +1,11 @@
-import { createContext, useContext, useState } from 'react';
+import type { Chapter, Course, Lecture, Resource } from '@prisma/client';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { useToggle } from 'usehooks-ts';
 
-import type { Chapter, Course, Lecture, Resource } from '@prisma/client';
 import type { ReactNode } from 'react';
-
 type ResourceType = Omit<Resource, 'id' | 'createdAt' | 'lectureId'>;
-
 interface LectureType extends Omit<Partial<Lecture>, 'id' | 'chapterId'> {
   resources: ResourceType[];
 }
@@ -14,7 +14,7 @@ interface ChapterType extends Omit<Chapter, 'id' | 'courseId'> {
   lectures?: LectureType[];
 }
 
-interface CourseType extends Omit<Course, 'id' | 'categoryId'> {
+export interface CourseType extends Omit<Course, 'id' | 'categoryId'> {
   category?: { name: string; subCategory: string };
   courseTargets?: string[];
   courseRequirements?: string[];
@@ -37,13 +37,38 @@ const CourseContext = createContext<CourseContextValues | null>(null);
 
 export const CourseContextProvider = ({ children }: CourseContextProps) => {
   const [course, setCourse] = useState<CourseType | null>(null);
+  const prevValues = useRef<CourseType | null>(null);
   const [dispatchUpdate, toggle] = useToggle();
 
-  const updateCourse = (course: Partial<CourseType>) => {
+  const { data: session } = useSession();
+
+  const updateCourse = (courseParam: Partial<CourseType>) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
-    setCourse((prevState) => ({ ...prevState, ...course }));
+    setCourse((prevState) => {
+      return { ...prevState, ...courseParam };
+    });
   };
+
+  useEffect(() => {
+    if (
+      course?.name &&
+      JSON.stringify(prevValues.current) !== JSON.stringify(course)
+    ) {
+      (async function () {
+        try {
+          if (!session?.user?.id) throw new Error();
+
+          await axios.post('/api/course/update', {
+            ...course,
+            userId: session?.user?.id,
+          });
+        } catch (error) {}
+      })();
+    }
+
+    prevValues.current = course;
+  }, [course]);
 
   const resetCourse = () => {
     setCourse(null);
