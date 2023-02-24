@@ -13,6 +13,8 @@ export const PATHS = {
   TEACHING: 'teaching',
   TEACHING_DASHBOARD: 'dashboard',
   LOGIN: 'login',
+  CREATE_COURSE: 'create',
+  EDIT_COURSE: 'edit',
 };
 
 import { Uploader } from 'uploader';
