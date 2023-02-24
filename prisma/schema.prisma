@@ -40,10 +40,11 @@ enum COURSE_LEVEL {
 
 model Course {
   id                 String              @id @default(cuid())
-  name               String?             @db.VarChar(60)
+  name               String              @unique @db.VarChar(60)
   category           Category            @relation(fields: [categoryId], references: [id])
+  subCategory        String?
   password           String?             @db.Text
-  slug               String?             @db.Text
+  slug               String              @unique @db.VarChar(120)
   thumbnail          String?             @db.Text
   instructor         User                @relation(fields: [userId], references: [id])
   rating             Float?
@@ -113,8 +114,8 @@ model Review {
 model Category {
   id               String     @id @default(cuid())
   name             String     @unique
-  parentCategoryId String
-  parentCategory   Category   @relation("ParentSubCategories", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentCategoryId String?
+  parentCategory   Category?  @relation("ParentSubCategories", fields: [parentCategoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   subCategories    Category[] @relation("ParentSubCategories")
   Course           Course[]
 
@@ -122,7 +123,7 @@ model Category {
 }
 
 model Chapter {
-  id       String    @id @default(cuid())
+  id       String    @id
   title    String    @db.VarChar(60)
   order    Int
   Course   Course?   @relation(fields: [courseId], references: [id])
@@ -133,9 +134,9 @@ model Chapter {
 }
 
 model Lecture {
-  id          String             @id @default(cuid())
+  id          String             @id
   title       String             @db.VarChar(60)
-  description String             @db.Text
+  description String?            @db.Text
   isPreview   Boolean            @default(false)
   resources   Resource[]
   discussions Discussion[]
@@ -167,12 +168,14 @@ model Discussion {
 }
 
 model Resource {
-  id        String   @id @default(cuid())
-  name      String   @db.Text
-  url       String   @db.Text
-  createdAt DateTime @default(now())
-  Lecture   Lecture? @relation(fields: [lectureId], references: [id])
-  lectureId String?
+  id            String   @id @default(cuid())
+  name          String   @db.Text
+  type          String   @db.Text
+  videoDuration Float?
+  url           String   @db.Text
+  createdAt     DateTime @default(now())
+  Lecture       Lecture? @relation(fields: [lectureId], references: [id])
+  lectureId     String?
 
   @@index([lectureId])
 }
@@ -184,20 +187,21 @@ model LearningProgress {
 }
 
 model CourseRequirement {
-  id      String @id @default(cuid())
-  content String
-
-  Course   Course? @relation(fields: [courseId], references: [id])
-  courseId String?
+  id         String  @id @default(cuid())
+  content    String
+  courseSlug String  @db.VarChar(120)
+  Course     Course? @relation(fields: [courseId], references: [id])
+  courseId   String?
 
   @@index([courseId])
 }
 
 model CourseTarget {
-  id       String  @id @default(cuid())
-  content  String
-  Course   Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId String?
+  id         String  @id @default(cuid())
+  content    String
+  courseSlug String  @db.VarChar(120)
+  Course     Course? @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId   String?
 
   @@index([courseId])
 }
