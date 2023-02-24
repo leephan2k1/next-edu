@@ -1,24 +1,37 @@
-import { useAtomValue } from 'jotai';
 import type { NextPage } from 'next';
-import { teachingSections } from '~/atoms/teachingSections';
+import { useRouter } from 'next/router';
+import { Case, Default, Switch } from 'react-if';
 import MainLayout from '~/components/layouts/MainLayout';
 import CourseCreation from '~/components/partials/CourseCreation';
 import CourseSummary from '~/components/partials/CourseSummary';
 import TeachingDashBoardSidebar from '~/components/partials/TeachingDashboardSideBar';
-
-const TEACHING_DASHBOARD_SECTIONS = {
-  CourseSummary: <CourseSummary />,
-  CourseCreation: <CourseCreation />,
-};
+import { PATHS } from '~/constants';
 
 const TeachingDashboard: NextPage = () => {
-  const section = useAtomValue(teachingSections);
+  const router = useRouter();
 
   return (
     <div className="relative min-h-screen text-gray-600 dark:text-white md:pl-[16rem]">
       <TeachingDashBoardSidebar />
 
-      {TEACHING_DASHBOARD_SECTIONS[section]}
+      <Switch>
+        <Case condition={router.asPath.includes('dashboard')}>
+          <CourseSummary />
+        </Case>
+
+        <Case
+          condition={
+            router.asPath.includes(PATHS.CREATE_COURSE) ||
+            router.asPath.includes(PATHS.EDIT_COURSE)
+          }
+        >
+          <CourseCreation />
+        </Case>
+
+        <Default>
+          <div></div>
+        </Default>
+      </Switch>
     </div>
   );
 };
