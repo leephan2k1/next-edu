@@ -1,12 +1,13 @@
-import { SiGoogleclassroom } from 'react-icons/si';
-import ModernCourseCard from '../shared/ModernCourseCard';
-import { useSetAtom } from 'jotai';
-import { teachingSections } from '~/atoms/teachingSections';
+import { useRouter } from 'next/router';
 import { RiDraftLine } from 'react-icons/ri';
+import { SiGoogleclassroom } from 'react-icons/si';
 import { VscTasklist } from 'react-icons/vsc';
+import { PATHS } from '~/constants';
+import ModernCourseCard from '../shared/ModernCourseCard';
+import CoursesDraft from './CoursesDraft';
 
 export default function CourseCreation() {
-  const setSection = useSetAtom(teachingSections);
+  const router = useRouter();
 
   return (
     <div className="flex min-h-screen flex-col space-y-14 pt-[7rem] pb-[5rem] md:pt-[5rem]">
@@ -15,7 +16,7 @@ export default function CourseCreation() {
           Bắt đầu chia sẽ kiến thức hôm nay để mang giá trị đến cộng đồng!
         </p>
         <button
-          onClick={() => setSection('CourseCreation')}
+          onClick={() => router.push(`${PATHS.CREATE_COURSE}`)}
           className="smooth-effect w-fit min-w-fit rounded-xl bg-yellow-100 p-4 text-yellow-800 shadow-xl hover:scale-110 dark:text-gray-700"
         >
           Tạo khoá học
@@ -46,29 +47,13 @@ export default function CourseCreation() {
         </ul>
       </div>
 
-      <div className="mx-auto flex w-[90%] flex-col md:w-[80%]">
+      <div className="mx-auto flex w-[90%] flex-col overflow-x-scroll md:w-[80%]">
         <h1 className="flex space-x-4 text-3xl">
           <RiDraftLine className="h-8 w-8" />
           <span className="font-bold">Khoá học đang soạn</span>
         </h1>
-        {/* <h4 className="my-4 italic">Bạn chưa soạn khoá học nào!</h4> */}
-        <ul className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-          <li>
-            <ModernCourseCard />
-          </li>
-          <li>
-            <ModernCourseCard />
-          </li>
-          <li>
-            <ModernCourseCard />
-          </li>
-          <li>
-            <ModernCourseCard />
-          </li>
-          <li>
-            <ModernCourseCard />
-          </li>
-        </ul>
+
+        <CoursesDraft />
       </div>
 
       <div className="mx-auto flex w-[90%] flex-col md:w-[80%]">
