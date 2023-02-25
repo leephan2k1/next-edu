@@ -1,4 +1,7 @@
-import { memo, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { memo, useEffect, useRef, useState } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { BiCategoryAlt } from 'react-icons/bi';
@@ -6,23 +9,29 @@ import { FiTrash } from 'react-icons/fi';
 import { GiArcheryTarget } from 'react-icons/gi';
 import { GrUserExpert } from 'react-icons/gr';
 import { MdDriveFileRenameOutline, MdOutlineDraw } from 'react-icons/md';
+import { UploadButton } from 'react-uploader';
 import { useIsFirstRender } from 'usehooks-ts';
 import Editor from '~/components/shared/Editor';
 import {
   categories_detail,
   LEVELS_LABEL,
   MAPPING_LEVEL_LANGUAGE,
+  PATHS,
+  uploader,
 } from '~/constants';
 import useCourse from '~/contexts/CourseContext';
-import axios from 'axios';
-import { useRouter } from 'next/router';
-import { PATHS } from '~/constants';
-import { useSession } from 'next-auth/react';
-import { CheckIcon, LinkIcon } from '@heroicons/react/20/solid';
-import { PlusIcon } from '@heroicons/react/24/outline';
-import type QuillComponent from 'react-quill';
-import type { Course } from '@prisma/client';
+import Image from 'next/image';
 
+import {
+  CheckIcon,
+  LinkIcon,
+  PhotoIcon,
+  ArrowUpOnSquareIcon,
+} from '@heroicons/react/20/solid';
+import { PlusIcon } from '@heroicons/react/24/outline';
+
+import type QuillComponent from 'react-quill';
+import type { CourseType } from '~/types';
 export interface IFormInput {
   courseName: string;
   courseTargets: string[];
@@ -32,22 +41,6 @@ export interface IFormInput {
   meetingPlatform: string;
   category: string;
   category_details: string;
-}
-
-interface CourseType extends Course {
-  category: { id: string; name: string };
-  courseTargets: {
-    id: string;
-    content: string;
-    courseSlug: string;
-    courseId: string;
-  }[];
-  courseRequirements: {
-    id: string;
-    content: string;
-    courseSlug: string;
-    courseId: string;
-  }[];
 }
 
 interface CourseCreationInfoProps {
@@ -61,6 +54,8 @@ function CourseCreationInfo({ course }: CourseCreationInfoProps) {
   const isFirst = useIsFirstRender();
 
   const editorRef = useRef<QuillComponent | null>(null);
+
+  const [imageURL, setImageURL] = useState('');
 
   const {
     reset,
@@ -241,6 +236,50 @@ function CourseCreationInfo({ course }: CourseCreationInfoProps) {
             errors?.courseName ? 'border border-rose-500' : ''
           } p-4 focus:ring-1 focus:ring-gray-200 md:w-1/2`}
         />
+      </div>
+
+      <div className="my-4 flex w-full flex-col px-6">
+        <div className="flex flex-col">
+          <h2 className="flex items-center space-x-3">
+            <PhotoIcon className="h-8 w-8" /> <span>Ảnh đại diện khoá học</span>
+          </h2>
+          <span className="text-xl italic">
+            Bắt buộc khi phát hành khoá học
+          </span>
+        </div>
+
+        <UploadButton
+          uploader={uploader}
+          options={{ multi: false, mimeTypes: ['image/jpeg', 'image/png'] }}
+          onComplete={(files) => {
+            if (files[0]) {
+              setImageURL(files[0]?.fileUrl);
+            }
+          }}
+        >
+          {({ onClick }) => (
+            <button
+              className="smooth-effect absolute-center my-4 space-x-3 rounded-xl border border-dashed border-gray-500 p-4 md:max-w-md"
+              onClick={onClick}
+            >
+              <ArrowUpOnSquareIcon className="h-8 w-8" />
+              <span>Tải ảnh lên</span>
+            </button>
+          )}
+        </UploadButton>
+
+        {imageURL && (
+          <div className="my-4 max-h-[25rem] overflow-hidden rounded-xl  md:max-w-3xl">
+            <figure className="aspect-w-16 aspect-h-9 relative">
+              <Image
+                alt="course-thumbnail"
+                src={imageURL}
+                className="absolute inset-0 object-cover object-center"
+                fill
+              />
+            </figure>
+          </div>
+        )}
       </div>
 
       <div className="my-4 flex w-full flex-col px-6">
