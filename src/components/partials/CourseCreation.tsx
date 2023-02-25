@@ -15,8 +15,11 @@ import CoursePublishing from '../features/teaching/CoursePublishing';
 import { trpc } from '~/utils/trpc';
 import { lecturesContents } from '~/atoms/lecturesContents';
 import Loading from '../buttons/Loading';
+import { useSession } from 'next-auth/react';
 
 export default function CourseCreation() {
+  const { data: session } = useSession();
+
   const createSteps = useAtomValue(createCourseSteps);
   const setLecturesContents = useSetAtom(lecturesContents);
 
@@ -25,7 +28,7 @@ export default function CourseCreation() {
   const firstMount = useIsFirstRender();
 
   const { data: course, isLoading } = trpc.course.findCourseBySlug.useQuery(
-    { slug: router.query?.slug as string },
+    { slug: router.query?.slug as string, userId: session?.user?.id },
     { enabled: !!router.query?.slug },
   );
 
@@ -95,7 +98,9 @@ export default function CourseCreation() {
             {/* @ts-ignore */}
             <CourseCreationContents course={course} />
 
-            <CoursePublishing />
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {/* @ts-ignore */}
+            <CoursePublishing course={course} />
           </>
         )}
       </div>
