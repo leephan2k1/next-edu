@@ -98,6 +98,12 @@ input[type='number'] {
   height: fit-content;
 }
 
+.uploader__image-editor__actions.btn-group {
+  .btn.btn--primary {
+    height: fit-content;
+  }
+}
+
 .uploader__main-screen {
   .btn {
     height: fit-content;
