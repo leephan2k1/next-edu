@@ -11,6 +11,8 @@ import useCourse from '~/contexts/CourseContext';
 
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 
+import type { CourseType } from '~/types';
+
 import type { UseFormRegister } from 'react-hook-form';
 interface IFormInput {
   publishMode: string;
@@ -18,6 +20,10 @@ interface IFormInput {
   password: string;
   coursePriceSelect: string;
   coursePrice: number;
+}
+
+interface CoursePublishingProps {
+  course?: CourseType | null;
 }
 
 function PasswordInput({
@@ -53,7 +59,7 @@ function PasswordInput({
   );
 }
 
-function CoursePublishing() {
+function CoursePublishing({ course }: CoursePublishingProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const entry = useIntersectionObserver(ref, {});
   const setStep = useSetAtom(createCourseSteps);
@@ -62,9 +68,29 @@ function CoursePublishing() {
 
   const isFirst = useIsFirstRender();
 
-  const { getValues, register, watch } = useForm<IFormInput>({
+  const { getValues, register, watch, reset } = useForm<IFormInput>({
     defaultValues: { coursePrice: 0 },
   });
+
+  useEffect(() => {
+    if (course) {
+      reset({
+        publishMode: Object.keys(MAPPING_PUBLISH_MODE_LANGUAGE).find(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          (key) => MAPPING_PUBLISH_MODE_LANGUAGE[key] === course.publishMode,
+        ),
+        courseState: Object.keys(MAPPING_COURSE_STATE_LANGUAGE).find(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          (key) => MAPPING_COURSE_STATE_LANGUAGE[key] === course.courseState,
+        ),
+        password: course.password || '',
+        coursePriceSelect: course.coursePrice === 0 ? 'Miễn phí' : 'Có phí',
+        coursePrice: course.coursePrice || 0,
+      });
+    }
+  }, [course]);
 
   useEffect(() => {
     if (!!entry?.isIntersecting) {
