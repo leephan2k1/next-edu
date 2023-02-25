@@ -172,7 +172,8 @@ model Resource {
   name          String   @db.Text
   type          String   @db.Text
   videoDuration Float?
-  url           String   @db.Text
+  courseSlug    String   @db.Text
+  url           String   @unique @db.VarChar(500)
   createdAt     DateTime @default(now())
   Lecture       Lecture? @relation(fields: [lectureId], references: [id])
   lectureId     String?
