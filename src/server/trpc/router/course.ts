@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { router, protectedProcedure, publicProcedure } from '../trpc';
+import exclude from '~/server/helper/excludeFields';
 
 export const courseRouter = router({
   findCoursesByOwner: protectedProcedure
@@ -25,9 +26,9 @@ export const courseRouter = router({
     }),
 
   findCourseBySlug: publicProcedure
-    .input(z.object({ slug: z.string() }))
+    .input(z.object({ slug: z.string(), userId: z.string().optional() }))
     .query(async ({ input, ctx }) => {
-      const { slug } = input;
+      const { slug, userId } = input;
 
       const course = await ctx.prisma.course.findUnique({
         where: { slug },
@@ -52,6 +53,15 @@ export const courseRouter = router({
         },
       });
 
-      return course;
+      //the owner needs to get the password
+      if (course && userId === course.userId) {
+        return course;
+      }
+
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      const courseWithoutPassword = exclude(course, ['password']);
+
+      return courseWithoutPassword;
     }),
 });

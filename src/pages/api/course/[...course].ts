@@ -6,6 +6,7 @@ import slug from 'slug';
 import cleanTargetsAndRequirements from '~/server/helper/cleanTargetsAndRequirements';
 import cleanResourcesByCourse from '~/server/helper/cleanResourcesByCourse';
 import { computeVideoDuration } from '~/server/helper/computeVideoDuration';
+import exclude from '~/server/helper/excludeFields';
 
 const course = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body, query } = req;
@@ -186,7 +187,13 @@ const course = async (req: NextApiRequest, res: NextApiResponse) => {
         where: { name: courseParams[0] },
       });
 
-      return res.status(200).json({ coursesResult });
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      const coursesResultWithoutPassword = exclude(coursesResult, ['password']);
+
+      return res
+        .status(200)
+        .json({ coursesResult: coursesResultWithoutPassword });
 
     default:
       return res.status(404).json({ message: 'method invalidate' });
