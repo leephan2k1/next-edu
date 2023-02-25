@@ -34,7 +34,17 @@ export const courseRouter = router({
         include: {
           courseTargets: { distinct: ['content'] },
           courseRequirements: { distinct: ['content'] },
-          chapters: true,
+          chapters: {
+            include: {
+              lectures: {
+                include: {
+                  resources: true,
+                  discussions: true,
+                  learnedBy: true,
+                },
+              },
+            },
+          },
           reviews: true,
           students: true,
           instructor: true,
