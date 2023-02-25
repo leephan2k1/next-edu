@@ -1,62 +1,93 @@
-import { memo, useState, useEffect } from 'react';
-import useCourse from '~/contexts/CourseContext';
-import { useIsFirstRender } from 'usehooks-ts';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
+import { memo, useEffect, useState, useMemo } from 'react';
+import type { ChapterType } from '~/types';
 
 import LectureCreation from './LectureCreation';
 
 import type { Dispatch, SetStateAction } from 'react';
 
 interface ChapterCreationProps {
+  chapters?: ChapterType[];
   chapterIndex: number;
   removeChapter: Dispatch<SetStateAction<number[]>>;
+  setChapterContents: Dispatch<
+    SetStateAction<
+      {
+        title: string;
+        order: number;
+        lectures?: {
+          title: string;
+          description: string;
+          isPreview: boolean;
+          order: number;
+          resources: { name: string; url: string }[];
+        }[];
+      }[]
+    >
+  >;
 }
 
 function ChapterCreation({
+  chapters,
   chapterIndex,
   removeChapter,
+  setChapterContents,
 }: ChapterCreationProps) {
-  const [numberLecture, setNumberLecture] = useState<number[]>([1]);
+  const chapterByDB = useMemo(() => {
+    return (
+      chapters && chapters.find((chapter) => chapter.order === chapterIndex)
+    );
+  }, [chapters]);
+
+  const [numberLecture, setNumberLecture] = useState<number[]>(() => {
+    if (
+      chapters &&
+      chapterByDB &&
+      chapterByDB.lectures &&
+      chapterByDB.lectures.length > 0
+    ) {
+      return chapterByDB.lectures.map((lecture) => lecture.order);
+    }
+
+    return [1];
+  });
   const [animationParent] = useAutoAnimate<HTMLDivElement>();
   const [shouldShowInput, setShouldShowInput] = useState(false);
-  const [chapterTitle, setChapterTitle] = useState(() =>
-    chapterIndex === 1 ? 'Giới thiệu' : '',
-  );
-  const isFirst = useIsFirstRender();
 
-  const courseCtx = useCourse();
+  const [chapterTitle, setChapterTitle] = useState(() => {
+    const chapterByDB =
+      chapters && chapters.find((chapter) => chapter.order === chapterIndex);
 
-  const [isUpdated, setIsUpdated] = useState(false);
+    if (chapters && chapterByDB) {
+      return chapterByDB.title;
+    }
+
+    return chapterIndex === 1 ? 'Giới thiệu' : '';
+  });
 
   //hook update course values
   useEffect(() => {
-    if (!isFirst) {
-      const payload = { title: chapterTitle, order: chapterIndex };
-
-      if (courseCtx?.course?.chapters) {
-        // if chapter exists in global value => return
-        if (
-          courseCtx?.course?.chapters.find(
-            (elem) => elem.order === payload.order,
-          )
-        ) {
-          return;
-        }
-
-        courseCtx?.updateCourse({
-          chapters: [...courseCtx.course?.chapters, payload],
-        });
-        setIsUpdated(true);
-      } else {
-        courseCtx?.updateCourse({
-          chapters: [payload],
-        });
-        setIsUpdated(true);
+    const payload = { title: chapterTitle, order: chapterIndex };
+    setChapterContents((prevState) => {
+      // create if non-exist
+      if (
+        prevState.length === 0 ||
+        !prevState.find((chapter) => chapter.order === chapterIndex)
+      ) {
+        return [...prevState].concat(payload);
       }
-    }
-  }, [courseCtx?.dispatchUpdate]);
+
+      // update if exist
+      return prevState.map((chapter) => {
+        if (chapter.order === chapterIndex) {
+          return payload;
+        }
+        return chapter;
+      });
+    });
+  }, [chapterTitle]);
 
   return (
     <div
@@ -76,11 +107,16 @@ function ChapterCreation({
             <PencilIcon className="h-8 w-8" />
           </button>
           <button
-            onClick={() =>
+            onClick={() => {
+              setChapterContents((prevState) => {
+                return prevState.filter(
+                  (chapter) => chapter.order !== chapterIndex,
+                );
+              });
               removeChapter((prev) => {
                 return prev.filter((idx) => idx !== chapterIndex);
-              })
-            }
+              });
+            }}
             className="smooth-effect hover:text-rose-500"
           >
             <TrashIcon className="h-8 w-8" />
@@ -111,7 +147,8 @@ function ChapterCreation({
         {numberLecture.map((item) => {
           return (
             <LectureCreation
-              chapterUpdated={isUpdated}
+              // setChapterContents={setChapterContents}
+              lectures={chapterByDB?.lectures}
               chapterIndex={chapterIndex}
               removeLecture={setNumberLecture}
               lectureIndex={item}

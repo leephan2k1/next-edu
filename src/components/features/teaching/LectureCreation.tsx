@@ -1,9 +1,10 @@
-import { memo, useEffect, useState, useRef } from 'react';
+import { useSetAtom } from 'jotai';
+import { memo, useEffect, useRef, useState, useMemo } from 'react';
 import { UploadButton } from 'react-uploader';
+import { lecturesContents } from '~/atoms/lecturesContents';
 import Editor from '~/components/shared/Editor';
 import { uploader } from '~/constants';
-import useCourse from '~/contexts/CourseContext';
-import { useIsFirstRender } from 'usehooks-ts';
+import { checkFileType } from '~/utils/stringHandler';
 import {
   DocumentTextIcon,
   FilmIcon,
@@ -11,97 +12,124 @@ import {
   PlusIcon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import { CheckCircleIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 import type { Dispatch, SetStateAction } from 'react';
 import type QuillComponent from 'react-quill';
+import type { LectureType } from '~/types';
 
 interface LectureCreationProps {
-  chapterUpdated?: boolean;
+  lectures?: LectureType[];
   chapterIndex: number;
   lectureIndex: number;
   removeLecture: Dispatch<SetStateAction<number[]>>;
 }
 
 function LectureCreation({
-  chapterUpdated,
+  lectures,
   chapterIndex,
   lectureIndex,
   removeLecture,
 }: LectureCreationProps) {
-  const [lectureTitle, setLectureTitle] = useState(
-    `Tên bài học ${lectureIndex}`,
-  );
-  const [isPreview, setIsPreview] = useState(false);
+  const lectureByDb = useMemo(() => {
+    return (
+      lectures && lectures.find((lecture) => lecture.order === lectureIndex)
+    );
+  }, [lectures]);
+
+  // console.log('lectureByDb:; ', lectureByDb);
+
+  const [lectureTitle, setLectureTitle] = useState(() => {
+    if (lectureByDb) return lectureByDb.title;
+
+    return `Tên bài học ${lectureIndex}`;
+  });
+
+  const [description, setDescription] = useState(() => {
+    if (lectureByDb) return lectureByDb.description || '';
+
+    return '';
+  });
+
+  const [isPreview, setIsPreview] = useState(() => {
+    if (lectureByDb) return lectureByDb.isPreview;
+
+    return false;
+  });
   const [shouldShowInput, setShouldShowInput] = useState(false);
   const [shouldContents, setShouldContents] = useState(false);
   const [shouldVideoUpload, setShouldVideoUpload] = useState(true);
+
   const [fileUrls, setFilesUrl] = useState<
     { fileId: string; fileName: string; fileURL: string }[]
-  >([]);
+  >(() => {
+    // ?
+    if (lectureByDb)
+      return lectureByDb.resources.map((rsc) => ({
+        fileId: rsc.id,
+        fileName: rsc.name,
+        fileURL: rsc.url,
+      }));
+
+    return [];
+  });
 
   const editorRef = useRef<QuillComponent | null>(null);
 
-  const isFirstRender = useIsFirstRender();
-  const courseCtx = useCourse();
+  const setLecturesContents = useSetAtom(lecturesContents);
 
   //hook update lecture values
   useEffect(() => {
     const payload = {
       title: lectureTitle,
-      description: editorRef.current?.value
-        ? (editorRef.current?.value as string)
-        : '',
+      description: description,
       isPreview,
       order: lectureIndex,
+      chapterOrder: chapterIndex,
       resources: fileUrls.map((elem) => ({
         name: elem.fileName,
         url: elem.fileURL,
+        type: checkFileType(elem.fileName) || '',
+        videoDuration: null,
       })),
     };
 
-    // console.log('payload:: ', payload);
+    // console.log('payload::::; ', payload);
 
-    // wait the chapter update if chapter & lecture update same time
-    if (!isFirstRender && chapterUpdated) {
-      const chapter = courseCtx?.course?.chapters.find(
-        (elem) => elem.order === chapterIndex,
-      );
-
-      if (chapter) {
-        if (chapter.lectures && Array.isArray(chapter.lectures)) {
-          // check lecture exist in chapter
-          if (chapter.lectures.find((elem) => elem.order === lectureIndex)) {
-            //re assign if resources array updated:
-            Object.assign(chapter, {
-              lectures: chapter.lectures.map((elem) => {
-                if (elem.order === lectureIndex) {
-                  return payload;
-                }
-
-                return elem;
-              }),
-            });
-            return;
+    setLecturesContents((prevState) => {
+      //create if non-exist:
+      if (
+        !prevState.find(
+          (lecture) =>
+            lecture.order === lectureIndex &&
+            lecture.chapterOrder === chapterIndex,
+        )
+      ) {
+        return [...prevState, payload];
+      }
+      //update if exist:
+      else {
+        return prevState.map((lecture) => {
+          if (
+            lecture.order === lectureIndex &&
+            lecture.chapterOrder === chapterIndex
+          ) {
+            return payload;
           }
 
-          chapter.lectures.push(payload);
-        } else {
-          Object.assign(chapter, { lectures: [payload] });
-        }
-
-        courseCtx?.updateCourse({
-          chapters: courseCtx.course?.chapters.map((chapterElem) => {
-            if (chapter.order === chapterElem.order) {
-              return chapter;
-            }
-
-            return chapterElem;
-          }),
+          return lecture;
         });
       }
-    }
-  }, [courseCtx?.dispatchUpdate, chapterUpdated]);
+    });
+  }, [
+    description,
+    lectureTitle,
+    isPreview,
+    fileUrls,
+    editorRef.current?.value,
+    lectureIndex,
+    chapterIndex,
+  ]);
 
   return (
     <div className="flex w-full flex-col rounded-lg bg-slate-200 p-4 dark:bg-black">
@@ -125,11 +153,25 @@ function LectureCreation({
             <PencilIcon className="h-8 w-8" />
           </button>
           <button
-            onClick={() =>
-              removeLecture((prev) => {
-                return prev.filter((idx) => idx !== lectureIndex);
-              })
-            }
+            onClick={() => {
+              setLecturesContents((prevState) => {
+                prevState.splice(
+                  prevState.findIndex(
+                    (lecture) =>
+                      lecture.chapterOrder === chapterIndex &&
+                      lecture.order === lectureIndex,
+                  ),
+                  1,
+                );
+
+                return prevState;
+              });
+              setTimeout(() => {
+                removeLecture((prev) => {
+                  return prev.filter((idx) => idx !== lectureIndex);
+                });
+              }, 100);
+            }}
             className="smooth-effect hover:text-rose-500"
           >
             <TrashIcon className="h-8 w-8" />
@@ -151,6 +193,10 @@ function LectureCreation({
           <h3 className="italic">Mô tả khoá học</h3>
           <Editor
             styles="px-0"
+            onEditorChange={(value) => {
+              setDescription(value);
+            }}
+            contents={description}
             getInstance={(editor) => {
               editorRef.current = editor;
             }}
@@ -187,9 +233,7 @@ function LectureCreation({
                   ),
                 );
 
-                if (fileUrls.find((elem) => elem.fileURL.includes('.mp4'))) {
-                  setShouldVideoUpload(false);
-                }
+                setShouldVideoUpload(false);
               }}
             >
               {({ onClick }) => (
@@ -214,7 +258,7 @@ function LectureCreation({
                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
                 'application/vnd.ms-excel',
-                'mime/application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
               ],
             }}
             onComplete={(files) => {
@@ -250,12 +294,30 @@ function LectureCreation({
             return (
               <li
                 key={fileInfo.fileId}
-                className="flex w-full items-center space-x-4"
+                className="flex w-full items-center justify-between"
               >
-                <CheckCircleIcon className="h-6 w-6 text-green-500" />
-                <span className="max-w-[90%] line-clamp-1">
-                  {fileInfo.fileName}
-                </span>
+                <div className="flex h-fit w-fit items-center space-x-4">
+                  <CheckCircleIcon className="h-6 w-6 text-green-500" />
+                  <span className="max-w-[90%] line-clamp-1">
+                    {fileInfo.fileName}
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    setFilesUrl((prevState) => {
+                      return prevState.filter(
+                        (file) => file.fileId !== fileInfo.fileId,
+                      );
+                    });
+
+                    if (checkFileType(fileInfo.fileName) === 'video') {
+                      setShouldVideoUpload(true);
+                    }
+                  }}
+                  className="absolute-center smooth-effect rounded-full border border-gray-600 p-1 hover:bg-rose-500 hover:text-white dark:border-white"
+                >
+                  <XMarkIcon className="h-6 w-6" />{' '}
+                </button>
               </li>
             );
           })}

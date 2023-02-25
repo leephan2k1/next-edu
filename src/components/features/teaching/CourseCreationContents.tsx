@@ -1,17 +1,51 @@
-import { useRef, useState, useEffect, memo } from 'react';
-import { useIntersectionObserver } from 'usehooks-ts';
-
 import { PlusIcon } from '@heroicons/react/24/outline';
+import { useAtomValue } from 'jotai';
+import { useEffect, useRef, useState } from 'react';
+import { useIntersectionObserver } from 'usehooks-ts';
+import { lecturesContents } from '~/atoms/lecturesContents';
+import useCourse from '~/contexts/CourseContext';
+import type { CourseType } from '~/types';
 
-import ChapterCreation from './ChapterCreation';
-import { createCourseSteps } from '~/atoms/createCourseSteps';
 import { useSetAtom } from 'jotai';
+import { createCourseSteps } from '~/atoms/createCourseSteps';
+import ChapterCreation from './ChapterCreation';
 
-function CourseCreationContents() {
-  const [numberChapter, setNumberChapter] = useState<number[]>([1]);
+interface CourseCreationContentsProps {
+  course?: CourseType | null;
+}
+
+export default function CourseCreationContents({
+  course,
+}: CourseCreationContentsProps) {
+  const [numberChapter, setNumberChapter] = useState<number[]>(() => {
+    if (course && course.chapters && course.chapters.length > 0) {
+      return course.chapters.map((chapter) => chapter.order);
+    }
+
+    return [1];
+  });
+
+  const [chapterContents, setChapterContents] = useState<
+    {
+      title: string;
+      order: number;
+      lectures?: {
+        title: string;
+        description: string;
+        isPreview: boolean;
+        order: number;
+        chapterOrder: number;
+        resources: { name: string; url: string }[];
+      }[];
+    }[]
+  >([]);
+
+  const lecturesContentsValue = useAtomValue(lecturesContents);
+
   const ref = useRef<HTMLDivElement | null>(null);
   const entry = useIntersectionObserver(ref, {});
   const setStep = useSetAtom(createCourseSteps);
+  const courseCtx = useCourse();
 
   useEffect(() => {
     if (!!entry?.isIntersecting) {
@@ -20,6 +54,33 @@ function CourseCreationContents() {
       setStep((prevStep) => (prevStep > 1 ? --prevStep : prevStep));
     }
   }, [entry]);
+
+  useEffect(() => {
+    // console.log('lecturesContentsValue trong effect:: ', lecturesContentsValue);
+    // console.log('chapterContents::: ', chapterContents);
+
+    chapterContents.forEach((chapter) => {
+      const lectureByChapter = lecturesContentsValue
+        .filter((lecture) => lecture.chapterOrder === chapter.order)
+        .map((e) => ({
+          title: e.title,
+          description: e.description,
+          isPreview: e.isPreview,
+          order: e.order,
+          resources: e.resources,
+        }));
+
+      chapter.lectures = [];
+
+      Object.assign(chapter?.lectures, lectureByChapter);
+    });
+
+    courseCtx?.updateCourse({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      chapters: chapterContents,
+    });
+  }, [courseCtx?.dispatchUpdate, chapterContents]);
 
   return (
     <div className="mt-4 flex flex-col space-y-6">
@@ -34,6 +95,10 @@ function CourseCreationContents() {
       {numberChapter.map((item) => {
         return (
           <ChapterCreation
+            chapters={course?.chapters}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore
+            setChapterContents={setChapterContents}
             removeChapter={setNumberChapter}
             chapterIndex={item}
             key={item}
@@ -60,5 +125,3 @@ function CourseCreationContents() {
     </div>
   );
 }
-
-export default memo(CourseCreationContents);

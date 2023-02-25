@@ -1,7 +1,7 @@
 import type { Chapter, Course, Lecture, Resource } from '@prisma/client';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import { createContext, useContext, useEffect, useState, useRef } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useToggle } from 'usehooks-ts';
 
 import type { ReactNode } from 'react';
@@ -37,24 +37,24 @@ const CourseContext = createContext<CourseContextValues | null>(null);
 
 export const CourseContextProvider = ({ children }: CourseContextProps) => {
   const [course, setCourse] = useState<CourseType | null>(null);
-  const prevValues = useRef<CourseType | null>(null);
+  // const prevValues = useRef<CourseType | null>(null);
   const [dispatchUpdate, toggle] = useToggle();
 
   const { data: session } = useSession();
 
+  // console.log('course updating:: ', course);
+
   const updateCourse = (courseParam: Partial<CourseType>) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
+
     setCourse((prevState) => {
       return { ...prevState, ...courseParam };
     });
   };
 
   useEffect(() => {
-    if (
-      course?.name &&
-      JSON.stringify(prevValues.current) !== JSON.stringify(course)
-    ) {
+    if (course?.name) {
       (async function () {
         try {
           if (!session?.user?.id) throw new Error();
@@ -66,8 +66,6 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
         } catch (error) {}
       })();
     }
-
-    prevValues.current = course;
   }, [course]);
 
   const resetCourse = () => {
