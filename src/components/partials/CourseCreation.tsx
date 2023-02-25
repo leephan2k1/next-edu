@@ -1,6 +1,6 @@
 import { PencilIcon } from '@heroicons/react/24/outline';
 import { ArrowUturnLeftIcon } from '@heroicons/react/24/solid';
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { FiSave } from 'react-icons/fi';
@@ -13,22 +13,32 @@ import CourseCreationContents from '../features/teaching/CourseCreationContents'
 import CourseCreationInfo from '../features/teaching/CourseCreationInfo';
 import CoursePublishing from '../features/teaching/CoursePublishing';
 import { trpc } from '~/utils/trpc';
+import { lecturesContents } from '~/atoms/lecturesContents';
+import Loading from '../buttons/Loading';
 
 export default function CourseCreation() {
   const createSteps = useAtomValue(createCourseSteps);
+  const setLecturesContents = useSetAtom(lecturesContents);
+
   const courseCtx = useCourse();
   const router = useRouter();
   const firstMount = useIsFirstRender();
 
-  const { data: course } = trpc.course.findCourseBySlug.useQuery(
+  const { data: course, isLoading } = trpc.course.findCourseBySlug.useQuery(
     { slug: router.query?.slug as string },
     { enabled: !!router.query?.slug },
   );
+
+  // console.log('course:: ', course);
 
   useEffect(() => {
     if (firstMount) {
       courseCtx?.resetCourse();
     }
+
+    return () => {
+      setLecturesContents([]);
+    };
   }, [firstMount]);
 
   return (
@@ -71,13 +81,23 @@ export default function CourseCreation() {
           </li>
         </ul>
 
-        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
-        {/* @ts-ignore */}
-        <CourseCreationInfo course={course} />
+        {isLoading && router.query?.slug ? (
+          <div className="absolute-center overflow-hidden">
+            <Loading styles="w-10 h-10" />
+          </div>
+        ) : (
+          <>
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {/* @ts-ignore */}
+            <CourseCreationInfo course={course} />
 
-        <CourseCreationContents />
+            {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+            {/* @ts-ignore */}
+            <CourseCreationContents course={course} />
 
-        <CoursePublishing />
+            <CoursePublishing />
+          </>
+        )}
       </div>
 
       <div className="fixed bottom-10 right-10 flex items-center space-x-4">
