@@ -4,7 +4,8 @@ import { prisma } from '../../../server/db/client';
 import createCategory from '~/server/helper/createCategory';
 import slug from 'slug';
 import cleanTargetsAndRequirements from '~/server/helper/cleanTargetsAndRequirements';
-// import { getVideoDurationInSeconds } from 'get-video-duration';
+import cleanResourcesByCourse from '~/server/helper/cleanResourcesByCourse';
+import { computeVideoDuration } from '~/server/helper/computeVideoDuration';
 
 const course = async (req: NextApiRequest, res: NextApiResponse) => {
   const { method, body, query } = req;
@@ -35,7 +36,10 @@ const course = async (req: NextApiRequest, res: NextApiResponse) => {
       if (!categoryDb) return res.status(500).json({ message: 'Error' });
 
       // Clean everything before making new ones.
-      await cleanTargetsAndRequirements(slug(name));
+      await Promise.allSettled([
+        await cleanTargetsAndRequirements(slug(name)),
+        await cleanResourcesByCourse(slug(name)),
+      ]);
 
       //update course if non-exist:
       const coursePayload = {
@@ -67,9 +71,11 @@ const course = async (req: NextApiRequest, res: NextApiResponse) => {
         courseLevel,
       };
 
-      // getVideoDurationInSeconds(
-      //   'https://upcdn.io/12a1xxF/raw/uploads/2023/02/16/kyoto%20manga%20devlogs%20browse%20page-2M9C.mp4',
-      // ).then((duration) => console.log('duration::: ', duration));
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      const newChaptersWithDuration = await computeVideoDuration(chapters);
+
+      Object.assign(chapters, newChaptersWithDuration);
 
       const course = await prisma.course.upsert({
         where: {
@@ -95,6 +101,12 @@ const course = async (req: NextApiRequest, res: NextApiResponse) => {
                       description: lecture.description,
                       isPreview: lecture.isPreview,
                       order: lecture.order,
+                      resources: {
+                        create: lecture.resources.map((resource) => ({
+                          ...resource,
+                          courseSlug: slug(name),
+                        })),
+                      },
                     },
                     create: {
                       id: `${slug(name)}_${chapter.order}_${lecture.order}`,
@@ -102,6 +114,12 @@ const course = async (req: NextApiRequest, res: NextApiResponse) => {
                       description: lecture.description,
                       isPreview: lecture.isPreview,
                       order: lecture.order,
+                      resources: {
+                        create: lecture.resources.map((resource) => ({
+                          ...resource,
+                          courseSlug: slug(name),
+                        })),
+                      },
                     },
                   })),
                 },
@@ -110,6 +128,21 @@ const course = async (req: NextApiRequest, res: NextApiResponse) => {
                 title: chapter.title,
                 order: chapter.order,
                 id: `${slug(name)}_${chapter.order}`,
+                lectures: {
+                  create: chapter.lectures?.map((lecture) => ({
+                    id: `${slug(name)}_${chapter.order}_${lecture.order}`,
+                    title: lecture.title,
+                    description: lecture.description,
+                    isPreview: lecture.isPreview,
+                    order: lecture.order,
+                    resources: {
+                      create: lecture.resources.map((resource) => ({
+                        ...resource,
+                        courseSlug: slug(name),
+                      })),
+                    },
+                  })),
+                },
               },
             })),
           },
@@ -130,6 +163,12 @@ const course = async (req: NextApiRequest, res: NextApiResponse) => {
                   description: lecture.description,
                   isPreview: lecture.isPreview,
                   order: lecture.order,
+                  resources: {
+                    create: lecture.resources.map((resource) => ({
+                      ...resource,
+                      courseSlug: slug(name),
+                    })),
+                  },
                 })),
               },
             })),
