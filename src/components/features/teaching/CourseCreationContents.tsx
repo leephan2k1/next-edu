@@ -89,7 +89,8 @@ export default function CourseCreationContents({
       </h1>
       <p className="italic md:w-3/4">
         Một khoá học phải có ít nhất 1 chương, 1 bài học và 1 bài học xem trước
-        công khai. Xem thêm phần trách nhiệm để biết thêm chi tiết!
+        công khai. Xem thêm phần{' '}
+        <span className="text-rose-500">hướng dẫn</span> để biết thêm chi tiết!
       </p>
 
       {numberChapter.map((item) => {

@@ -70,7 +70,7 @@ export default function TeachingDashBoardSidebar() {
 
         <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl p-4 hover:bg-slate-200 hover:dark:bg-black">
           <InformationCircleIcon className="h-10 w-10" />
-          <span>Trách nhiệm</span>
+          <span>Hướng dẫn</span>
         </button>
       </aside>
     </>
