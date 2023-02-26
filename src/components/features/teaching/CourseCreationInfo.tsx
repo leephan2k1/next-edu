@@ -55,7 +55,11 @@ function CourseCreationInfo({ course }: CourseCreationInfoProps) {
 
   const editorRef = useRef<QuillComponent | null>(null);
 
-  const [imageURL, setImageURL] = useState('');
+  const [imageURL, setImageURL] = useState(() => {
+    if (course?.thumbnail) return course.thumbnail;
+
+    return '';
+  });
 
   const {
     reset,
@@ -185,6 +189,7 @@ function CourseCreationInfo({ course }: CourseCreationInfoProps) {
 
           courseCtx?.updateCourse({
             name: courseName,
+            thumbnail: imageURL,
             category: { name: category, subCategory: category_details },
             briefDescription: briefDescCourse.trim(),
             detailDescription: editorRef.current?.value

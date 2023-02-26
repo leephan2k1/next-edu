@@ -14,6 +14,7 @@ const course = async (req: NextApiRequest, res: NextApiResponse) => {
   const {
     category,
     name,
+    thumbnail,
     briefDescription,
     publishMode,
     courseState,
@@ -45,6 +46,7 @@ const course = async (req: NextApiRequest, res: NextApiResponse) => {
       //update course if non-exist:
       const coursePayload = {
         name,
+        thumbnail,
         slug: slug(name),
         briefDescription,
         category: { connect: { id: categoryDb.id } },
