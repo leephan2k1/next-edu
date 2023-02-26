@@ -7,12 +7,39 @@ import CourseSummary from '~/components/partials/CourseSummary';
 import TeachingDashBoardSidebar from '~/components/partials/TeachingDashboardSideBar';
 import { PATHS } from '~/constants';
 
+import {
+  ChartBarIcon,
+  InformationCircleIcon,
+} from '@heroicons/react/24/outline';
+import { AiOutlineFundProjectionScreen } from 'react-icons/ai';
+import { VscOrganization } from 'react-icons/vsc';
+
 const TeachingDashboard: NextPage = () => {
   const router = useRouter();
 
   return (
     <div className="relative min-h-screen text-gray-600 dark:text-white md:pl-[16rem]">
-      <TeachingDashBoardSidebar />
+      <TeachingDashBoardSidebar>
+        <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl bg-slate-200 p-4 dark:bg-black">
+          <AiOutlineFundProjectionScreen className="h-10 w-10" />
+          <span>Khoá học</span>
+        </button>
+
+        <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl p-4 hover:bg-slate-200 hover:dark:bg-black">
+          <ChartBarIcon className="h-10 w-10" />
+          <span>Phân tích</span>
+        </button>
+
+        <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl p-4 hover:bg-slate-200 hover:dark:bg-black">
+          <VscOrganization className="h-10 w-10" />
+          <span>Tổ chức</span>
+        </button>
+
+        <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl p-4 hover:bg-slate-200 hover:dark:bg-black">
+          <InformationCircleIcon className="h-10 w-10" />
+          <span>Hướng dẫn</span>
+        </button>
+      </TeachingDashBoardSidebar>
 
       <Switch>
         <Case condition={router.asPath.includes('dashboard')}>

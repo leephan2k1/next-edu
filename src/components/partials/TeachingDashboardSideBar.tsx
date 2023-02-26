@@ -1,16 +1,17 @@
 import { Transition } from '@headlessui/react';
-import {
-  Bars3Icon,
-  ChartBarIcon,
-  InformationCircleIcon,
-} from '@heroicons/react/24/outline';
+import { Bars3Icon } from '@heroicons/react/24/outline';
+import type { ReactNode } from 'react';
 import { Fragment, useRef, useState } from 'react';
-import { AiOutlineFundProjectionScreen } from 'react-icons/ai';
-import { VscOrganization } from 'react-icons/vsc';
 import Teleport from '../shared/Teleport';
 import Logo from './Logo';
 
-export default function TeachingDashBoardSidebar() {
+interface TeachingDashBoardSidebarProps {
+  children: ReactNode;
+}
+
+export default function TeachingDashBoardSidebar({
+  children,
+}: TeachingDashBoardSidebarProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -53,25 +54,7 @@ export default function TeachingDashBoardSidebar() {
       >
         <Logo customStyles="md:text-3xl" />
 
-        <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl bg-slate-200 p-4 dark:bg-black">
-          <AiOutlineFundProjectionScreen className="h-10 w-10" />
-          <span>Khoá học</span>
-        </button>
-
-        <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl p-4 hover:bg-slate-200 hover:dark:bg-black">
-          <ChartBarIcon className="h-10 w-10" />
-          <span>Phân tích</span>
-        </button>
-
-        <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl p-4 hover:bg-slate-200 hover:dark:bg-black">
-          <VscOrganization className="h-10 w-10" />
-          <span>Tổ chức</span>
-        </button>
-
-        <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl p-4 hover:bg-slate-200 hover:dark:bg-black">
-          <InformationCircleIcon className="h-10 w-10" />
-          <span>Hướng dẫn</span>
-        </button>
+        {children}
       </aside>
     </>
   );
