@@ -25,6 +25,19 @@ export const courseRouter = router({
       return { message: 'success', courses };
     }),
 
+  publishCourse: protectedProcedure
+    .input(z.object({ published: z.boolean(), slug: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { slug, published } = input;
+
+      const course = await ctx.prisma.course.update({
+        where: { slug },
+        data: { published },
+      });
+
+      return course;
+    }),
+
   findCourseBySlug: publicProcedure
     .input(z.object({ slug: z.string(), userId: z.string().optional() }))
     .query(async ({ input, ctx }) => {
