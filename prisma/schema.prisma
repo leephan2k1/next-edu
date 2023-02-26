@@ -64,6 +64,7 @@ model Course {
   reviews            Review[]
   students           Student[]
   verified           Boolean             @default(false)
+  published          Boolean             @default(false)
   categoryId         String
 
   @@index([userId])
