@@ -1,10 +1,37 @@
-import { type NextPage } from 'next';
-import MainLayout from '~/components/layouts/MainLayout';
-import VerifyCourses from '~/components/features/admin/VerifyCourses';
-import TeachingDashBoardSidebar from '~/components/partials/TeachingDashboardSideBar';
+import type { NextPage } from 'next';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { AiOutlineFundProjectionScreen } from 'react-icons/ai';
+import Loading from '~/components/buttons/Loading';
+import VerifyCourses from '~/components/features/admin/VerifyCourses';
+import MainLayout from '~/components/layouts/MainLayout';
+import TeachingDashBoardSidebar from '~/components/partials/TeachingDashboardSideBar';
+import usePreviousRoute from '~/contexts/HistoryRouteContext';
+import { trpc } from '~/utils/trpc';
 
 const Admin: NextPage = () => {
+  const prevRoute = usePreviousRoute();
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  const { data: userInfo, isLoading } = trpc.user.findUserInfo.useQuery(
+    { email: session?.user?.email as string },
+    { enabled: !!session?.user?.email },
+  );
+
+  if (isLoading || !userInfo) {
+    return (
+      <div className="absolute-center min-h-screen w-full">
+        <Loading />
+      </div>
+    );
+  }
+
+  if (userInfo && userInfo.role !== 'ADMIN') {
+    router.push(prevRoute?.url || '/');
+    return null;
+  }
+
   return (
     <div className="min-h-screen w-full text-gray-600 dark:bg-black dark:text-white md:pl-[16rem]">
       <TeachingDashBoardSidebar>
