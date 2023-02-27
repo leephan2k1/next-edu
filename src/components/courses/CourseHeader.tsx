@@ -4,73 +4,113 @@ import Link from 'next/link';
 import { BsStarFill } from 'react-icons/bs';
 import CourseSidebar from '~/components/courses/CourseSidebar';
 import Breadcrumbs from '../shared/Breadcrumbs';
+import type { CourseType } from '~/types';
 
-export default function CourseHeader() {
+interface CourseHeaderProps {
+  course?: CourseType;
+}
+
+export default function CourseHeader({ course }: CourseHeaderProps) {
   return (
     <div className="relative w-full bg-white py-10 text-gray-600 dark:bg-dark-background dark:text-white/60 lg:px-6 lg:py-6">
       <div className="mx-auto flex w-full flex-col items-center  md:max-w-[720px] lg:max-w-[1200px] lg:flex-row lg:items-start lg:justify-center">
-        <div className="my-auto flex flex-col items-center space-y-6 md:max-w-[80%] lg:max-w-[70%] lg:items-start">
-          <Breadcrumbs />
+        <div className="my-auto flex flex-col items-center space-y-6 md:max-w-[80%] lg:min-w-[70rem] lg:max-w-[70%] lg:items-start">
+          {course ? (
+            <Breadcrumbs
+              category={course.category.name}
+              subCategory={course.subCategory as string}
+            />
+          ) : (
+            <div className="h-[3rem] w-3/4 animate-pulse rounded-2xl bg-gray-300 dark:bg-gray-700"></div>
+          )}
 
           {/* demo thumbnail  */}
           <div className="w-[80%] lg:hidden">
-            <div className="relative overflow-hidden rounded-2xl pb-[56.25%]">
-              <Image
-                className="absolute inset-0 bg-center bg-no-repeat"
-                fill
-                alt="course-thumbnail"
-                src={
-                  'https://img-b.udemycdn.com/course/750x422/1565838_e54e_16.jpg'
-                }
-              />
+            <div
+              className={`relative overflow-hidden rounded-2xl  pb-[56.25%] ${
+                !course && 'animate-pulse bg-gray-300 dark:bg-gray-700'
+              }`}
+            >
+              {course && (
+                <Image
+                  className="absolute inset-0 bg-center bg-no-repeat"
+                  fill
+                  alt="course-thumbnail"
+                  src={course.thumbnail as string}
+                />
+              )}
             </div>
           </div>
 
-          <div className="flex max-w-[70%] flex-col space-y-6">
-            <h1 className="text-4xl font-semibold lg:text-5xl">
-              30-Day Money-Back Guarantee Development Web Development The
-              Complete 2023 Web Development Bootcamp
-            </h1>
+          <div className="flex min-w-[33.2rem] max-w-[70%] flex-col space-y-6">
+            {course ? (
+              <h1 className="text-4xl font-semibold lg:text-5xl">
+                {course.name}
+              </h1>
+            ) : (
+              <div className="h-[5rem] w-full animate-pulse rounded-2xl bg-gray-300 dark:bg-gray-700"></div>
+            )}
 
-            <h2 className="text-2xl lg:text-3xl">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore
-              delectus eius id ipsam ratione. Libero tempora rerum consequuntur
-              fugit atque neque dolores cum, exercitationem sint similique dicta
-              tempore sequi officiis. Lorem ipsum dolor sit amet consectetur
-              adipisicing elit. Dolore delectus eius id ipsam ratione.
-            </h2>
+            {course ? (
+              <h2 className="text-2xl lg:text-3xl">
+                {course.briefDescription}
+              </h2>
+            ) : (
+              <div className="mx-auto h-[10rem] w-3/4 animate-pulse rounded-2xl bg-gray-300 dark:bg-gray-700 lg:mx-0"></div>
+            )}
 
-            <div className="flex flex-col items-start md:flex-row md:items-center md:space-x-4">
-              <div className="flex items-center space-x-4">
-                <span className="inline-block">5.0</span>
+            {course ? (
+              <div className="flex flex-col items-start md:flex-row md:items-center md:space-x-4">
+                <div className="flex items-center space-x-4">
+                  <span className="inline-block">5.0</span>
 
-                <div className="flex space-x-2">
-                  <BsStarFill className="h-5 w-5 text-yellow-500" />
-                  <BsStarFill className="h-5 w-5 text-yellow-500" />
-                  <BsStarFill className="h-5 w-5 text-yellow-500" />
-                  <BsStarFill className="h-5 w-5 text-yellow-500" />
-                  <BsStarFill className="h-5 w-5 text-yellow-500" />
+                  <div className="flex space-x-2">
+                    <BsStarFill className="h-5 w-5 text-yellow-500" />
+                    <BsStarFill className="h-5 w-5 text-yellow-500" />
+                    <BsStarFill className="h-5 w-5 text-yellow-500" />
+                    <BsStarFill className="h-5 w-5 text-yellow-500" />
+                    <BsStarFill className="h-5 w-5 text-yellow-500" />
+                  </div>
+                </div>
+
+                <div className="flex">
+                  {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                  {/* @ts-ignore */}
+                  <span>({course.reviews.length} đánh giá)</span>
+                  <span className="mx-2">|</span>
+                  {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                  {/* @ts-ignore */}
+                  <span>{course.students.length} học sinh</span>
                 </div>
               </div>
-
-              <div className="flex">
-                <span>(100 đánh giá)</span>
-                <span className="mx-2">|</span>
-                <span>100 học sinh</span>
-              </div>
-            </div>
+            ) : (
+              <div className="h-[4rem] w-full animate-pulse rounded-2xl bg-gray-300 dark:bg-gray-700"></div>
+            )}
 
             <h3 className="flex items-center md:space-x-2">
               <UserIcon className="hidden h-6 w-6 md:inline-block" />
               <span>Người hướng dẫn: </span>
-              <Link className="text-blue-500" href="/">
-                Lorem ipsum dolor
-              </Link>
+              {course ? (
+                <Link className="text-blue-500" href="/">
+                  {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+                  {/* @ts-ignore */}
+                  {course.instructor.name}
+                </Link>
+              ) : (
+                <div className="h-[2rem] w-1/2 animate-pulse rounded-xl bg-gray-300 dark:bg-gray-700"></div>
+              )}
             </h3>
 
             <h5 className="flex items-center space-x-2">
               <ClockIcon className="h-6 w-6" />{' '}
-              <span>Cập nhật lần cuối: 11/2022</span>
+              <span className="flex">
+                Cập nhật lần cuối:{' '}
+                {course &&
+                  new Date(course.updatedAt).toLocaleDateString('vi-VI')}
+              </span>
+              {!course && (
+                <div className="h-[2rem] w-1/2 animate-pulse rounded-xl bg-gray-300 dark:bg-gray-700"></div>
+              )}
             </h5>
           </div>
 
@@ -78,13 +118,13 @@ export default function CourseHeader() {
             <button className="btn-primary btn-lg btn w-[80%] grow">
               Thêm vào giỏ hàng
             </button>
-            <button className="btn-ghost btn-active btn-lg btn flex-1 text-gray-600 dark:text-white/60">
+            <button className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60">
               <HeartIcon className="h-8 w-8" />
             </button>
           </div>
         </div>
 
-        <CourseSidebar />
+        <CourseSidebar course={course} />
       </div>
     </div>
   );
