@@ -23,7 +23,8 @@ export default function ConfirmPublishCourseModal({
 
   const [missingFields, setMissingFields] = useState<string[]>([]);
 
-  const { mutate: publishCourse } = trpc.course.publishCourse.useMutation();
+  const { mutate: publishCourse, isSuccess } =
+    trpc.course.publishCourse.useMutation();
 
   const handlePublishCourse = () => {
     if (router.query?.slug && !Array.isArray(router.query?.slug)) {
@@ -32,6 +33,13 @@ export default function ConfirmPublishCourseModal({
       toast.error('Opps! Có gì đó không đúng?');
     }
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success('Phát hành khoá học thành công! Hãy đợi phê duyệt');
+      setIsOpen(false);
+    }
+  }, [isSuccess]);
 
   useEffect(() => {
     const mistakeFields: string[] = [];
