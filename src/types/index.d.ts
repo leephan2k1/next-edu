@@ -1,4 +1,12 @@
-import type { Chapter, Course, Lecture, Resource } from '@prisma/client';
+import type {
+  Chapter,
+  Course,
+  Lecture,
+  Resource,
+  VERIFIED_STATE,
+} from '@prisma/client';
+
+export type VerifiedStateType = VERIFIED_STATE;
 
 export type LearningOptions =
   | 'note'

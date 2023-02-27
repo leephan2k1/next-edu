@@ -38,6 +38,12 @@ enum COURSE_LEVEL {
   ALL
 }
 
+enum VERIFIED_STATE {
+  APPROVED
+  PENDING
+  REJECT
+}
+
 model Course {
   id                 String              @id @default(cuid())
   name               String              @unique @db.VarChar(60)
@@ -63,7 +69,7 @@ model Course {
   updatedAt          DateTime            @updatedAt
   reviews            Review[]
   students           Student[]
-  verified           Boolean             @default(false)
+  verified           VERIFIED_STATE      @default(PENDING)
   published          Boolean             @default(false)
   categoryId         String
 
