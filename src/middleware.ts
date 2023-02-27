@@ -8,7 +8,8 @@ export async function middleware(req: NextRequest) {
   if (
     req.nextUrl.pathname.includes(PATHS.TEACHING) ||
     req.nextUrl.pathname.includes(PATHS.USER_PROFILE) ||
-    req.nextUrl.pathname.includes(PATHS.LEARNING)
+    req.nextUrl.pathname.includes(PATHS.LEARNING) ||
+    req.nextUrl.pathname.includes(PATHS.ADMIN)
   ) {
     const session = await getToken({
       req,
@@ -18,8 +19,6 @@ export async function middleware(req: NextRequest) {
 
     //fix ref: https://nextjs.org/docs/messages/middleware-relative-urls
     const url = req.nextUrl.clone();
-
-
 
     if (!session) {
       url.pathname = `/${PATHS.LOGIN}`;
