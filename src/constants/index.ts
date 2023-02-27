@@ -15,6 +15,7 @@ export const PATHS = {
   LOGIN: 'login',
   CREATE_COURSE: 'create',
   EDIT_COURSE: 'edit',
+  ADMIN: 'admin',
 };
 
 import { Uploader } from 'uploader';
