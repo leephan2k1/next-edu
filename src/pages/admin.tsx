@@ -41,9 +41,18 @@ const Admin: NextPage = () => {
         </button>
       </TeachingDashBoardSidebar>
 
-      <VerifyCourses title="Khoá học chờ phê duyệt" />
-      <VerifyCourses title="Khoá học đã phê duyệt" />
-      <VerifyCourses title="Khoá học đã từ chối" />
+      <VerifyCourses
+        queryKeys={{ published: true, verified: 'PENDING' }}
+        title="Khoá học chờ phê duyệt"
+      />
+      <VerifyCourses
+        queryKeys={{ published: true, verified: 'APPROVED' }}
+        title="Khoá học đã phê duyệt"
+      />
+      <VerifyCourses
+        queryKeys={{ published: false, verified: 'REJECT' }}
+        title="Khoá học đã từ chối"
+      />
     </div>
   );
 };
