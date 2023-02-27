@@ -3,7 +3,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { AiOutlineFundProjectionScreen } from 'react-icons/ai';
 import Loading from '~/components/buttons/Loading';
-import VerifyCourses from '~/components/features/admin/VerifyCourses';
+import CourseDashboard from '~/components/features/admin/CourseDashboard';
 import MainLayout from '~/components/layouts/MainLayout';
 import TeachingDashBoardSidebar from '~/components/partials/TeachingDashboardSideBar';
 import usePreviousRoute from '~/contexts/HistoryRouteContext';
@@ -41,18 +41,7 @@ const Admin: NextPage = () => {
         </button>
       </TeachingDashBoardSidebar>
 
-      <VerifyCourses
-        queryKeys={{ published: true, verified: 'PENDING' }}
-        title="Khoá học chờ phê duyệt"
-      />
-      <VerifyCourses
-        queryKeys={{ published: true, verified: 'APPROVED' }}
-        title="Khoá học đã phê duyệt"
-      />
-      <VerifyCourses
-        queryKeys={{ published: false, verified: 'REJECT' }}
-        title="Khoá học đã từ chối"
-      />
+      <CourseDashboard />
     </div>
   );
 };
