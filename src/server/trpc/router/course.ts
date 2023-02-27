@@ -34,13 +34,20 @@ export const courseRouter = router({
           z.literal('REJECT'),
         ]),
         published: z.boolean(),
+        userId: z.string().optional(),
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { published, verified } = input;
+      const { published, verified, userId } = input;
+
+      const conditions = { published, verified };
+
+      if (userId) {
+        Object.assign(conditions, { ...conditions, userId });
+      }
 
       const courses = await ctx.prisma.course.findMany({
-        where: { published, verified },
+        where: conditions,
         include: {
           courseTargets: { distinct: ['content'] },
           courseRequirements: { distinct: ['content'] },
