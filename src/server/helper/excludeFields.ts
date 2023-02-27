@@ -4,8 +4,10 @@ export default function exclude<T, Key extends keyof T>(
   obj: T,
   keys: Key[],
 ): Omit<T, Key> {
-  for (const key of keys) {
-    delete obj[key];
+  if (obj && keys.length > 0) {
+    for (const key of keys) {
+      delete obj[key];
+    }
   }
   return obj;
 }
