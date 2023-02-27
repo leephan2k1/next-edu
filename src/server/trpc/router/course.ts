@@ -25,6 +25,46 @@ export const courseRouter = router({
       return { message: 'success', courses };
     }),
 
+  findWaitingListCourses: protectedProcedure
+    .input(
+      z.object({
+        verified: z.union([
+          z.literal('APPROVED'),
+          z.literal('PENDING'),
+          z.literal('REJECT'),
+        ]),
+        published: z.boolean(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { published, verified } = input;
+
+      const courses = await ctx.prisma.course.findMany({
+        where: { published, verified },
+        include: {
+          courseTargets: { distinct: ['content'] },
+          courseRequirements: { distinct: ['content'] },
+          chapters: {
+            include: {
+              lectures: {
+                include: {
+                  resources: true,
+                  discussions: true,
+                  learnedBy: true,
+                },
+              },
+            },
+          },
+          reviews: true,
+          students: true,
+          instructor: true,
+          category: true,
+        },
+      });
+
+      return courses;
+    }),
+
   publishCourse: protectedProcedure
     .input(z.object({ published: z.boolean(), slug: z.string() }))
     .mutation(async ({ input, ctx }) => {
