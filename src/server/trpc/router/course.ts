@@ -60,7 +60,34 @@ export const courseRouter = router({
           instructor: true,
           category: true,
         },
+        orderBy: { updatedAt: 'asc' },
       });
+
+      return courses;
+    }),
+
+  verifyCourse: protectedProcedure
+    .input(
+      z.object({
+        verified: z.union([
+          z.literal('APPROVED'),
+          z.literal('PENDING'),
+          z.literal('REJECT'),
+        ]),
+        coursesId: z.array(z.string()),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { coursesId, verified } = input;
+
+      const courses = await Promise.allSettled(
+        coursesId.map(async (id) => {
+          return await ctx.prisma.course.update({
+            where: { id },
+            data: { verified },
+          });
+        }),
+      );
 
       return courses;
     }),
