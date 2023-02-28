@@ -23,7 +23,7 @@ function CourseDescription({ description }: CourseDescriptionProps) {
       <article
         ref={parent}
         className={`prose-xl prose ${
-          disclosure.open && isOverflow ? 'h-fit' : 'h-[10rem]'
+          disclosure.open && isOverflow ? 'h-fit' : 'h-[40rem]'
         } min-h-fit min-w-full overflow-hidden overflow-x-hidden text-gray-600 prose-img:max-w-[60vw] prose-img:rounded-2xl dark:text-white/80 lg:prose-2xl`}
         dangerouslySetInnerHTML={{ __html: description }}
       ></article>
