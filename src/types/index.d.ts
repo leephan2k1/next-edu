@@ -2,6 +2,7 @@ import type {
   Chapter,
   Course,
   Lecture,
+  Review,
   Resource,
   VERIFIED_STATE,
 } from '@prisma/client';
@@ -27,6 +28,7 @@ export interface ChapterType extends Omit<Chapter, 'id' | 'courseId'> {
 
 export interface CourseType extends Course {
   chapters: ChapterType[];
+  reviews: Review[];
   category: { id: string; name: string };
   courseTargets: {
     id: string;
