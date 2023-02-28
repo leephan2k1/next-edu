@@ -78,9 +78,9 @@ model Course {
 }
 
 model Student {
-  id       String   @id @default(cuid())
-  userId   String   @unique
-  progress Int      @default(0)
+  id       String             @id @default(cuid())
+  userId   String             @unique
+  progress LearningProgress[]
   courses  Course[]
 }
 
@@ -189,9 +189,13 @@ model Resource {
 }
 
 model LearningProgress {
-  id      String    @id @default(cuid())
-  userId  String
-  Lecture Lecture[]
+  id        String    @id @default(cuid())
+  userId    String
+  Lecture   Lecture[]
+  Student   Student?  @relation(fields: [studentId], references: [id])
+  studentId String?
+
+  @@index([studentId])
 }
 
 model CourseRequirement {
