@@ -6,8 +6,15 @@ import {
   LockClosedIcon,
 } from '@heroicons/react/20/solid';
 import { PlayCircleIcon } from '@heroicons/react/24/solid';
+import type { ChapterType } from '~/types';
 
-export default function CourseContentCollapse() {
+interface CourseContentCollapseProps {
+  chapter: ChapterType;
+}
+
+export default function CourseContentCollapse({
+  chapter,
+}: CourseContentCollapseProps) {
   const [animationParent] = useAutoAnimate<HTMLDivElement>();
 
   return (
@@ -18,7 +25,7 @@ export default function CourseContentCollapse() {
             <>
               <Disclosure.Button className="flex w-full flex-col rounded-xl bg-stone-300 px-4 py-2 text-left text-lg font-medium dark:border-white dark:bg-black md:text-2xl">
                 <div className="flex w-full items-center justify-between">
-                  1. Giới thiệu
+                  {chapter.order}. {chapter.title}
                   <ChevronUpIcon
                     className={`${open ? 'rotate-180 transform' : ''} h-8 w-8`}
                   />
@@ -30,52 +37,43 @@ export default function CourseContentCollapse() {
               </Disclosure.Button>
               <Disclosure.Panel>
                 <ul className="mx-auto w-full space-y-6 px-2 py-4 text-lg md:text-xl">
-                  <li className="flex flex-col space-y-2 rounded-xl border border-dashed border-gray-500 py-2 px-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-left">
-                        1. Lorem ipsum, dolor sit amet consectetur adipisicing
-                        elit. Dolorum laborum .
-                      </h3>
+                  {chapter &&
+                    chapter.lectures &&
+                    chapter.lectures.length > 0 &&
+                    chapter.lectures.map((lecture) => {
+                      return (
+                        <li
+                          key={lecture.id}
+                          className="flex flex-col space-y-2 rounded-xl border border-dashed border-gray-500 py-2 px-4"
+                        >
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-left">
+                              {lecture.order}. {lecture.title}
+                            </h3>
 
-                      <span className="rounded-full bg-green-400 p-2">
-                        <CheckIcon className="h-3 w-3 text-gray-700" />
-                      </span>
-                    </div>
-                    <div className="flex space-x-2">
-                      <PlayCircleIcon className="h-6 w-6 text-gray-400" />
-                      <span>5:00</span>
-                    </div>
-                  </li>
-                  <li className="flex flex-col space-y-2 rounded-xl border border-dashed border-gray-500 py-2 px-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-left">
-                        1. Lorem ipsum, dolor sit amet consectetur adipisicing
-                        elit. Dolorum laborum .
-                      </h3>
-
-                      <span className="rounded-full bg-green-400 p-2">
-                        <CheckIcon className="h-3 w-3 text-gray-700" />
-                      </span>
-                    </div>
-                    <div className="flex space-x-2">
-                      <PlayCircleIcon className="h-6 w-6 text-gray-400" />
-                      <span>5:00</span>
-                    </div>
-                  </li>
-                  <li className="flex flex-col space-y-2 rounded-xl border border-dashed border-gray-500 py-2 px-4 text-gray-500/60 dark:text-white/50">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-left">
-                        1. Lorem ipsum, dolor sit amet consectetur adipisicing
-                        elit. Dolorum laborum .
-                      </h3>
-
-                      <LockClosedIcon className="h-6 w-6 text-gray-700" />
-                    </div>
-                    <div className="flex space-x-2">
-                      <PlayCircleIcon className="h-6 w-6 text-gray-400" />
-                      <span>5:00</span>
-                    </div>
-                  </li>
+                            <span className="rounded-full bg-green-400 p-2">
+                              <CheckIcon className="h-3 w-3 text-gray-700" />
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <PlayCircleIcon className="h-6 w-6 text-gray-400" />
+                            <span>
+                              {lecture.resources.find(
+                                (rsc) => rsc.type === 'video',
+                              )
+                                ? `${Math.floor(
+                                    Number(
+                                      lecture.resources.find(
+                                        (rsc) => rsc.type === 'video',
+                                      )?.videoDuration,
+                                    ) / 60,
+                                  )} phút`
+                                : ''}
+                            </span>
+                          </div>
+                        </li>
+                      );
+                    })}
                 </ul>
               </Disclosure.Panel>
             </>

@@ -7,7 +7,11 @@ import { Bars3Icon, ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { listNoteModalState } from '~/atoms/listNoteModal';
 import Logo from '../../partials/Logo';
 
-export default function LearningHeader() {
+interface LearningHeaderProps {
+  courseName: string;
+}
+
+export default function LearningHeader({ courseName }: LearningHeaderProps) {
   const tooltip = useTooltipState();
   const setListNodeOpen = useSetAtom(listNoteModalState);
   const setCourseContentsBarOpen = useSetAtom(courseContentBarState);
@@ -23,10 +27,7 @@ export default function LearningHeader() {
           <Logo customStyles="md:block hidden" />
 
           <h1 className="max-w-[50%] font-bold line-clamp-1 md:max-w-[60%]">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum,
-            velit voluptatibus suscipit, minima dolores nulla amet nihil
-            perferendis nobis voluptas totam dolore reprehenderit iusto
-            similique. Pariatur minima numquam laboriosam deserunt?
+            {courseName}
           </h1>
         </div>
 
@@ -35,9 +36,9 @@ export default function LearningHeader() {
             className="radial-progress scale-75"
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
-            style={{ '--value': 70 }}
+            style={{ '--value': 0 }}
           >
-            70%
+            0%
           </div>
           <TooltipAnchor state={tooltip} className="button secondary">
             <button

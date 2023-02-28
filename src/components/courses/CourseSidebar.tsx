@@ -15,6 +15,8 @@ import {
 import Loading from '../buttons/Loading';
 import useIsEnrolled from '~/hooks/useIsEnrolled';
 import { If, Then, Else } from 'react-if';
+import { useRouter } from 'next/router';
+import { PATHS } from '~/constants';
 
 interface CourseSidebarProps {
   course?: CourseType;
@@ -30,6 +32,7 @@ function CourseSidebar({
   const refBtn = useRef<HTMLButtonElement | null>(null);
   const setSidebarState = useSetAtom(courseSidebarInViewport);
   const entry = useIntersectionObserver(refBtn, {});
+  const router = useRouter();
 
   const courseCtx = useCourse();
 
@@ -66,6 +69,13 @@ function CourseSidebar({
   }, [course]);
 
   const handleEnrollCourse = () => {
+    if (isEnrolled) {
+      router.push(
+        `/${PATHS.LEARNING}/${course?.slug}/${course?.chapters[0]?.lectures[0]?.id}`,
+      );
+      return;
+    }
+
     if (course?.slug) {
       courseCtx?.enrollCourse(course.slug);
     }

@@ -6,8 +6,13 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
 import CourseContentCollapse from './CourseContentCollapse';
+import type { ChapterType } from '~/types';
 
-function CourseContentsBar() {
+interface CourseContentsBarProps {
+  chapters: ChapterType[];
+}
+
+function CourseContentsBar({ chapters }: CourseContentsBarProps) {
   const [open, setOpen] = useAtom(courseContentBarState);
 
   return (
@@ -55,11 +60,16 @@ function CourseContentsBar() {
                 </Dialog.Title>
 
                 <Dialog.Description className="flex flex-col space-y-4">
-                  <CourseContentCollapse />
-                  <CourseContentCollapse />
-                  <CourseContentCollapse />
-                  <CourseContentCollapse />
-                  <CourseContentCollapse />
+                  {chapters &&
+                    chapters.length > 0 &&
+                    chapters.map((chapter) => {
+                      return (
+                        <CourseContentCollapse
+                          key={chapter.id}
+                          chapter={chapter}
+                        />
+                      );
+                    })}
                 </Dialog.Description>
               </Dialog.Panel>
             </Transition.Child>
