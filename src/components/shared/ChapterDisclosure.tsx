@@ -4,10 +4,15 @@ import { memo, useEffect } from 'react';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { ChevronUpIcon } from '@heroicons/react/20/solid';
 import { DocumentTextIcon, PlayCircleIcon } from '@heroicons/react/24/solid';
+import { useSetAtom } from 'jotai';
+import { previewModalState, resources } from '~/atoms/previewLectureAtom';
 
 import type { ChapterType, LectureType } from '~/types';
 
 const Lesson = ({ lecture }: { lecture: LectureType }) => {
+  const setIsOpen = useSetAtom(previewModalState);
+  const setResource = useSetAtom(resources);
+
   const selectIcon = () => {
     if (lecture.resources.find((rsc) => rsc.type === 'video')) {
       return (
@@ -23,7 +28,15 @@ const Lesson = ({ lecture }: { lecture: LectureType }) => {
       <span>{selectIcon()}</span>
       <span>{lecture.title}</span>{' '}
       {lecture.isPreview && (
-        <span className="cursor-pointer text-blue-500">xem trước</span>
+        <button
+          onClick={() => {
+            setIsOpen(true);
+            setResource(lecture.resources);
+          }}
+          className="cursor-pointer text-blue-500"
+        >
+          xem trước
+        </button>
       )}
     </li>
   );
