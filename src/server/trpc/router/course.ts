@@ -99,6 +99,23 @@ export const courseRouter = router({
       return courses;
     }),
 
+  enrollCourse: protectedProcedure
+    .input(z.object({ slug: z.string(), userId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { slug, userId } = input;
+
+      const student = await ctx.prisma.student.upsert({
+        where: { userId },
+        update: { courses: { connect: [{ slug }] } },
+        create: {
+          userId,
+          courses: { connect: [{ slug }] },
+        },
+      });
+
+      return student;
+    }),
+
   publishCourse: protectedProcedure
     .input(z.object({ published: z.boolean(), slug: z.string() }))
     .mutation(async ({ input, ctx }) => {
