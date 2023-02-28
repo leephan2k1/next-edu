@@ -151,7 +151,7 @@ export const courseRouter = router({
             },
           },
           reviews: true,
-          students: true,
+          students: { include: { progress: true } },
           instructor: true,
           category: true,
         },
