@@ -1,25 +1,37 @@
-import type { NextPage, GetStaticPaths, GetStaticProps } from 'next';
-import CourseHeader from '~/components/courses/CourseHeader';
-import BuyOnly from '~/components/partials/BuyOnly';
+import type { NextPage } from 'next';
+// import RelatedCourses from '~/components/courses/RelatedCourses';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo } from 'react';
+import CourseAchievement from '~/components/courses/CourseAchievement';
 import CourseBody from '~/components/courses/CourseBody';
+import CourseContent from '~/components/courses/CourseContent';
+import CourseDescription from '~/components/courses/CourseDescription';
 import CourseFooter from '~/components/courses/CourseFooter';
+import CourseHeader from '~/components/courses/CourseHeader';
+import CourseRequirements from '~/components/courses/CourseRequirements';
+import CourseSidebar from '~/components/courses/CourseSidebar';
+import BuyOnly from '~/components/partials/BuyOnly';
 import CommentModal from '~/components/shared/CommentModal';
-import { prisma } from '~/server/db/client';
-import { useMemo } from 'react';
+import useCourse from '~/contexts/CourseContext';
+import { trpc } from '~/utils/trpc';
 
 import type { CourseType } from '~/types';
-import CourseAchievement from '~/components/courses/CourseAchievement';
-import CourseContent from '~/components/courses/CourseContent';
-import CourseRequirements from '~/components/courses/CourseRequirements';
-import CourseDescription from '~/components/courses/CourseDescription';
-// import RelatedCourses from '~/components/courses/RelatedCourses';
-import CourseSidebar from '~/components/courses/CourseSidebar';
 
-interface CoursePageProps {
-  course: CourseType;
-}
+const CoursePage: NextPage = () => {
+  const courseCtx = useCourse();
+  const router = useRouter();
 
-const CoursePage: NextPage<CoursePageProps> = ({ course }) => {
+  const { data: course, refetch } = trpc.course.findCourseBySlug.useQuery(
+    { slug: router.query.slug as string },
+    { enabled: !!router.query.slug },
+  );
+
+  useEffect(() => {
+    if (courseCtx?.enrollStatus === 'success') {
+      refetch();
+    }
+  }, [courseCtx?.enrollStatus]);
+
   const ratingValue = useMemo(() => {
     if (!course) return 0;
 
@@ -76,9 +88,9 @@ const CoursePage: NextPage<CoursePageProps> = ({ course }) => {
 
   return (
     <div className="min-h-screen">
-      <CourseHeader course={course} ratingValue={ratingValue}>
+      <CourseHeader course={course as CourseType} ratingValue={ratingValue}>
         <CourseSidebar
-          course={course}
+          course={course as CourseType}
           totalVideoDuration={totalVideoDuration}
           totalLectures={totalLectures || 0}
         />
@@ -93,13 +105,11 @@ const CoursePage: NextPage<CoursePageProps> = ({ course }) => {
                 content: target.content,
               }))}
             />
-
             <CourseContent
-              course={course}
+              course={course as CourseType}
               totalLectures={totalLectures || 0}
               totalVideoDuration={totalVideoDuration}
             />
-
             <CourseRequirements
               requirements={course.courseRequirements.map((rq) => ({
                 id: rq.id,
@@ -114,53 +124,11 @@ const CoursePage: NextPage<CoursePageProps> = ({ course }) => {
 
           <CommentModal />
 
-          <BuyOnly course={course} ratingValue={ratingValue} />
+          <BuyOnly course={course as CourseType} ratingValue={ratingValue} />
         </>
       ) : null}
     </div>
   );
-};
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const { slug } = params;
-
-  const course = await prisma.course.findUnique({
-    where: { slug },
-    include: {
-      courseTargets: { distinct: ['content'] },
-      courseRequirements: { distinct: ['content'] },
-      chapters: {
-        include: {
-          lectures: {
-            include: {
-              resources: true,
-              discussions: true,
-              learnedBy: true,
-            },
-          },
-        },
-      },
-      reviews: true,
-      students: true,
-      instructor: { include: { bio: true } },
-      category: true,
-    },
-  });
-
-  if (!course) return { notFound: true };
-
-  return {
-    props: { course: JSON.parse(JSON.stringify(course)) },
-    revalidate: 60 * 60 * 12, //12h
-  };
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  return { paths: [], fallback: true };
 };
 
 export default CoursePage;
