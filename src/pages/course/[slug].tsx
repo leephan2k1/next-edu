@@ -14,12 +14,15 @@ import BuyOnly from '~/components/partials/BuyOnly';
 import CommentModal from '~/components/shared/CommentModal';
 import useCourse from '~/contexts/CourseContext';
 import { trpc } from '~/utils/trpc';
-
+import usePreviousRoute from '~/contexts/HistoryRouteContext';
+import { useIsClient } from 'usehooks-ts';
 import type { CourseType } from '~/types';
 
 const CoursePage: NextPage = () => {
   const courseCtx = useCourse();
   const router = useRouter();
+  const prevRoute = usePreviousRoute();
+  const isClient = useIsClient();
 
   const { data: course, refetch } = trpc.course.findCourseBySlug.useQuery(
     { slug: router.query.slug as string },
@@ -85,6 +88,16 @@ const CoursePage: NextPage = () => {
       }, 0);
     }
   }, [course]);
+
+  if (
+    course &&
+    course?.verified !== 'APPROVED' &&
+    !course?.published &&
+    isClient
+  ) {
+    router.push(prevRoute?.url || '/');
+    return null;
+  }
 
   return (
     <div className="min-h-screen">
