@@ -77,7 +77,7 @@ function CoursesDraft() {
       </thead>
       <tbody className="rounded-xl">
         {data &&
-          data.courses.length &&
+          data.courses.length > 0 &&
           data.courses.map((course, order) => {
             return (
               <CoursesDraftItem

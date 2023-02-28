@@ -74,7 +74,12 @@ function CourseList({
     });
 
   if (Array.isArray(courses) && courses.length === 0) {
-    return <h4 className="my-4 italic">Chưa có khoá học nào!</h4>;
+    return (
+      <div className="mx-auto flex w-[90%] flex-col md:w-[80%]">
+        {children}
+        <h4 className="my-4 italic">Chưa có khoá học nào!</h4>
+      </div>
+    );
   }
 
   return (
