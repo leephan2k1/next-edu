@@ -1,22 +1,14 @@
-import CourseAchievement from './CourseAchievement';
-import CourseContent from './CourseContent';
-import CourseRequirements from './CourseRequirements';
-import CourseDescription from './CourseDescription';
-import RelatedCourses from './RelatedCourses';
+import type { ReactNode } from 'react';
 
-export default function CourseBody() {
+interface CourseBodyProps {
+  children: ReactNode;
+}
+
+export default function CourseBody({ children }: CourseBodyProps) {
   return (
     <div className="my-16 w-full text-gray-600 dark:text-white/80">
       <div className="mx-auto flex w-full flex-col space-y-14 px-4 md:max-w-[720px] lg:max-w-[1200px]">
-        <CourseAchievement />
-
-        <CourseContent />
-
-        <CourseRequirements />
-
-        <CourseDescription />
-
-        <RelatedCourses />
+        {children}
       </div>
     </div>
   );

@@ -1,16 +1,29 @@
-import { ClockIcon, HeartIcon, UserIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { BsStarFill } from 'react-icons/bs';
-import CourseSidebar from '~/components/courses/CourseSidebar';
-import Breadcrumbs from '../shared/Breadcrumbs';
-import type { CourseType } from '~/types';
 
+import {
+  ClockIcon,
+  HeartIcon,
+  StarIcon,
+  UserIcon,
+} from '@heroicons/react/24/outline';
+
+import Breadcrumbs from '../shared/Breadcrumbs';
+
+import type { CourseType } from '~/types';
 interface CourseHeaderProps {
   course?: CourseType;
+  ratingValue: number;
+  children: ReactNode;
 }
 
-export default function CourseHeader({ course }: CourseHeaderProps) {
+export default function CourseHeader({
+  children,
+  course,
+  ratingValue,
+}: CourseHeaderProps) {
   return (
     <div className="relative w-full bg-white py-10 text-gray-600 dark:bg-dark-background dark:text-white/60 lg:px-6 lg:py-6">
       <div className="mx-auto flex w-full flex-col items-center  md:max-w-[720px] lg:max-w-[1200px] lg:flex-row lg:items-start lg:justify-center">
@@ -62,14 +75,27 @@ export default function CourseHeader({ course }: CourseHeaderProps) {
             {course ? (
               <div className="flex flex-col items-start md:flex-row md:items-center md:space-x-4">
                 <div className="flex items-center space-x-4">
-                  <span className="inline-block">5.0</span>
+                  <span className="inline-block">{ratingValue}</span>
 
                   <div className="flex space-x-2">
-                    <BsStarFill className="h-5 w-5 text-yellow-500" />
-                    <BsStarFill className="h-5 w-5 text-yellow-500" />
-                    <BsStarFill className="h-5 w-5 text-yellow-500" />
-                    <BsStarFill className="h-5 w-5 text-yellow-500" />
-                    <BsStarFill className="h-5 w-5 text-yellow-500" />
+                    {Array.from(new Array(ratingValue).keys()).map((elem) => {
+                      return (
+                        <BsStarFill
+                          key={elem}
+                          className="h-5 w-5 text-yellow-500"
+                        />
+                      );
+                    })}
+                    {Array.from(new Array(5 - ratingValue).keys()).map(
+                      (elem) => {
+                        return (
+                          <StarIcon
+                            key={elem}
+                            className="h-5 w-5 text-gray-500 dark:text-white"
+                          />
+                        );
+                      },
+                    )}
                   </div>
                 </div>
 
@@ -115,16 +141,18 @@ export default function CourseHeader({ course }: CourseHeaderProps) {
           </div>
 
           <div className="mx-auto flex w-[70%] space-x-6 lg:hidden">
-            <button className="btn-primary btn-lg btn w-[80%] grow">
-              Thêm vào giỏ hàng
-            </button>
+            {course && Number(course.coursePrice) > 0 && (
+              <button className="btn-primary btn-lg btn w-[80%] grow">
+                Thêm vào giỏ hàng
+              </button>
+            )}
             <button className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60">
               <HeartIcon className="h-8 w-8" />
             </button>
           </div>
         </div>
 
-        <CourseSidebar course={course} />
+        {children}
       </div>
     </div>
   );

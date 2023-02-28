@@ -15,9 +15,15 @@ import {
 
 interface CourseSidebarProps {
   course?: CourseType;
+  totalVideoDuration: number;
+  totalLectures: number;
 }
 
-function CourseSidebar({ course }: CourseSidebarProps) {
+function CourseSidebar({
+  course,
+  totalVideoDuration,
+  totalLectures,
+}: CourseSidebarProps) {
   const refBtn = useRef<HTMLButtonElement | null>(null);
   const setSidebarState = useSetAtom(courseSidebarInViewport);
   const entry = useIntersectionObserver(refBtn, {});
@@ -25,32 +31,6 @@ function CourseSidebar({ course }: CourseSidebarProps) {
   useEffect(() => {
     setSidebarState(!!entry?.isIntersecting);
   }, [entry?.isIntersecting]);
-
-  const totalVideoDuration = useMemo(() => {
-    if (course) {
-      return course.chapters.reduce((prev, curr) => {
-        return (
-          prev +
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //@ts-ignore
-          curr.lectures?.reduce((time, lecture) => {
-            return (
-              time +
-              lecture.resources.reduce((videoDur, rsc) => {
-                if (rsc.type === 'video' && !isNaN(videoDur)) {
-                  return videoDur + Number(rsc.videoDuration);
-                }
-
-                return videoDur + 0;
-              }, 0)
-            );
-          }, 0)
-        );
-      }, 0);
-    }
-
-    return 0;
-  }, [course]);
 
   const totalDownloadableResource = useMemo(() => {
     if (course) {
@@ -76,18 +56,6 @@ function CourseSidebar({ course }: CourseSidebarProps) {
     }
 
     return 0;
-  }, [course]);
-
-  const totalLectures = useMemo(() => {
-    if (course) {
-      return course.chapters.reduce((nChapter, chapter) => {
-        if (chapter.lectures) {
-          return nChapter + chapter.lectures?.length;
-        }
-
-        return nChapter;
-      }, 0);
-    }
   }, [course]);
 
   return (
@@ -125,9 +93,11 @@ function CourseSidebar({ course }: CourseSidebarProps) {
       )}
 
       <div className="flex w-full space-x-4 px-4">
-        <button className="btn-primary btn-lg btn w-[70%]">
-          Thêm vào giỏ hàng
-        </button>
+        {course && Number(course.coursePrice) > 0 && (
+          <button className="btn-primary btn-lg btn w-[70%]">
+            Thêm vào giỏ hàng
+          </button>
+        )}
         <button className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60">
           <HeartIcon className="h-8 w-8" />
         </button>
@@ -138,7 +108,9 @@ function CourseSidebar({ course }: CourseSidebarProps) {
           ref={refBtn}
           className="smooth-effect w-full rounded-xl border border-gray-600 p-3 uppercase hover:bg-white dark:border-white/60 dark:hover:bg-dark-background"
         >
-          Mua ngay
+          {course && Number(course.coursePrice) > 0
+            ? 'Mua ngay'
+            : 'Đăng ký học'}
         </button>
       </div>
 
@@ -149,7 +121,11 @@ function CourseSidebar({ course }: CourseSidebarProps) {
             {course ? (
               <>
                 <PlayCircleIcon className="h-6 w-6" />{' '}
-                <span>{totalVideoDuration} giờ video</span>
+                <span>
+                  {Math.floor(totalVideoDuration / 3600) > 0
+                    ? `${Math.floor(totalVideoDuration / 3600)} giờ video`
+                    : `${Math.ceil(totalVideoDuration / 60)} phút video`}
+                </span>
               </>
             ) : (
               <div className="h-[2rem] w-full animate-pulse rounded-lg bg-gray-300 dark:bg-gray-700"></div>
@@ -159,7 +135,7 @@ function CourseSidebar({ course }: CourseSidebarProps) {
             {course ? (
               <>
                 <BookOpenIcon className="h-6 w-6" />{' '}
-                <span>{totalLectures} bài giảng</span>
+                <span>{totalLectures} bài học</span>
               </>
             ) : (
               <div className="h-[2rem] w-full animate-pulse rounded-lg bg-gray-300 dark:bg-gray-700"></div>
