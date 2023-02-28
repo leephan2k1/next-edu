@@ -5,13 +5,16 @@ import { BiInfinite } from 'react-icons/bi';
 import { useIntersectionObserver } from 'usehooks-ts';
 import { courseSidebarInViewport } from '~/atoms/courseSidebarAtom';
 import type { CourseType } from '~/types';
-
+import useCourse from '~/contexts/CourseContext';
 import {
   BookOpenIcon,
   FolderArrowDownIcon,
   HeartIcon,
   PlayCircleIcon,
 } from '@heroicons/react/24/outline';
+import Loading from '../buttons/Loading';
+import useIsEnrolled from '~/hooks/useIsEnrolled';
+import { If, Then, Else } from 'react-if';
 
 interface CourseSidebarProps {
   course?: CourseType;
@@ -27,6 +30,10 @@ function CourseSidebar({
   const refBtn = useRef<HTMLButtonElement | null>(null);
   const setSidebarState = useSetAtom(courseSidebarInViewport);
   const entry = useIntersectionObserver(refBtn, {});
+
+  const courseCtx = useCourse();
+
+  const isEnrolled = useIsEnrolled({ course });
 
   useEffect(() => {
     setSidebarState(!!entry?.isIntersecting);
@@ -57,6 +64,12 @@ function CourseSidebar({
 
     return 0;
   }, [course]);
+
+  const handleEnrollCourse = () => {
+    if (course?.slug) {
+      courseCtx?.enrollCourse(course.slug);
+    }
+  };
 
   return (
     <aside
@@ -94,23 +107,37 @@ function CourseSidebar({
 
       <div className="flex w-full space-x-4 px-4">
         {course && Number(course.coursePrice) > 0 && (
-          <button className="btn-primary btn-lg btn w-[70%]">
+          <button disabled={!course} className="btn-primary btn-lg btn w-[70%]">
             Thêm vào giỏ hàng
           </button>
         )}
-        <button className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60">
+        <button
+          disabled={!course}
+          className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60"
+        >
           <HeartIcon className="h-8 w-8" />
         </button>
       </div>
 
       <div className="flex w-full space-x-4 px-4">
         <button
+          disabled={courseCtx?.enrollStatus === 'loading' || !course}
+          onClick={handleEnrollCourse}
           ref={refBtn}
-          className="smooth-effect w-full rounded-xl border border-gray-600 p-3 uppercase hover:bg-white dark:border-white/60 dark:hover:bg-dark-background"
+          className="smooth-effect absolute-center min-h-[4rem] w-full rounded-xl border border-gray-600 p-3 uppercase hover:bg-white dark:border-white/60 dark:hover:bg-dark-background"
         >
-          {course && Number(course.coursePrice) > 0
-            ? 'Mua ngay'
-            : 'Đăng ký học'}
+          <If condition={!isEnrolled}>
+            <Then>
+              {courseCtx?.enrollStatus === 'loading' ? (
+                <Loading />
+              ) : course && Number(course.coursePrice) > 0 ? (
+                'Mua ngay'
+              ) : (
+                'Đăng ký học'
+              )}
+            </Then>
+            <Else>{'Học ngay'}</Else>
+          </If>
         </button>
       </div>
 

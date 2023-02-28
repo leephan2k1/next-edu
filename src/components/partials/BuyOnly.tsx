@@ -3,6 +3,10 @@ import { courseSidebarInViewport } from '~/atoms/courseSidebarAtom';
 import { useAtomValue } from 'jotai';
 import type { CourseType } from '~/types';
 import { StarIcon } from '@heroicons/react/24/outline';
+import useCourse from '~/contexts/CourseContext';
+import Loading from '../buttons/Loading';
+import useIsEnrolled from '~/hooks/useIsEnrolled';
+import { If, Then, Else } from 'react-if';
 
 interface BuyOnlyProps {
   course?: CourseType;
@@ -11,6 +15,15 @@ interface BuyOnlyProps {
 
 export default function BuyOnly({ course, ratingValue }: BuyOnlyProps) {
   const sidebarInViewport = useAtomValue(courseSidebarInViewport);
+  const courseCtx = useCourse();
+
+  const isEnrolled = useIsEnrolled({ course });
+
+  const handleEnrollCourse = () => {
+    if (course?.slug) {
+      courseCtx?.enrollCourse(course?.slug);
+    }
+  };
 
   return (
     <div
@@ -32,7 +45,7 @@ export default function BuyOnly({ course, ratingValue }: BuyOnlyProps) {
             return (
               <StarIcon
                 key={elem}
-                className="h-5 w-5 text-gray-500 dark:text-white"
+                className="h-5 w-5 text-white dark:text-gray-500"
               />
             );
           })}
@@ -48,8 +61,23 @@ export default function BuyOnly({ course, ratingValue }: BuyOnlyProps) {
               }).format(1950000)
             : 'Miễn phí'}
         </h1>
-        <button className="btn-primary btn-lg btn flex-1">
-          {Number(course?.coursePrice) > 0 ? 'Mua ngay' : 'Đăng ký ngay'}
+        <button
+          onClick={handleEnrollCourse}
+          disabled={courseCtx?.enrollStatus === 'loading' || !course}
+          className="absolute-center btn-primary btn-lg btn flex-1"
+        >
+          <If condition={!isEnrolled}>
+            <Then>
+              {courseCtx?.enrollStatus === 'loading' ? (
+                <Loading />
+              ) : Number(course?.coursePrice) > 0 ? (
+                'Mua ngay'
+              ) : (
+                'Đăng ký ngay'
+              )}
+            </Then>
+            <Else>{'Học ngay'}</Else>
+          </If>
         </button>
       </div>
     </div>

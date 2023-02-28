@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useToggle } from 'usehooks-ts';
+import { trpc } from '~/utils/trpc';
+import toast from 'react-hot-toast';
 
 import type { ReactNode } from 'react';
 type ResourceType = Omit<Resource, 'id' | 'createdAt' | 'lectureId'>;
@@ -22,9 +24,11 @@ export interface CourseType extends Omit<Course, 'id' | 'categoryId'> {
 }
 
 interface CourseContextValues {
+  enrollStatus: 'error' | 'success' | 'idle' | 'loading';
   course: CourseType | null;
   dispatchUpdate: boolean;
   dispatch: () => void;
+  enrollCourse: (courseSlug: string) => void;
   updateCourse: (course: Partial<CourseType>) => void;
   resetCourse: () => void;
 }
@@ -44,6 +48,9 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
 
   // console.log('course updating:: ', course);
 
+  const { mutate: enrollCourseMutate, status: enrollStatus } =
+    trpc.course.enrollCourse.useMutation();
+
   const updateCourse = (courseParam: Partial<CourseType>) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
@@ -53,6 +60,24 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
     });
   };
 
+  const enrollCourse = (courseSlug: string) => {
+    if (!session?.user?.id) return;
+
+    enrollCourseMutate({ slug: courseSlug, userId: session?.user?.id });
+  };
+
+  // effect notify toast enroll
+  useEffect(() => {
+    if (enrollStatus === 'success') {
+      toast.success('Đăng ký khoá học thành công!');
+    }
+
+    if (enrollStatus === 'error') {
+      toast.error('Đăng ký khoá học thất bại! Thử lại sau!');
+    }
+  }, [enrollStatus]);
+
+  // effect create/update course
   useEffect(() => {
     if (course?.name) {
       (async function () {
@@ -75,7 +100,9 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
   return (
     <CourseContext.Provider
       value={{
+        enrollStatus,
         dispatchUpdate,
+        enrollCourse,
         dispatch: toggle,
         course,
         updateCourse,
