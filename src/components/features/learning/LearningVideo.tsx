@@ -4,6 +4,7 @@ import { useSetAtom } from 'jotai';
 import { memo, useEffect, useState } from 'react';
 import { videoCurrentTime } from '~/atoms/videoCurrentTime';
 import { playerOptions } from '~/constants';
+import useLecture from '~/contexts/LearningContext';
 import Player from '../videoPlayer/Player';
 
 function LearningVideo() {
@@ -13,6 +14,8 @@ function LearningVideo() {
   */
   const [artPlayer, setArtPlayer] = useState<unknown>();
   const setVideoCurrentTime = useSetAtom(videoCurrentTime);
+
+  const lectureCtx = useLecture();
 
   useEffect(() => {
     if (artPlayer) {
@@ -29,10 +32,13 @@ function LearningVideo() {
   return (
     <div className="h-[20rem] w-full bg-green-500/0 px-4 md:h-[45vh] lg:h-[80vh]">
       <Player
+        key={lectureCtx?.currentLecture.id}
         option={{
           ...playerOptions,
-          url: 'https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-720p.mp4',
-          title: '【新海诚动画】『秒速5センチメートル',
+          url: lectureCtx?.currentLecture.resources.find(
+            (rsc) => rsc.type === 'video',
+          ).url,
+          title: lectureCtx?.currentLecture?.title,
         }}
         className="my-auto h-full w-full rounded-2xl"
         getInstance={(art: unknown) => {
@@ -44,3 +50,5 @@ function LearningVideo() {
 }
 
 export default memo(LearningVideo);
+
+// https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-720p.mp4

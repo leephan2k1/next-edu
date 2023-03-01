@@ -1,14 +1,16 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 
 import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
 import toast from 'react-hot-toast';
 import type { LectureType } from '~/types';
 import { PATHS } from '~/constants';
+import { useIsClient } from 'usehooks-ts';
 
 interface LearningContextType {
   allLecturesByChapters: LectureType[];
   handleNavigateLecture: (direction: 'next' | 'prev') => void;
+  currentLecture: LectureType | undefined;
 }
 interface HsRouteContextProps {
   children: ReactNode;
@@ -22,6 +24,17 @@ export const LearningContextProvider = ({
   allLecturesByChapters,
 }: HsRouteContextProps) => {
   const router = useRouter();
+  const isClient = useIsClient();
+
+  const currentLecture = useMemo(() => {
+    if (!isClient) return;
+
+    const paths = window.location.pathname.split('/');
+    if (paths.length !== 4) return undefined;
+    const lectureId = paths[3];
+
+    return allLecturesByChapters.find((lc) => lc.id === lectureId);
+  }, [allLecturesByChapters, router.query, isClient]);
 
   const handleNavigateLecture = (direction: 'next' | 'prev') => {
     // bc art player init once so router next paths can't change -> router can't use
@@ -72,6 +85,7 @@ export const LearningContextProvider = ({
   return (
     <LearningContext.Provider
       value={{
+        currentLecture,
         handleNavigateLecture,
         allLecturesByChapters,
       }}
