@@ -11,6 +11,7 @@ import ListNoteModal from '~/components/features/note/ListNoteModal';
 import MainLayout from '~/components/layouts/MainLayout';
 import { PATHS } from '~/constants';
 import { trpc } from '~/utils/trpc';
+import { LearningContextProvider } from '~/contexts/LearningContext';
 
 import type { ReactNode } from 'react';
 import type { CourseType, Progress } from '~/types';
@@ -102,7 +103,7 @@ const LearningPage: NextPage = () => {
         { shallow: true },
       );
     },
-    [progressByCourse],
+    [progressByCourse, course],
   );
 
   if (!course && isClient && isSuccess) {
@@ -112,39 +113,42 @@ const LearningPage: NextPage = () => {
 
   return (
     <>
-      <ListNoteModal />
-      <div className="flex min-h-screen flex-col text-gray-600 dark:text-white/60">
-        {course && (
-          <>
-            <CourseContentsBar>
-              {course?.chapters &&
-                course?.chapters.length > 0 &&
-                course?.chapters.map((chapter) => {
-                  return (
-                    <CourseContentCollapse
-                      handleNavigateLecture={handleNavigateLecture}
-                      allLecturesByChapters={allLecturesByChapters}
-                      isLoadingProgress={isLoadingProgress}
-                      progressByCourse={progressByCourse}
-                      key={chapter.id}
-                      chapter={chapter}
-                    />
-                  );
-                })}
-            </CourseContentsBar>
+      <LearningContextProvider allLecturesByChapters={allLecturesByChapters}>
+        <ListNoteModal />
+        <div className="flex min-h-screen flex-col text-gray-600 dark:text-white/60">
+          {course && (
+            <>
+              <CourseContentsBar>
+                {course?.chapters &&
+                  course?.chapters.length > 0 &&
+                  course?.chapters.map((chapter) => {
+                    return (
+                      <CourseContentCollapse
+                        handleNavigateLecture={handleNavigateLecture}
+                        allLecturesByChapters={allLecturesByChapters}
+                        isLoadingProgress={isLoadingProgress}
+                        progressByCourse={progressByCourse}
+                        key={chapter.id}
+                        chapter={chapter}
+                      />
+                    );
+                  })}
+              </CourseContentsBar>
 
-            <LearningHeader
-              courseName={course?.name}
-              learningPercentage={Math.trunc(
-                Number(progressByCourse.length / allLecturesByChapters.length) *
-                  100,
-              )}
-            />
+              <LearningHeader
+                courseName={course?.name}
+                learningPercentage={Math.trunc(
+                  Number(
+                    progressByCourse.length / allLecturesByChapters.length,
+                  ) * 100,
+                )}
+              />
 
-            <LearningBody course={course as CourseType} />
-          </>
-        )}
-      </div>
+              <LearningBody course={course as CourseType} />
+            </>
+          )}
+        </div>
+      </LearningContextProvider>
     </>
   );
 };
