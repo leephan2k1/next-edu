@@ -8,6 +8,25 @@ import type {
   Student,
 } from '@prisma/client';
 
+export interface Progress {
+  id: string;
+  title: string;
+  description: string;
+  isPreview: boolean;
+  order: number;
+  chapterId: string;
+}
+
+export type StudentProgressType =
+  | (Student & {
+      progress: LearningProgress &
+        {
+          Lecture: Lecture[];
+        }[];
+    })
+  | null
+  | undefined;
+
 export type VerifiedStateType = VERIFIED_STATE;
 
 export type LearningOptions =
