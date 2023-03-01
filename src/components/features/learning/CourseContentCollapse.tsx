@@ -6,14 +6,25 @@ import {
   LockClosedIcon,
 } from '@heroicons/react/20/solid';
 import { PlayCircleIcon } from '@heroicons/react/24/solid';
-import type { ChapterType } from '~/types';
+import { Else, If, Then } from 'react-if';
+import type { ChapterType, LectureType, Progress } from '~/types';
+import toast from 'react-hot-toast';
+import { unlockLectureHelper } from '~/utils/general';
 
 interface CourseContentCollapseProps {
   chapter: ChapterType;
+  allLecturesByChapters: LectureType[];
+  isLoadingProgress: boolean;
+  progressByCourse: Progress[];
+  handleNavigateLecture: (lectureId: string) => void;
 }
 
 export default function CourseContentCollapse({
   chapter,
+  handleNavigateLecture,
+  progressByCourse,
+  allLecturesByChapters,
+  isLoadingProgress,
 }: CourseContentCollapseProps) {
   const [animationParent] = useAutoAnimate<HTMLDivElement>();
 
@@ -43,34 +54,82 @@ export default function CourseContentCollapse({
                     chapter.lectures.map((lecture) => {
                       return (
                         <li
+                          onClick={() => {
+                            if (
+                              !progressByCourse.some(
+                                (elem) => elem?.id === lecture.id,
+                              ) &&
+                              unlockLectureHelper(
+                                progressByCourse,
+                                allLecturesByChapters,
+                              )?.id !== lecture.id
+                            ) {
+                              toast.error(
+                                'Bạn chưa hoàn thành bài học trước đó!',
+                              );
+                              return;
+                            }
+                            handleNavigateLecture(lecture.id);
+                          }}
                           key={lecture.id}
-                          className="flex flex-col space-y-2 rounded-xl border border-dashed border-gray-500 py-2 px-4"
+                          className="flex cursor-pointer flex-col space-y-2 rounded-xl border border-dashed border-gray-500 py-2 px-4"
                         >
-                          <div className="flex items-center justify-between">
-                            <h3 className="text-left">
-                              {lecture.order}. {lecture.title}
-                            </h3>
+                          <If condition={isLoadingProgress}>
+                            <Then>
+                              <div className="h-[5rem] w-full animate-pulse rounded-xl bg-gray-300 dark:bg-gray-600"></div>
+                            </Then>
+                            <Else>
+                              <>
+                                <div className="flex items-center justify-between">
+                                  <h3 className="text-left">
+                                    {lecture.order}. {lecture.title}
+                                  </h3>
 
-                            <span className="rounded-full bg-green-400 p-2">
-                              <CheckIcon className="h-3 w-3 text-gray-700" />
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <PlayCircleIcon className="h-6 w-6 text-gray-400" />
-                            <span>
-                              {lecture.resources.find(
-                                (rsc) => rsc.type === 'video',
-                              )
-                                ? `${Math.floor(
-                                    Number(
-                                      lecture.resources.find(
-                                        (rsc) => rsc.type === 'video',
-                                      )?.videoDuration,
-                                    ) / 60,
-                                  )} phút`
-                                : ''}
-                            </span>
-                          </div>
+                                  <If
+                                    condition={
+                                      progressByCourse.length > 0 &&
+                                      progressByCourse.find(
+                                        (elem) => elem?.id === lecture.id,
+                                      )
+                                    }
+                                  >
+                                    <Then>
+                                      <span className="rounded-full bg-green-400 p-2">
+                                        <CheckIcon className="h-3 w-3 text-gray-700" />
+                                      </span>
+                                    </Then>
+                                    <Else>
+                                      {unlockLectureHelper(
+                                        progressByCourse,
+                                        allLecturesByChapters,
+                                      )?.id === lecture.id ? null : (
+                                        <span className="rounded-full p-2">
+                                          <LockClosedIcon className="h-5 w-5 text-gray-700" />
+                                        </span>
+                                      )}
+                                    </Else>
+                                  </If>
+                                </div>
+
+                                <div className="flex items-center space-x-2">
+                                  <PlayCircleIcon className="h-6 w-6 text-gray-400" />
+                                  <span>
+                                    {lecture.resources.find(
+                                      (rsc) => rsc.type === 'video',
+                                    )
+                                      ? `${Math.floor(
+                                          Number(
+                                            lecture.resources.find(
+                                              (rsc) => rsc.type === 'video',
+                                            )?.videoDuration,
+                                          ) / 60,
+                                        )} phút`
+                                      : ''}
+                                  </span>
+                                </div>
+                              </>
+                            </Else>
+                          </If>
                         </li>
                       );
                     })}

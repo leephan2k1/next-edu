@@ -1,13 +1,17 @@
 import { useSetAtom } from 'jotai';
 import { courseContentBarState } from '~/atoms/courseContentBarState';
-
+import type { CourseType } from '~/types';
 import {
   Bars3Icon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 
-export default function LearningFooter() {
+interface LearningFooterProps {
+  course: CourseType;
+}
+
+export default function LearningFooter({ course }: LearningFooterProps) {
   const setCourseContentsBarOpen = useSetAtom(courseContentBarState);
 
   return (
@@ -20,12 +24,7 @@ export default function LearningFooter() {
           >
             <Bars3Icon className="h-8 w-8" />
           </button>
-          <h2 className="text-lg line-clamp-1 md:text-xl">
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ducimus
-            pariatur at provident dolor odio qui veniam animi voluptates
-            laboriosam nobis dignissimos, quam dolorem amet molestiae commodi
-            inventore nostrum magnam doloremque?
-          </h2>
+          <h2 className="text-lg line-clamp-1 md:text-xl">{course.name}</h2>
         </div>
 
         <div className="flex space-x-4">

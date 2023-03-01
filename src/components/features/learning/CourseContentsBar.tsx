@@ -5,14 +5,13 @@ import { courseContentBarState } from '~/atoms/courseContentBarState';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
-import CourseContentCollapse from './CourseContentCollapse';
-import type { ChapterType } from '~/types';
+import type { ReactNode } from 'react';
 
 interface CourseContentsBarProps {
-  chapters: ChapterType[];
+  children: ReactNode;
 }
 
-function CourseContentsBar({ chapters }: CourseContentsBarProps) {
+function CourseContentsBar({ children }: CourseContentsBarProps) {
   const [open, setOpen] = useAtom(courseContentBarState);
 
   return (
@@ -60,16 +59,7 @@ function CourseContentsBar({ chapters }: CourseContentsBarProps) {
                 </Dialog.Title>
 
                 <Dialog.Description className="flex flex-col space-y-4">
-                  {chapters &&
-                    chapters.length > 0 &&
-                    chapters.map((chapter) => {
-                      return (
-                        <CourseContentCollapse
-                          key={chapter.id}
-                          chapter={chapter}
-                        />
-                      );
-                    })}
+                  {children}
                 </Dialog.Description>
               </Dialog.Panel>
             </Transition.Child>
