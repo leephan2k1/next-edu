@@ -1,13 +1,14 @@
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useState, useEffect } from 'react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import type { Dispatch, SetStateAction } from 'react';
-import useCourse from '~/contexts/CourseContext';
 import { FaceFrownIcon } from '@heroicons/react/24/solid';
-import { If, Then, Else } from 'react-if';
-import { trpc } from '~/utils/trpc';
-import { useRouter } from 'next/router';
+import type { Dispatch, SetStateAction } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { Else, If, Then } from 'react-if';
+import slug from 'slug';
+import useCourse from '~/contexts/CourseContext';
+import { trpc } from '~/utils/trpc';
+import axios from 'axios';
 
 interface ConfirmPublishCourseModalProps {
   isOpen: boolean;
@@ -18,7 +19,6 @@ export default function ConfirmPublishCourseModal({
   isOpen,
   setIsOpen,
 }: ConfirmPublishCourseModalProps) {
-  const router = useRouter();
   const courseCtx = useCourse();
 
   const [missingFields, setMissingFields] = useState<string[]>([]);
@@ -26,10 +26,26 @@ export default function ConfirmPublishCourseModal({
   const { mutate: publishCourse, isSuccess } =
     trpc.course.publishCourse.useMutation();
 
-  const handlePublishCourse = () => {
-    if (router.query?.slug && !Array.isArray(router.query?.slug)) {
-      publishCourse({ published: true, slug: router.query.slug });
-    } else {
+  const handlePublishCourse = async () => {
+    try {
+      if (courseCtx?.course && courseCtx?.course?.name) {
+        const existCourse = await axios.get(
+          `/api/course/${courseCtx?.course?.name}`,
+        );
+
+        if (existCourse) {
+          publishCourse({
+            published: true,
+            slug: slug(courseCtx?.course?.name),
+          });
+        } else {
+          courseCtx.updateCourse({ published: true });
+          setIsOpen(false);
+        }
+      } else {
+        toast.error('Opps! Có gì đó không đúng?');
+      }
+    } catch (error) {
       toast.error('Opps! Có gì đó không đúng?');
     }
   };

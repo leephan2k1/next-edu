@@ -27,6 +27,7 @@ const course = async (req: NextApiRequest, res: NextApiResponse) => {
     chapters,
     courseRequirements,
     courseTargets,
+    published,
   } = body as CourseType;
 
   switch (method) {
@@ -72,6 +73,7 @@ const course = async (req: NextApiRequest, res: NextApiResponse) => {
         courseState,
         coursePrice: Number(coursePrice),
         courseLevel,
+        published,
       };
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
