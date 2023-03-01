@@ -6,6 +6,7 @@ import type {
   Resource,
   VERIFIED_STATE,
   Student,
+  Discussion,
 } from '@prisma/client';
 
 export interface Progress {
@@ -40,6 +41,7 @@ export type ResourceType = Omit<Resource, 'lectureId' | 'courseSlug'>;
 
 export interface LectureType extends Lecture {
   resources: ResourceType[];
+  discussions: Discussion[];
 }
 
 export interface ChapterType extends Omit<Chapter, 'id' | 'courseId'> {
