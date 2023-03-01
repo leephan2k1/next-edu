@@ -5,10 +5,12 @@ import { useSetAtom } from 'jotai';
 import { useRef } from 'react';
 import { useEffectOnce } from 'usehooks-ts';
 import { quillEditorState } from '~/atoms/quillEditorState';
+import useLecture from '~/contexts/LearningContext';
 
 export default function Player({ option, getInstance, ...rest }) {
   const setGoToEditor = useSetAtom(quillEditorState);
   const artRef = useRef<HTMLDivElement | null>(null);
+  const lectureCtx = useLecture();
 
   useEffectOnce(() => {
     const art = new Artplayer({
@@ -45,7 +47,7 @@ export default function Player({ option, getInstance, ...rest }) {
             color: 'white',
           },
           click: () => {
-            alert('Den bai tiep theo');
+            lectureCtx?.handleNavigateLecture('next');
           },
         },
         {
@@ -61,7 +63,7 @@ export default function Player({ option, getInstance, ...rest }) {
             color: 'white',
           },
           click: () => {
-            alert('Den bai truoc do');
+            lectureCtx?.handleNavigateLecture('prev');
           },
         },
       ],

@@ -1,10 +1,10 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-nocheck
+import { useSetAtom } from 'jotai';
 import { memo, useEffect, useState } from 'react';
+import { videoCurrentTime } from '~/atoms/videoCurrentTime';
 import { playerOptions } from '~/constants';
 import Player from '../videoPlayer/Player';
-import { useSetAtom } from 'jotai';
-import { videoCurrentTime } from '~/atoms/videoCurrentTime';
 
 function LearningVideo() {
   /*
