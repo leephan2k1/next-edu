@@ -7,6 +7,8 @@ import type {
   VERIFIED_STATE,
   Student,
   Discussion,
+  User,
+  Announcement,
 } from '@prisma/client';
 
 export interface Progress {
@@ -52,6 +54,8 @@ export interface CourseType extends Course {
   chapters: ChapterType[];
   reviews: Review[];
   students: Student[];
+  instructor: User;
+  announcements: Announcement[];
   category: { id: string; name: string };
   courseTargets: {
     id: string;
