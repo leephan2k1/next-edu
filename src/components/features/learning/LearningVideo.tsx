@@ -32,7 +32,7 @@ function LearningVideo() {
   return (
     <div className="h-[20rem] w-full bg-green-500/0 px-4 md:h-[45vh] lg:h-[80vh]">
       <Player
-        key={lectureCtx?.currentLecture.id}
+        key={lectureCtx?.currentLecture && lectureCtx?.currentLecture.id}
         option={{
           ...playerOptions,
           url: lectureCtx?.currentLecture
