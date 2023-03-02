@@ -17,6 +17,7 @@ interface EditorProps {
   styles?: string;
   contents?: string;
   handleCancel?: () => void;
+  isLoadingSubmit?: boolean;
 }
 
 function Editor({
@@ -26,6 +27,7 @@ function Editor({
   getInstance,
   onEditorChange,
   onSubmit,
+  isLoadingSubmit,
 }: EditorProps) {
   const [editorState, setEditorState] = useAtom(quillEditorState);
   const [value, setValue] = useState<string>(contents || '');
@@ -88,9 +90,14 @@ function Editor({
           <span>Xoá</span>
         </button>
         {onSubmit && (
-          <button className="absolute-center h-[4rem] w-[5rem] rounded-xl bg-white py-3 px-4 text-gray-600 shadow-lg">
-            {/* <span>Lưu</span> */}
-            <Loading />
+          <button
+            onClick={() => {
+              onSubmit();
+            }}
+            disabled={isLoadingSubmit}
+            className="absolute-center h-[4rem] w-[5rem] rounded-xl bg-white py-3 px-4 text-gray-600 shadow-lg"
+          >
+            {isLoadingSubmit ? <Loading /> : <span>Lưu</span>}
           </button>
         )}
       </div>
