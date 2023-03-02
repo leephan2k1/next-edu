@@ -36,4 +36,44 @@ export const userRouter = router({
 
       return noteByUser;
     }),
+
+  deleteNote: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { id } = input;
+
+      const deletedNote = await ctx.prisma.note.delete({
+        where: { id },
+      });
+
+      return deletedNote;
+    }),
+
+  findNotes: protectedProcedure
+    .input(
+      z.object({
+        sort: z.union([z.literal('asc'), z.literal('desc')]),
+        chapterId: z.string().optional(),
+        lectureId: z.string().optional(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { chapterId, sort, lectureId } = input;
+
+      const conditions = {};
+
+      if (chapterId) Object.assign(conditions, { ...conditions, chapterId });
+
+      if (lectureId) Object.assign(conditions, { ...conditions, lectureId });
+
+      const notes = await ctx.prisma.note.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          ...conditions,
+        },
+        orderBy: { createdAt: sort },
+      });
+
+      return notes;
+    }),
 });
