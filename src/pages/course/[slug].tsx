@@ -1,7 +1,7 @@
-import type { NextPage } from 'next';
 // import RelatedCourses from '~/components/courses/RelatedCourses';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useIsClient } from 'usehooks-ts';
 import CourseAchievement from '~/components/courses/CourseAchievement';
 import CourseBody from '~/components/courses/CourseBody';
 import CourseContent from '~/components/courses/CourseContent';
@@ -11,22 +11,30 @@ import CourseHeader from '~/components/courses/CourseHeader';
 import CourseRequirements from '~/components/courses/CourseRequirements';
 import CourseSidebar from '~/components/courses/CourseSidebar';
 import BuyOnly from '~/components/partials/BuyOnly';
+import ConfirmCoursePassword from '~/components/partials/ConfirmCoursePassword';
 import CommentModal from '~/components/shared/CommentModal';
 import useCourse from '~/contexts/CourseContext';
-import { trpc } from '~/utils/trpc';
 import usePreviousRoute from '~/contexts/HistoryRouteContext';
-import { useIsClient } from 'usehooks-ts';
-import type { CourseType } from '~/types';
+import { prisma } from '~/server/db/client';
+import { trpc } from '~/utils/trpc';
 
-const CoursePage: NextPage = () => {
+import type { CourseType } from '~/types';
+import type { GetServerSideProps, NextPage } from 'next';
+interface CoursePageProps {
+  courseHasPassword?: boolean;
+}
+
+const CoursePage: NextPage = ({ courseHasPassword }: CoursePageProps) => {
   const courseCtx = useCourse();
   const router = useRouter();
   const prevRoute = usePreviousRoute();
   const isClient = useIsClient();
 
+  const [isUnlocked, setIsUnlocked] = useState(!courseHasPassword);
+
   const { data: course, refetch } = trpc.course.findCourseBySlug.useQuery(
     { slug: router.query.slug as string },
-    { enabled: !!router.query.slug },
+    { enabled: !!router.query.slug && isUnlocked },
   );
 
   useEffect(() => {
@@ -99,6 +107,10 @@ const CoursePage: NextPage = () => {
     return null;
   }
 
+  if (courseHasPassword && !isUnlocked) {
+    return <ConfirmCoursePassword setIsUnlocked={setIsUnlocked} />;
+  }
+
   return (
     <div className="min-h-screen">
       <CourseHeader course={course as CourseType} ratingValue={ratingValue}>
@@ -142,6 +154,24 @@ const CoursePage: NextPage = () => {
       ) : null}
     </div>
   );
+};
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// middleware check course has a password
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const { slug } = query;
+
+  const course = await prisma?.course.findUnique({
+    where: { slug: slug as string },
+    select: { password: true },
+  });
+
+  const courseHasPassword = course?.password !== null;
+
+  return {
+    props: { courseHasPassword },
+  };
 };
 
 export default CoursePage;
