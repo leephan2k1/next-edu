@@ -3,6 +3,23 @@ import { router, protectedProcedure, publicProcedure } from '../trpc';
 import exclude from '~/server/helper/excludeFields';
 
 export const courseRouter = router({
+  checkCoursePassword: publicProcedure
+    .input(z.object({ password: z.string(), courseSlug: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { password, courseSlug } = input;
+
+      const courseWithPassword = await ctx.prisma.course.findUnique({
+        where: { slug: courseSlug },
+        select: { password: true },
+      });
+
+      if (password === courseWithPassword?.password) {
+        return true;
+      }
+
+      return false;
+    }),
+
   findCoursesByOwner: protectedProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ input, ctx }) => {
