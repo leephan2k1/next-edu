@@ -1,3 +1,8 @@
+import { useMemo } from 'react';
+import toast from 'react-hot-toast';
+import { Else, If, Then } from 'react-if';
+import { unlockLectureHelper } from '~/utils/general';
+
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Disclosure } from '@headlessui/react';
 import {
@@ -6,11 +11,8 @@ import {
   LockClosedIcon,
 } from '@heroicons/react/20/solid';
 import { PlayCircleIcon } from '@heroicons/react/24/solid';
-import { Else, If, Then } from 'react-if';
-import type { ChapterType, LectureType, Progress } from '~/types';
-import toast from 'react-hot-toast';
-import { unlockLectureHelper } from '~/utils/general';
 
+import type { ChapterType, LectureType, Progress } from '~/types';
 interface CourseContentCollapseProps {
   chapter: ChapterType;
   allLecturesByChapters: LectureType[];
@@ -28,6 +30,38 @@ export default function CourseContentCollapse({
 }: CourseContentCollapseProps) {
   const [animationParent] = useAutoAnimate<HTMLDivElement>();
 
+  const numberLectureCompleted = useMemo(() => {
+    if (chapter.lectures && chapter.lectures?.length > 0) {
+      return chapter.lectures?.reduce((acc, lecture) => {
+        if (progressByCourse.some((lc) => lc.id === lecture.id)) {
+          return ++acc;
+        }
+
+        return acc;
+      }, 0);
+    }
+
+    return 0;
+  }, [chapter, progressByCourse]);
+
+  const totalVideoDuration = useMemo(() => {
+    if (chapter.lectures && chapter.lectures?.length > 0) {
+      return chapter.lectures.reduce((acc, lecture) => {
+        const rscVideo = lecture.resources.find((rsc) => rsc.type === 'video');
+
+        if (rscVideo) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //@ts-ignore
+          return acc + rscVideo.videoDuration;
+        }
+
+        return acc;
+      }, 0);
+    }
+
+    return 0;
+  }, [chapter]);
+
   return (
     <div className="w-full">
       <div className="mx-auto w-full px-2" ref={animationParent}>
@@ -42,8 +76,13 @@ export default function CourseContentCollapse({
                   />
                 </div>
                 <div className="flex text-base text-gray-400 dark:text-white/60 md:text-xl">
-                  <span>0/5</span>
-                  <span>| 30:33</span>
+                  <span>
+                    {numberLectureCompleted}/{chapter.lectures?.length}
+                  </span>
+                  <span>
+                    | {Math.trunc(totalVideoDuration / 60)}:
+                    {Math.trunc(totalVideoDuration % 60)}
+                  </span>
                 </div>
               </Disclosure.Button>
               <Disclosure.Panel>
@@ -86,12 +125,12 @@ export default function CourseContentCollapse({
                                   </h3>
 
                                   <If
-                                    condition={
+                                    condition={Boolean(
                                       progressByCourse.length > 0 &&
-                                      progressByCourse.find(
-                                        (elem) => elem?.id === lecture.id,
-                                      )
-                                    }
+                                        progressByCourse.find(
+                                          (elem) => elem?.id === lecture.id,
+                                        ),
+                                    )}
                                   >
                                     <Then>
                                       <span className="rounded-full bg-green-400 p-2">
