@@ -3,7 +3,11 @@ import { useOnClickOutside } from 'usehooks-ts';
 
 import { TrashIcon } from '@heroicons/react/24/solid';
 
-export default function RemoveButton() {
+interface RemoveButtonProps {
+  removeAction: () => void;
+}
+
+export default function RemoveButton({ removeAction }: RemoveButtonProps) {
   const ref = useRef<HTMLDivElement | null>(null);
 
   const [isOpenConfirm, setOpenConfirm] = useState(false);
@@ -29,7 +33,8 @@ export default function RemoveButton() {
           <div className="flex items-center justify-between space-x-4 px-4">
             <button
               onClick={() => {
-                console.warn('test');
+                removeAction();
+                setOpenConfirm(false);
               }}
               className="rounded-xl bg-rose-500 px-3 py-2 text-white"
             >
