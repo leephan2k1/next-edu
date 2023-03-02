@@ -18,6 +18,7 @@ interface EditorProps {
   contents?: string;
   handleCancel?: () => void;
   isLoadingSubmit?: boolean;
+  removeMessage?: string;
 }
 
 function Editor({
@@ -28,6 +29,7 @@ function Editor({
   onEditorChange,
   onSubmit,
   isLoadingSubmit,
+  removeMessage,
 }: EditorProps) {
   const [editorState, setEditorState] = useAtom(quillEditorState);
   const [value, setValue] = useState<string>(contents || '');
@@ -87,7 +89,7 @@ function Editor({
           }}
           className="absolute-center h-[4rem] w-fit rounded-xl bg-white py-3 px-4 text-gray-600 shadow-lg"
         >
-          <span>Xoá</span>
+          <span>{removeMessage ? removeMessage : 'Xoá'}</span>
         </button>
         {onSubmit && (
           <button
