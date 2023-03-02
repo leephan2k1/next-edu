@@ -91,6 +91,10 @@ input[type='number'] {
     top: 0;
     position: sticky;
     background-color: #ffffff;
+    z-index: 100 !important;
+    .ql-picker-options {
+      z-index: 200 !important;
+    }
   }
 }
 
