@@ -25,6 +25,63 @@ export const courseRouter = router({
       return { message: 'success', courses };
     }),
 
+  findAnnouncements: publicProcedure
+    .input(z.object({ courseId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      const { courseId } = input;
+
+      const announcements = await ctx.prisma.announcement.findMany({
+        where: { courseId },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return announcements;
+    }),
+
+  deleteAnnouncement: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { id } = input;
+
+      const deletedAnnouncement = await ctx.prisma.announcement.delete({
+        where: { id },
+      });
+
+      return deletedAnnouncement;
+    }),
+
+  updateAnnouncement: protectedProcedure
+    .input(z.object({ id: z.string(), content: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { id, content } = input;
+
+      const updatedAnnouncement = await ctx.prisma.announcement.update({
+        where: { id },
+        data: { content },
+      });
+
+      return updatedAnnouncement;
+    }),
+
+  createAnnouncement: protectedProcedure
+    .input(z.object({ content: z.string(), id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { content, id } = input;
+
+      const courseWithAnnouncement = await ctx.prisma.course.update({
+        where: { id },
+        data: {
+          announcements: {
+            create: {
+              content,
+            },
+          },
+        },
+      });
+
+      return courseWithAnnouncement;
+    }),
+
   findWaitingListCourses: protectedProcedure
     .input(
       z.object({

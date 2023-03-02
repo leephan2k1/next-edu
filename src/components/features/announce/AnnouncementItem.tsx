@@ -1,9 +1,84 @@
-import { memo } from 'react';
+import { PencilIcon } from '@heroicons/react/24/outline';
+import { TrashIcon } from '@heroicons/react/24/solid';
+import type { Announcement } from '@prisma/client';
 import Image from 'next/image';
+import { memo, useEffect, useState, useRef } from 'react';
+import { trpc } from '~/utils/trpc';
+import Editor from '~/components/shared/Editor';
+import type QuillComponent from 'react-quill';
+import toast from 'react-hot-toast';
 
-const ex = `<div class="ud-text-with-links" data-purpose="safely-set-inner-html:announcement:content"><p>Hi Space Cadets,</p><p>I have had numerous discussions with AWS on the T3 micro instances not being marked as free tier eligible. AWS is taking the issue seriously and is working on it. In the meantime the Intro to AWS lab notes have been updated to show the t3 instance. The cost is 1 cent per hour outside of the free tier.</p><p>If you are billed for t3 micro instance time that should be under the free tier, you can lodge a free billing support ticket with AWS. Despite the small cost, I would strongly recommend all students to do this in order to help elevate the issue.</p><p>In the meantime, AWS has released another version of the "new console experience" this week. Most notably you can't list services by "A-Z" to make them easy to find. The "new console experience" was released 3 years ago and has been changing virtually every week since.</p><p>Hopefully I can give you all better news with the next announcement.</p><p>All the best,</p><p>Paul</p><p>BackSpace Academy</p></div>`;
+interface AnnouncementItemProps {
+  announcement: Announcement;
+  isOwner: boolean;
+  instructor: { name: string; image: string };
+  refetch?: () => void;
+}
 
-function AnnouncementItem() {
+function AnnouncementItem({
+  announcement,
+  instructor,
+  isOwner,
+  refetch,
+}: AnnouncementItemProps) {
+  const [openEditor, setOpenEditor] = useState(false);
+
+  const editorRef = useRef<QuillComponent | null>(null);
+
+  const {
+    mutate: deleteAnnouncement,
+    isSuccess: isDeleteAnnouncementSuccess,
+    isError: isDeleteAnnouncementError,
+  } = trpc.course.deleteAnnouncement.useMutation();
+
+  const {
+    mutate: updateAnnouncement,
+    isError: isUpdateAnnouncementError,
+    isSuccess: isUpdateAnnouncementSuccess,
+    isLoading: isUpdateAnnouncementLoading,
+  } = trpc.course.updateAnnouncement.useMutation();
+
+  useEffect(() => {
+    if (
+      (isDeleteAnnouncementSuccess || isUpdateAnnouncementSuccess) &&
+      refetch &&
+      typeof refetch === 'function'
+    ) {
+      refetch();
+      setOpenEditor(false);
+    }
+
+    if (isUpdateAnnouncementError || isDeleteAnnouncementError) {
+      toast.error('Oopps! Lỗi xảy ra, thử lại sau!');
+    }
+  }, [
+    isDeleteAnnouncementSuccess,
+    isUpdateAnnouncementSuccess,
+    isUpdateAnnouncementError,
+    isDeleteAnnouncementError,
+  ]);
+
+  const handleDeleteAnnouncement = () => {
+    const isConfirm = window.confirm('Đồng ý xoá thông báo?');
+
+    if (isConfirm) {
+      deleteAnnouncement({ id: announcement.id });
+    }
+  };
+
+  const handleUpdateAnnouncement = () => {
+    const payload = {
+      id: announcement.id,
+      content: editorRef.current?.value as string,
+    };
+
+    if (payload.content === announcement.content) {
+      setOpenEditor(false);
+    } else {
+      updateAnnouncement(payload);
+    }
+  };
+
   return (
     <li className="flex flex-col">
       <div className="flex space-x-4">
@@ -12,24 +87,63 @@ function AnnouncementItem() {
             fill
             className="absolute rounded-full bg-cover bg-center bg-no-repeat"
             alt="user-avatar"
-            src="https://placeimg.com/192/192/people"
+            src={instructor.image}
           />
         </figure>
 
-        <div className="flex flex-1 flex-col justify-center space-y-2">
-          <h2 className="font-medium md:text-3xl">Lorem ipsum dolor sit</h2>
-          <div className="flex space-x-2 text-xl">
-            <span>Đã đăng thông báo · </span>
+        <div className="flex flex-1 justify-between">
+          <div className="flex flex-col space-y-2">
+            <h2 className="font-medium md:text-3xl">{instructor.name}</h2>
+            <div className="flex space-x-2 text-xl">
+              <span>Đã đăng thông báo · </span>
 
-            <span>1 tháng trước</span>
+              <span>
+                {new Date(announcement.createdAt).toLocaleDateString('vi-VI')}
+              </span>
+            </div>
           </div>
+
+          {isOwner && (
+            <div className="flex space-x-2">
+              <button
+                onClick={() => {
+                  setOpenEditor(true);
+                }}
+                className="smooth-effect p-2 hover:text-green-500"
+              >
+                <PencilIcon className="h-6 w-6" />
+              </button>
+              <button
+                onClick={handleDeleteAnnouncement}
+                className="smooth-effect p-2 hover:text-rose-500"
+              >
+                <TrashIcon className="h-6 w-6" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      <article
-        className={`prose-lg prose mt-4 min-h-fit min-w-full overflow-x-hidden rounded-xl bg-white p-4 text-gray-600 prose-img:rounded-2xl dark:bg-dark-background dark:text-white/80  lg:prose-xl`}
-        dangerouslySetInnerHTML={{ __html: ex }}
-      ></article>
+      {openEditor ? (
+        <Editor
+          getInstance={(editor) => {
+            editorRef.current = editor;
+          }}
+          isLoadingSubmit={isUpdateAnnouncementLoading}
+          contents={announcement.content}
+          styles="mt-6"
+          removeMessage="Huỷ"
+          handleCancel={() => setOpenEditor(false)}
+          onSubmit={() => {
+            handleUpdateAnnouncement();
+          }}
+        />
+      ) : (
+        <article
+          className={`prose-lg prose mt-4 min-h-fit min-w-full overflow-x-hidden rounded-xl bg-white p-4 text-gray-600 prose-img:rounded-2xl dark:bg-dark-background dark:text-white/80  lg:prose-xl`}
+          dangerouslySetInnerHTML={{ __html: announcement.content }}
+        ></article>
+      )}
     </li>
   );
 }
