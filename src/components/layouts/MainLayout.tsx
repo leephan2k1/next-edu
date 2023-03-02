@@ -21,7 +21,9 @@ export default function MainLayout({
   children,
 }: MainLayoutProps) {
   return (
-    <div className={`${nunito.className} bg-light-background dark:bg-black`}>
+    <div
+      className={`${nunito.className} bg-light-background text-gray-600 dark:bg-black dark:text-white`}
+    >
       <Toaster toastOptions={{ duration: 3500 }} />
 
       {showHeader && <Header showCategories={showCategoriesHeader} />}
