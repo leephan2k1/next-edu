@@ -72,9 +72,21 @@ model Course {
   verified           VERIFIED_STATE      @default(PENDING)
   published          Boolean             @default(false)
   categoryId         String
+  announcements      Announcement[]
 
   @@index([userId])
   @@index([categoryId])
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Course    Course?  @relation(fields: [courseId], references: [id])
+  courseId  String?
+
+  @@index([courseId])
 }
 
 model Student {
@@ -86,7 +98,7 @@ model Student {
 
 model LearningProgress {
   id         String    @id @default(cuid())
-  courseSlug String    @unique
+  courseSlug String
   Lecture    Lecture[]
   Student    Student?  @relation(fields: [studentId], references: [id])
   studentId  String?
