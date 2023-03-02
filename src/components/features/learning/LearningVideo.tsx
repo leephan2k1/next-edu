@@ -35,9 +35,11 @@ function LearningVideo() {
         key={lectureCtx?.currentLecture.id}
         option={{
           ...playerOptions,
-          url: lectureCtx?.currentLecture.resources.find(
-            (rsc) => rsc.type === 'video',
-          ).url,
+          url: lectureCtx?.currentLecture
+            ? lectureCtx?.currentLecture?.resources.find(
+                (rsc) => rsc.type === 'video',
+              ).url
+            : '',
           title: lectureCtx?.currentLecture?.title,
         }}
         className="my-auto h-full w-full rounded-2xl"
