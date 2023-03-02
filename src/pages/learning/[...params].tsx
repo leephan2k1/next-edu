@@ -113,7 +113,10 @@ const LearningPage: NextPage = () => {
 
   return (
     <>
-      <LearningContextProvider allLecturesByChapters={allLecturesByChapters}>
+      <LearningContextProvider
+        course={course}
+        allLecturesByChapters={allLecturesByChapters}
+      >
         <ListNoteModal />
         <div className="flex min-h-screen flex-col text-gray-600 dark:text-white/60">
           {course && (

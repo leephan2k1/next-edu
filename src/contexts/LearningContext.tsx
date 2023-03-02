@@ -1,26 +1,29 @@
-import { createContext, useContext, useMemo } from 'react';
-
 import { useRouter } from 'next/router';
-import type { ReactNode } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import toast from 'react-hot-toast';
-import type { LectureType } from '~/types';
-import { PATHS } from '~/constants';
 import { useIsClient } from 'usehooks-ts';
+import { PATHS } from '~/constants';
+
+import type { ReactNode } from 'react';
+import type { LectureType, CourseType } from '~/types';
 
 interface LearningContextType {
   allLecturesByChapters: LectureType[];
   handleNavigateLecture: (direction: 'next' | 'prev') => void;
   currentLecture: LectureType | undefined;
+  course?: CourseType;
 }
 interface HsRouteContextProps {
   children: ReactNode;
   allLecturesByChapters: LectureType[];
+  course?: CourseType;
 }
 
 const LearningContext = createContext<LearningContextType | null>(null);
 
 export const LearningContextProvider = ({
   children,
+  course,
   allLecturesByChapters,
 }: HsRouteContextProps) => {
   const router = useRouter();
@@ -85,6 +88,7 @@ export const LearningContextProvider = ({
   return (
     <LearningContext.Provider
       value={{
+        course,
         currentLecture,
         handleNavigateLecture,
         allLecturesByChapters,
