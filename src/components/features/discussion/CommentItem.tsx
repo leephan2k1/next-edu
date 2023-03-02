@@ -39,7 +39,7 @@ function CommentItem() {
           </span>
         </div>
 
-        {openEditor && <DiscussStandalone />}
+        {openEditor && <DiscussStandalone inputType="comment" />}
       </div>
     </div>
   );
