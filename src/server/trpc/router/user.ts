@@ -37,6 +37,19 @@ export const userRouter = router({
       return noteByUser;
     }),
 
+  updateNote: protectedProcedure
+    .input(z.object({ content: z.string(), id: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { id, content } = input;
+
+      const note = await ctx.prisma.note.update({
+        where: { id },
+        data: { content },
+      });
+
+      return note;
+    }),
+
   deleteNote: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ input, ctx }) => {
