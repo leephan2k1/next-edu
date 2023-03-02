@@ -1,15 +1,38 @@
 import { useAtom } from 'jotai';
-import { Fragment, memo } from 'react';
+import { Fragment, memo, useState } from 'react';
 import { listNoteModalState } from '~/atoms/listNoteModal';
 import SelectButton from '~/components/buttons/Select';
+import { trpc } from '~/utils/trpc';
 
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
-
+import Loading from '~/components/buttons/Loading';
+import useLecture from '~/contexts/LearningContext';
 import NoteItem from './NoteItem';
 
+const selectedNoteByDateOptions = [
+  { label: 'Mới nhất', value: 'desc' },
+  { label: 'Cũ nhất', value: 'asc' },
+];
+
+const selectedNoteByTypeOptions = [
+  { label: 'Bài học hiện tại', value: 'currentLecture' },
+  { label: 'Chương hiện tại', value: 'currentChapter' },
+  { label: 'Tất cả chương', value: 'allLesson' },
+];
+
 function ListNoteModal() {
+  const [selectedNoteByDate, setSelectedNoteByDate] = useState(
+    selectedNoteByDateOptions[0],
+  );
+
+  const [selectedNoteByType, setSelectedNoteByType] = useState(
+    selectedNoteByTypeOptions[0],
+  );
+
+  const lectureCtx = useLecture();
+
   const [animationParent] = useAutoAnimate<HTMLDivElement>();
 
   const [isOpen, setIsOpen] = useAtom(listNoteModalState);
@@ -17,6 +40,32 @@ function ListNoteModal() {
   function closeModal() {
     setIsOpen(false);
   }
+
+  const {
+    data: notes,
+    isLoading,
+    refetch,
+  } = trpc.user.findNotes.useQuery(
+    {
+      // zod error???
+      sort: selectedNoteByDate?.value === 'asc' ? 'asc' : 'desc',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+      chapterId:
+        selectedNoteByType?.value === 'currentChapter'
+          ? lectureCtx?.currentLecture?.chapterId
+          : undefined,
+      lectureId:
+        selectedNoteByType?.value === 'currentLecture'
+          ? lectureCtx?.currentLecture?.id
+          : undefined,
+    },
+    { enabled: isOpen },
+  );
+
+  const refetchNotes = () => {
+    refetch();
+  };
 
   return (
     <>
@@ -61,30 +110,41 @@ function ListNoteModal() {
 
                   <div className="mt-4 flex items-center space-x-4 text-gray-500">
                     <SelectButton
-                      options={[
-                        { label: 'Chương hiện tại', value: 'currentLesson' },
-                        { label: 'Tất cả chương', value: 'allLesson' },
-                      ]}
+                      option={selectedNoteByType}
+                      setOption={setSelectedNoteByType}
+                      options={selectedNoteByTypeOptions}
                     />
                     <SelectButton
-                      options={[
-                        { label: 'Mới nhất', value: 'latest' },
-                        { label: 'Cũ nhất', value: 'oldest' },
-                      ]}
+                      option={selectedNoteByDate}
+                      setOption={setSelectedNoteByDate}
+                      options={selectedNoteByDateOptions}
                     />
                   </div>
 
-                  <div
-                    ref={animationParent}
-                    className="mt-6 max-h-full overflow-y-scroll pb-32"
-                  >
-                    <ul className="flex w-full flex-col space-y-4 ">
-                      <NoteItem />
-                      <NoteItem />
-                      <NoteItem />
-                      <NoteItem />
-                    </ul>
-                  </div>
+                  {isLoading ? (
+                    <div className="full-size absolute-center">
+                      <Loading />
+                    </div>
+                  ) : (
+                    <div
+                      ref={animationParent}
+                      className="mt-6 max-h-full overflow-y-scroll pb-32"
+                    >
+                      <ul className="flex w-full flex-col space-y-4">
+                        {notes &&
+                          notes.length > 0 &&
+                          notes.map((note) => {
+                            return (
+                              <NoteItem
+                                key={note.id}
+                                note={note}
+                                refetchNotes={refetchNotes}
+                              />
+                            );
+                          })}
+                      </ul>
+                    </div>
+                  )}
                 </Dialog.Panel>
               </Transition.Child>
             </div>
