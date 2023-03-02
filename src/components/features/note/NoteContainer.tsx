@@ -35,9 +35,11 @@ function NoteContainer() {
     };
 
     for (const key in payload) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      //@ts-ignore
-      if (!payload[key]) {
+      if (
+        payload[key] === '' ||
+        payload[key] === null ||
+        payload[key] === undefined
+      ) {
         toast.error('Oops! Có lỗi xảy ra, thử lại sau!');
         return;
       }
