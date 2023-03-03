@@ -98,7 +98,7 @@ model Student {
 }
 
 model LearningProgress {
-  id         String    @id @default(cuid())
+  id         String    @id
   courseSlug String
   Lecture    Lecture[]
   Student    Student?  @relation(fields: [studentId], references: [id])
