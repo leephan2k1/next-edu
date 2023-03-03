@@ -1,13 +1,17 @@
-import { BsStarFill } from 'react-icons/bs';
-import { courseSidebarInViewport } from '~/atoms/courseSidebarAtom';
 import { useAtomValue } from 'jotai';
-import type { CourseType } from '~/types';
-import { StarIcon } from '@heroicons/react/24/outline';
+import { useRouter } from 'next/router';
+import { BsStarFill } from 'react-icons/bs';
+import { Else, If, Then } from 'react-if';
+import { courseSidebarInViewport } from '~/atoms/courseSidebarAtom';
+import { PATHS } from '~/constants';
 import useCourse from '~/contexts/CourseContext';
-import Loading from '../buttons/Loading';
 import useIsEnrolled from '~/hooks/useIsEnrolled';
-import { If, Then, Else } from 'react-if';
 
+import { StarIcon } from '@heroicons/react/24/outline';
+
+import Loading from '../buttons/Loading';
+
+import type { CourseType } from '~/types';
 interface BuyOnlyProps {
   course?: CourseType;
   ratingValue: number;
@@ -17,9 +21,23 @@ export default function BuyOnly({ course, ratingValue }: BuyOnlyProps) {
   const sidebarInViewport = useAtomValue(courseSidebarInViewport);
   const courseCtx = useCourse();
 
+  const router = useRouter();
+
   const isEnrolled = useIsEnrolled({ course });
 
   const handleEnrollCourse = () => {
+    if (
+      isEnrolled &&
+      course?.chapters &&
+      course?.chapters.length > 0 &&
+      course?.chapters[0]?.lectures
+    ) {
+      router.push(
+        `/${PATHS.LEARNING}/${course?.slug}/${course?.chapters[0]?.lectures[0]?.id}`,
+      );
+      return;
+    }
+
     if (course?.slug) {
       courseCtx?.enrollCourse(course?.slug);
     }
