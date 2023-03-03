@@ -2,6 +2,55 @@ import { z } from 'zod';
 import { publicProcedure, router, protectedProcedure } from '../trpc';
 
 export const userRouter = router({
+  findWishlist: protectedProcedure.query(async ({ ctx }) => {
+    const userWithWishlist = await ctx.prisma.user.findUnique({
+      where: { id: ctx.session.user.id },
+      select: { wishlist: true },
+    });
+
+    return userWithWishlist?.wishlist;
+  }),
+
+  addWishCourse: protectedProcedure
+    .input(z.object({ courseId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { courseId } = input;
+
+      const userWithWishCourse = await ctx.prisma.wishlist.upsert({
+        where: { courseId },
+        update: {
+          user: {
+            connect: { id: ctx.session.user.id },
+          },
+        },
+        create: {
+          courseId,
+          user: {
+            connect: { id: ctx.session.user.id },
+          },
+        },
+      });
+
+      return userWithWishCourse;
+    }),
+
+  deleteWishCourse: protectedProcedure
+    .input(z.object({ wishlistId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { wishlistId } = input;
+
+      const userWithoutWishCourse = await ctx.prisma.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          wishlist: {
+            disconnect: { id: wishlistId },
+          },
+        },
+      });
+
+      return userWithoutWishCourse;
+    }),
+
   findUserInfo: publicProcedure
     .input(z.object({ email: z.string() }))
     .query(async ({ input, ctx }) => {
