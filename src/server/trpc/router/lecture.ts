@@ -8,21 +8,23 @@ export const lectureRouter = router({
         userId: z.string(),
         courseSlug: z.string(),
         lectureId: z.string(),
+        studentId: z.string(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { userId, courseSlug, lectureId } = input;
+      const { userId, courseSlug, lectureId, studentId } = input;
 
       const progress = await ctx.prisma.student.update({
         where: { userId },
         data: {
           progress: {
             upsert: {
-              where: { courseSlug },
+              where: { id: `${studentId}_${courseSlug}` },
               update: {
                 Lecture: { connect: [{ id: lectureId }] },
               },
               create: {
+                id: `${studentId}_${courseSlug}`,
                 courseSlug,
                 Lecture: { connect: [{ id: lectureId }] },
               },
