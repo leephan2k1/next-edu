@@ -53,10 +53,16 @@ function ModernCourseCard({
             </span>
 
             <span className="text-base font-bold md:text-lg lg:text-xl">
-              {new Intl.NumberFormat('en', { notation: 'compact' }).format(
-                course.coursePrice as number,
-              )}{' '}
-              vnđ
+              {course.coursePrice && course.coursePrice > 0 ? (
+                <>
+                  {new Intl.NumberFormat('en', { notation: 'compact' }).format(
+                    course.coursePrice as number,
+                  )}{' '}
+                  vnđ
+                </>
+              ) : (
+                'Miễn phí'
+              )}
             </span>
           </div>
 
