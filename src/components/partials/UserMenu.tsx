@@ -82,7 +82,7 @@ function UserMenu({ show, setShow }: UserMenuProps) {
           href={`/${PATHS.USER}/${PATHS.USER_PROFILE}`}
           className="smooth-effect flex cursor-pointer space-x-3 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
         >
-          <figure className="min-h-20 min-w-20 relative h-20 w-20 rounded-full">
+          <figure className="relative h-20 min-h-[5rem] w-20 min-w-[5rem] rounded-full">
             <Image
               fill
               className="absolute rounded-full bg-cover bg-center bg-no-repeat"
@@ -92,9 +92,9 @@ function UserMenu({ show, setShow }: UserMenuProps) {
               }
             />
           </figure>
-          <div className="flex flex-1 flex-col justify-center">
-            <h1 className="font-semibold">{auth?.user?.name}</h1>
-            <h2>{auth?.user?.email}</h2>
+          <div className="flex flex-1 flex-col justify-center overflow-hidden">
+            <h1 className="font-semibold line-clamp-1">{auth?.user?.name}</h1>
+            <h2 className="line-clamp-1">{auth?.user?.email}</h2>
           </div>
         </Link>
 
