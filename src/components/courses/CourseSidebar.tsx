@@ -1,33 +1,47 @@
 import { useSetAtom } from 'jotai';
 import Image from 'next/image';
-import { memo, useEffect, useRef, useMemo } from 'react';
+import { useRouter } from 'next/router';
+import { memo, useEffect, useMemo, useRef } from 'react';
 import { BiInfinite } from 'react-icons/bi';
+import { Else, If, Then } from 'react-if';
 import { useIntersectionObserver } from 'usehooks-ts';
 import { courseSidebarInViewport } from '~/atoms/courseSidebarAtom';
-import type { CourseType } from '~/types';
+import { PATHS } from '~/constants';
 import useCourse from '~/contexts/CourseContext';
+import useIsEnrolled from '~/hooks/useIsEnrolled';
+
 import {
   BookOpenIcon,
   FolderArrowDownIcon,
   HeartIcon,
   PlayCircleIcon,
 } from '@heroicons/react/24/outline';
-import Loading from '../buttons/Loading';
-import useIsEnrolled from '~/hooks/useIsEnrolled';
-import { If, Then, Else } from 'react-if';
-import { useRouter } from 'next/router';
-import { PATHS } from '~/constants';
+import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 
+import Loading from '../buttons/Loading';
+
+import type { Wishlist } from '@prisma/client';
+
+import type { CourseType } from '~/types';
 interface CourseSidebarProps {
   course?: CourseType;
   totalVideoDuration: number;
   totalLectures: number;
+
+  isLoading?: boolean;
+  handleAddWishCourse: () => void;
+  handleDeleteWishCourse: (wishlistId: string) => void;
+  wishlist: Wishlist[];
 }
 
 function CourseSidebar({
   course,
   totalVideoDuration,
   totalLectures,
+  wishlist,
+  handleAddWishCourse,
+  isLoading,
+  handleDeleteWishCourse,
 }: CourseSidebarProps) {
   const refBtn = useRef<HTMLButtonElement | null>(null);
   const setSidebarState = useSetAtom(courseSidebarInViewport);
@@ -41,6 +55,14 @@ function CourseSidebar({
   useEffect(() => {
     setSidebarState(!!entry?.isIntersecting);
   }, [entry?.isIntersecting]);
+
+  const wishlistItem = useMemo(() => {
+    if (course && wishlist) {
+      return wishlist.find((fvCourse) => fvCourse.courseId === course?.id);
+    }
+
+    return null;
+  }, [course, wishlist]);
 
   const totalDownloadableResource = useMemo(() => {
     if (course) {
@@ -69,7 +91,12 @@ function CourseSidebar({
   }, [course]);
 
   const handleEnrollCourse = () => {
-    if (isEnrolled) {
+    if (
+      isEnrolled &&
+      course?.chapters &&
+      course?.chapters.length > 0 &&
+      course?.chapters[0]?.lectures
+    ) {
       router.push(
         `/${PATHS.LEARNING}/${course?.slug}/${course?.chapters[0]?.lectures[0]?.id}`,
       );
@@ -123,9 +150,29 @@ function CourseSidebar({
         )}
         <button
           disabled={!course}
+          onClick={() => {
+            if (isLoading) return; //bc btn styles :b
+
+            if (!wishlistItem) {
+              handleAddWishCourse();
+            } else {
+              handleDeleteWishCourse(wishlistItem.id);
+            }
+          }}
           className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60"
         >
-          <HeartIcon className="h-8 w-8" />
+          <If condition={isLoading}>
+            <Then>
+              <Loading />
+            </Then>
+            <Else>
+              {!!wishlistItem ? (
+                <HeartIconSolid className="h-8 w-8 text-rose-500 animate-in zoom-in" />
+              ) : (
+                <HeartIcon className="h-8 w-8 animate-in zoom-in" />
+              )}
+            </Else>
+          </If>
         </button>
       </div>
 

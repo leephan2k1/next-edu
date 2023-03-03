@@ -1,6 +1,8 @@
+import { useSession } from 'next-auth/react';
 // import RelatedCourses from '~/components/courses/RelatedCourses';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useIsClient } from 'usehooks-ts';
 import CourseAchievement from '~/components/courses/CourseAchievement';
 import CourseBody from '~/components/courses/CourseBody';
@@ -20,6 +22,7 @@ import { trpc } from '~/utils/trpc';
 
 import type { CourseType } from '~/types';
 import type { GetServerSideProps, NextPage } from 'next';
+
 interface CoursePageProps {
   courseHasPassword?: boolean;
 }
@@ -30,6 +33,8 @@ const CoursePage: NextPage = ({ courseHasPassword }: CoursePageProps) => {
   const prevRoute = usePreviousRoute();
   const isClient = useIsClient();
 
+  const { status } = useSession();
+
   const [isUnlocked, setIsUnlocked] = useState(!courseHasPassword);
 
   const { data: course, refetch } = trpc.course.findCourseBySlug.useQuery(
@@ -37,11 +42,62 @@ const CoursePage: NextPage = ({ courseHasPassword }: CoursePageProps) => {
     { enabled: !!router.query.slug && isUnlocked },
   );
 
+  const { data: wishList, refetch: refetchWishlist } =
+    trpc.user.findWishlist.useQuery(undefined, {
+      enabled: status === 'authenticated' && isUnlocked,
+    });
+
+  const { mutate: addWishCourse, status: addWishCourseStatus } =
+    trpc.user.addWishCourse.useMutation();
+
+  const { mutate: deleteWishCourse, status: deleteWishCourseStatus } =
+    trpc.user.deleteWishCourse.useMutation();
+
+  useEffect(() => {
+    if (deleteWishCourseStatus === 'success') {
+      toast.success('Đã xoá khỏi danh sách yêu thích');
+      return;
+    }
+  }, [deleteWishCourseStatus]);
+
+  useEffect(() => {
+    if (addWishCourseStatus === 'success') {
+      toast.success('Đã thêm vào danh sách yêu thích');
+      return;
+    }
+  }, [addWishCourseStatus]);
+
+  useEffect(() => {
+    if (
+      addWishCourseStatus === 'success' ||
+      deleteWishCourseStatus === 'success'
+    ) {
+      refetchWishlist();
+    }
+
+    if (addWishCourseStatus === 'error' || deleteWishCourseStatus === 'error') {
+      toast.error('Có lỗi xảy ra, thử lại sau!');
+    }
+  }, [addWishCourseStatus, deleteWishCourseStatus]);
+
   useEffect(() => {
     if (courseCtx?.enrollStatus === 'success') {
       refetch();
     }
   }, [courseCtx?.enrollStatus]);
+
+  const handleAddWishCourse = () => {
+    if (!course || !course?.id) {
+      toast.error('Oops! Có lỗi xảy ra, thử lại sau!');
+      return;
+    }
+
+    addWishCourse({ courseId: course.id });
+  };
+
+  const handleDeleteWishCourse = (wishlistId: string) => {
+    deleteWishCourse({ wishlistId });
+  };
 
   const ratingValue = useMemo(() => {
     if (!course) return 0;
@@ -113,8 +169,25 @@ const CoursePage: NextPage = ({ courseHasPassword }: CoursePageProps) => {
 
   return (
     <div className="min-h-screen">
-      <CourseHeader course={course as CourseType} ratingValue={ratingValue}>
+      <CourseHeader
+        wishlist={wishList || []}
+        isLoading={
+          addWishCourseStatus === 'loading' ||
+          deleteWishCourseStatus === 'loading'
+        }
+        handleDeleteWishCourse={handleDeleteWishCourse}
+        handleAddWishCourse={handleAddWishCourse}
+        course={course as CourseType}
+        ratingValue={ratingValue}
+      >
         <CourseSidebar
+          handleDeleteWishCourse={handleDeleteWishCourse}
+          isLoading={
+            addWishCourseStatus === 'loading' ||
+            deleteWishCourseStatus === 'loading'
+          }
+          wishlist={wishList || []}
+          handleAddWishCourse={handleAddWishCourse}
           course={course as CourseType}
           totalVideoDuration={totalVideoDuration}
           totalLectures={totalLectures || 0}

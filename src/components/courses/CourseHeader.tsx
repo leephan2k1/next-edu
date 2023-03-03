@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import type { ReactNode } from 'react';
+import { useMemo } from 'react';
 import { BsStarFill } from 'react-icons/bs';
+import { Else, If, Then } from 'react-if';
 
 import {
   ClockIcon,
@@ -9,21 +10,43 @@ import {
   StarIcon,
   UserIcon,
 } from '@heroicons/react/24/outline';
+import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 
+import Loading from '../buttons/Loading';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
+import type { Wishlist } from '@prisma/client';
+import type { ReactNode } from 'react';
 import type { CourseType } from '~/types';
+
 interface CourseHeaderProps {
   course?: CourseType;
   ratingValue: number;
   children: ReactNode;
+
+  isLoading?: boolean;
+  handleAddWishCourse: () => void;
+  handleDeleteWishCourse: (wishlistId: string) => void;
+  wishlist: Wishlist[];
 }
 
 export default function CourseHeader({
   children,
   course,
   ratingValue,
+  wishlist,
+  handleAddWishCourse,
+  isLoading,
+  handleDeleteWishCourse,
 }: CourseHeaderProps) {
+  const wishlistItem = useMemo(() => {
+    if (course && wishlist) {
+      return wishlist.find((fvCourse) => fvCourse.courseId === course?.id);
+    }
+
+    return null;
+  }, [course, wishlist]);
+
   return (
     <div className="relative w-full bg-white py-10 text-gray-600 dark:bg-dark-background dark:text-white/60 lg:px-6 lg:py-6">
       <div className="mx-auto flex w-full flex-col items-center  md:max-w-[720px] lg:max-w-[1200px] lg:flex-row lg:items-start lg:justify-center">
@@ -146,8 +169,31 @@ export default function CourseHeader({
                 Thêm vào giỏ hàng
               </button>
             )}
-            <button className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60">
-              <HeartIcon className="h-8 w-8" />
+
+            <button
+              onClick={() => {
+                if (isLoading) return; //bc btn styles :b
+
+                if (!wishlistItem) {
+                  handleAddWishCourse();
+                } else {
+                  handleDeleteWishCourse(wishlistItem.id);
+                }
+              }}
+              className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60"
+            >
+              <If condition={isLoading}>
+                <Then>
+                  <Loading />
+                </Then>
+                <Else>
+                  {!!wishlistItem ? (
+                    <HeartIconSolid className="h-8 w-8 text-rose-500 animate-in zoom-in" />
+                  ) : (
+                    <HeartIcon className="h-8 w-8 animate-in zoom-in" />
+                  )}
+                </Else>
+              </If>
             </button>
           </div>
         </div>
