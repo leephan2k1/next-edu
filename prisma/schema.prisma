@@ -122,8 +122,15 @@ model User {
   Course        Course[]
   Discussion    Discussion[]
   notes         Note[]
+  wishlist      Wishlist[]
 
   @@index([bioId])
+}
+
+model Wishlist {
+  id       String @id @default(cuid())
+  courseId String @unique
+  user     User[]
 }
 
 model Note {
