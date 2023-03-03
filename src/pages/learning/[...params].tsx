@@ -61,25 +61,6 @@ const LearningPage: NextPage<LearningPageProps> = ({ studentsEnrolled }) => {
     { enabled: !!session?.user?.id },
   );
 
-  useEffect(() => {
-    const userId = session?.user?.id;
-    if (!userId) return;
-
-    if (router.query.params && router.query.params.length > 1) {
-      const courseSlug = router.query.params[0];
-      const lectureId = router.query.params[1];
-      if (!courseSlug || !lectureId) return;
-
-      updateProgress({ userId, courseSlug, lectureId });
-    }
-  }, [router.query, session?.user]);
-
-  useEffect(() => {
-    if (isSuccessUpdateProgress) {
-      refetchProgress();
-    }
-  }, [isSuccessUpdateProgress]);
-
   const progressByCourse = useMemo<Progress[]>(() => {
     if (router.query.params && router.query.params.length > 0) {
       const courseSlug = router.query.params[0];
@@ -106,6 +87,62 @@ const LearningPage: NextPage<LearningPageProps> = ({ studentsEnrolled }) => {
     return [];
   }, [course]);
 
+  const isValidLecture = useMemo(() => {
+    if (
+      router.query.params &&
+      router.query.params.length > 1 &&
+      router.query.params[1]
+    ) {
+      const lectureId = router.query.params[1];
+
+      const currentIdx = allLecturesByChapters.findIndex(
+        (lc) => lc.id === lectureId,
+      );
+
+      if (currentIdx && currentIdx !== 0) {
+        const prevLecture = allLecturesByChapters[currentIdx - 1];
+
+        if (
+          !studentProgress?.progress[0]?.Lecture.some(
+            (lc) => lc.id === prevLecture.id,
+          )
+        ) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+  }, [allLecturesByChapters, studentProgress, router.query]);
+
+  useEffect(() => {
+    const userId = session?.user?.id;
+    if (!userId) return;
+
+    if (
+      router.query.params &&
+      router.query.params.length > 1 &&
+      studentProgress?.id
+    ) {
+      const courseSlug = router.query.params[0];
+      const lectureId = router.query.params[1];
+      if (!courseSlug || !lectureId || !isValidLecture) return;
+
+      updateProgress({
+        userId,
+        courseSlug,
+        lectureId,
+        studentId: studentProgress?.id,
+      });
+    }
+  }, [router.query, session?.user, studentProgress, isValidLecture]);
+
+  useEffect(() => {
+    if (isSuccessUpdateProgress) {
+      refetchProgress();
+    }
+  }, [isSuccessUpdateProgress]);
+
   const handleNavigateLecture = useCallback(
     (lectureId: string) => {
       if (!course?.slug) return;
@@ -124,9 +161,13 @@ const LearningPage: NextPage<LearningPageProps> = ({ studentsEnrolled }) => {
     return null;
   }
 
+  // check user cheat on lecture path or not enroll yet
   if (
-    session?.user &&
-    !studentsEnrolled.some((student) => student.userId === session?.user?.id)
+    (session?.user &&
+      !studentsEnrolled.some(
+        (student) => student.userId === session?.user?.id,
+      )) ||
+    !isValidLecture
   ) {
     return <BlankLearningPage />;
   }
