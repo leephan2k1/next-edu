@@ -74,6 +74,20 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+#nprogress .bar {
+  background: #facc15 !important;
+  z-index: 1500 !important;
+}
+
+#nprogress .spinner-icon {
+  border-top-color: yellow !important;
+  border-left-color: yellow !important;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px red, 0 0 5px red !important;
+}
+
 //thanks to: https://9elements.github.io/fancy-border-radius
 .random-border-radius-var-1 {
   border-radius: 30% 70% 70% 30% / 38% 36% 64% 62%;
