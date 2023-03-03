@@ -40,7 +40,7 @@ function LearningVideo() {
                 (rsc) => rsc.type === 'video',
               ).url
             : '',
-          title: lectureCtx?.currentLecture?.title,
+          title: lectureCtx?.currentLecture?.title || '',
         }}
         className="my-auto h-full w-full rounded-2xl"
         getInstance={(art: unknown) => {
