@@ -42,6 +42,23 @@ export const userRouter = router({
       return userWithWishCourse;
     }),
 
+  deleteAllWishlist: protectedProcedure
+    .input(z.object({ wishlistIds: z.array(z.string()) }))
+    .mutation(async ({ ctx, input }) => {
+      const { wishlistIds } = input;
+
+      const deletedWishlist = await ctx.prisma.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          wishlist: {
+            disconnect: wishlistIds.map((id) => ({ id })),
+          },
+        },
+      });
+
+      return deletedWishlist;
+    }),
+
   deleteWishCourse: protectedProcedure
     .input(z.object({ wishlistId: z.string() }))
     .mutation(async ({ input, ctx }) => {
