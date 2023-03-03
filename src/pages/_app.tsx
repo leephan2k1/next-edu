@@ -9,6 +9,7 @@ import NProgress from 'nprogress';
 import MainLayout from '~/components/layouts/MainLayout';
 import { trpc } from '~/utils/trpc';
 import { CourseContextProvider } from '~/contexts/CourseContext';
+import { HistoryRouteContextProvider } from '~/contexts/HistoryRouteContext';
 
 import type { NextPage } from 'next';
 import type { Session } from 'next-auth';
@@ -43,7 +44,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <JotaiProvider>
         <ThemeProvider enableSystem={false} attribute="class">
           <CourseContextProvider>
-            {getLayout(<Component {...pageProps} />)}
+            <HistoryRouteContextProvider>
+              {getLayout(<Component {...pageProps} />)}
+            </HistoryRouteContextProvider>
           </CourseContextProvider>
         </ThemeProvider>
       </JotaiProvider>
