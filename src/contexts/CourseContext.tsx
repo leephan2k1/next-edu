@@ -1,13 +1,16 @@
 import type { Chapter, Course, Lecture, Resource } from '@prisma/client';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useToggle } from 'usehooks-ts';
-import { trpc } from '~/utils/trpc';
 import toast from 'react-hot-toast';
+import { useToggle } from 'usehooks-ts';
+import { PATHS } from '~/constants';
+import { trpc } from '~/utils/trpc';
 
 import type { ReactNode } from 'react';
 type ResourceType = Omit<Resource, 'id' | 'createdAt' | 'lectureId'>;
+
 interface LectureType extends Omit<Partial<Lecture>, 'id' | 'chapterId'> {
   resources: ResourceType[];
 }
@@ -40,9 +43,9 @@ interface CourseContextProps {
 const CourseContext = createContext<CourseContextValues | null>(null);
 
 export const CourseContextProvider = ({ children }: CourseContextProps) => {
-  const [course, setCourse] = useState<CourseType | null>(null);
-  // const prevValues = useRef<CourseType | null>(null);
+  const router = useRouter();
   const [dispatchUpdate, toggle] = useToggle();
+  const [course, setCourse] = useState<CourseType | null>(null);
 
   const { data: session } = useSession();
 
@@ -61,7 +64,10 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
   };
 
   const enrollCourse = (courseSlug: string) => {
-    if (!session?.user?.id) return;
+    if (!session?.user?.id) {
+      router.push(`/${PATHS.LOGIN}`);
+      return;
+    }
 
     enrollCourseMutate({ slug: courseSlug, userId: session?.user?.id });
   };
