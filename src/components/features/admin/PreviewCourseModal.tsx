@@ -89,7 +89,7 @@ export default function PreviewCourseModal({
                     <div className="flex w-full flex-col">
                       <h2 className="font-bold">Ảnh đại diện:</h2>
                       <div className="w-3/4 py-4">
-                        <figure className="aspect-w-16 aspect-h-9 relative overflow-hidden rounded-2xl bg-green-200">
+                        <figure className="aspect-w-16 aspect-h-9 relative overflow-hidden rounded-2xl">
                           <Image
                             alt="course-thumbnail"
                             fill

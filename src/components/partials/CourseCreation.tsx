@@ -114,7 +114,7 @@ export default function CourseCreation() {
           )}
         </div>
 
-        <div className="fixed bottom-10 right-10 flex items-center space-x-4">
+        <div className="fixed bottom-10 right-10 z-[350] flex items-center space-x-4">
           <button
             onClick={() => {
               courseCtx?.dispatch();
