@@ -73,6 +73,7 @@ model Course {
   published          Boolean             @default(false)
   categoryId         String
   announcements      Announcement[]
+  Wishlist           Wishlist[]
 
   @@index([userId])
   @@index([categoryId])
@@ -129,8 +130,11 @@ model User {
 
 model Wishlist {
   id       String @id @default(cuid())
-  courseId String @unique
+  course   Course @relation(fields: [courseId], references: [id])
   user     User[]
+  courseId String @unique
+
+  @@index([courseId])
 }
 
 model Note {
