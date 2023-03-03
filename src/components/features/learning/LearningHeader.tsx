@@ -4,23 +4,22 @@ import { courseContentBarState } from '~/atoms/courseContentBarState';
 
 import { DocumentMinusIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, ChevronLeftIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 import { listNoteModalState } from '~/atoms/listNoteModal';
+import { PATHS } from '~/constants';
 import Logo from '../../partials/Logo';
-import usePreviousRoute from '~/contexts/HistoryRouteContext';
-import { useRouter } from 'next/router';
 
 interface LearningHeaderProps {
   courseName: string;
+  courseSlug: string;
   learningPercentage: number;
 }
 
 export default function LearningHeader({
   courseName,
+  courseSlug,
   learningPercentage,
 }: LearningHeaderProps) {
-  const prevRoute = usePreviousRoute();
-  const router = useRouter();
-
   const tooltip = useTooltipState();
   const setListNodeOpen = useSetAtom(listNoteModalState);
   const setCourseContentsBarOpen = useSetAtom(courseContentBarState);
@@ -29,11 +28,12 @@ export default function LearningHeader({
     <header className="w-full bg-white p-4 dark:bg-dark-background">
       <nav className="mx-auto flex w-full justify-between md:max-w-[720px] lg:max-w-[1200px]">
         <div className="flex items-center space-x-4">
-          <button
-            onClick={() => router.push(prevRoute?.url || '/')}
-            className="btn-circle"
-          >
-            <ChevronLeftIcon className="h-6 w-6 md:h-8 md:w-8" />
+          <button className="btn-circle">
+            <Link
+              href={`${courseSlug ? `/${PATHS.COURSE}/${courseSlug}` : '/'}  `}
+            >
+              <ChevronLeftIcon className="h-6 w-6 md:h-8 md:w-8" />
+            </Link>
           </button>
 
           <Logo customStyles="md:block hidden" />

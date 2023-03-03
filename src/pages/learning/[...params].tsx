@@ -201,6 +201,7 @@ const LearningPage: NextPage<LearningPageProps> = ({ studentsEnrolled }) => {
 
               <LearningHeader
                 courseName={course?.name}
+                courseSlug={course?.slug}
                 learningPercentage={Math.trunc(
                   Number(
                     progressByCourse.length / allLecturesByChapters.length,
