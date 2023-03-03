@@ -2,14 +2,22 @@ import { z } from 'zod';
 import { publicProcedure, router, protectedProcedure } from '../trpc';
 
 export const userRouter = router({
-  findWishlist: protectedProcedure.query(async ({ ctx }) => {
-    const userWithWishlist = await ctx.prisma.user.findUnique({
-      where: { id: ctx.session.user.id },
-      select: { wishlist: true },
-    });
+  findWishlist: protectedProcedure
+    .input(z.object({ includeCourse: z.boolean().optional() }))
+    .query(async ({ input, ctx }) => {
+      const { includeCourse } = input;
 
-    return userWithWishlist?.wishlist;
-  }),
+      const userWithWishlist = await ctx.prisma.user.findUnique({
+        where: { id: ctx.session.user.id },
+        select: {
+          wishlist: {
+            include: { course: !!includeCourse },
+          },
+        },
+      });
+
+      return userWithWishlist?.wishlist;
+    }),
 
   addWishCourse: protectedProcedure
     .input(z.object({ courseId: z.string() }))

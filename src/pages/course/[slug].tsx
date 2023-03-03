@@ -48,9 +48,12 @@ const CoursePage: NextPage = ({
   );
 
   const { data: wishList, refetch: refetchWishlist } =
-    trpc.user.findWishlist.useQuery(undefined, {
-      enabled: status === 'authenticated' && isUnlocked,
-    });
+    trpc.user.findWishlist.useQuery(
+      { includeCourse: false },
+      {
+        enabled: status === 'authenticated' && isUnlocked,
+      },
+    );
 
   const { mutate: addWishCourse, status: addWishCourseStatus } =
     trpc.user.addWishCourse.useMutation();
