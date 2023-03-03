@@ -12,11 +12,17 @@ import MainLayout from '~/components/layouts/MainLayout';
 import { PATHS } from '~/constants';
 import { trpc } from '~/utils/trpc';
 import { LearningContextProvider } from '~/contexts/LearningContext';
+import { prisma } from '~/server/db/client';
+import BlankLearningPage from '~/components/shared/BlankLearningPage';
 
 import type { ReactNode } from 'react';
 import type { CourseType, Progress } from '~/types';
 
-const LearningPage: NextPage = () => {
+interface LearningPageProps {
+  studentsEnrolled: { id: string; userId: string }[];
+}
+
+const LearningPage: NextPage<LearningPageProps> = ({ studentsEnrolled }) => {
   const router = useRouter();
   const isClient = useIsClient();
   const { data: session } = useSession();
@@ -29,9 +35,16 @@ const LearningPage: NextPage = () => {
     return '';
   }, [router.query]);
 
-  const { data: course, isSuccess } = trpc.course.findCourseBySlug.useQuery({
-    slug: courseSlug as string,
-  });
+  const { data: course, isSuccess } = trpc.course.findCourseBySlug.useQuery(
+    {
+      slug: courseSlug as string,
+    },
+    {
+      enabled: studentsEnrolled.some(
+        (student) => student.userId === session?.user?.id,
+      ),
+    },
+  );
 
   const { mutate: updateProgress, isSuccess: isSuccessUpdateProgress } =
     trpc.lecture.updateProgress.useMutation();
@@ -111,6 +124,13 @@ const LearningPage: NextPage = () => {
     return null;
   }
 
+  if (
+    session?.user &&
+    !studentsEnrolled.some((student) => student.userId === session?.user?.id)
+  ) {
+    return <BlankLearningPage />;
+  }
+
   return (
     <>
       <LearningContextProvider
@@ -154,6 +174,26 @@ const LearningPage: NextPage = () => {
       </LearningContextProvider>
     </>
   );
+};
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+// middleware check student enrolled
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const { params } = query;
+
+  if (!params || params.length === 0) return { notFound: true };
+
+  const courseSlug = params[0];
+
+  const courseWithStudents = await prisma.course.findUnique({
+    where: { slug: courseSlug },
+    select: { students: true },
+  });
+
+  return {
+    props: { studentsEnrolled: courseWithStudents?.students || [] },
+  };
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
