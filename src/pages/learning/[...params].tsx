@@ -46,8 +46,11 @@ const LearningPage: NextPage<LearningPageProps> = ({ studentsEnrolled }) => {
     },
   );
 
-  const { mutate: updateProgress, isSuccess: isSuccessUpdateProgress } =
-    trpc.lecture.updateProgress.useMutation();
+  const {
+    mutate: updateProgress,
+    isSuccess: isSuccessUpdateProgress,
+    isLoading: isLoadingUpdateProgress,
+  } = trpc.lecture.updateProgress.useMutation();
 
   const {
     data: studentProgress,
@@ -167,7 +170,7 @@ const LearningPage: NextPage<LearningPageProps> = ({ studentsEnrolled }) => {
       !studentsEnrolled.some(
         (student) => student.userId === session?.user?.id,
       )) ||
-    !isValidLecture
+    (!isValidLecture && (!isLoadingProgress || !isLoadingUpdateProgress))
   ) {
     return <BlankLearningPage />;
   }
