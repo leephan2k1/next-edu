@@ -19,15 +19,20 @@ import useCourse from '~/contexts/CourseContext';
 import usePreviousRoute from '~/contexts/HistoryRouteContext';
 import { prisma } from '~/server/db/client';
 import { trpc } from '~/utils/trpc';
+import BlankCoursePage from '~/components/shared/BlankCoursePage';
 
 import type { CourseType } from '~/types';
 import type { GetServerSideProps, NextPage } from 'next';
 
 interface CoursePageProps {
   courseHasPassword?: boolean;
+  verified?: boolean;
 }
 
-const CoursePage: NextPage = ({ courseHasPassword }: CoursePageProps) => {
+const CoursePage: NextPage = ({
+  courseHasPassword,
+  verified,
+}: CoursePageProps) => {
   const courseCtx = useCourse();
   const router = useRouter();
   const prevRoute = usePreviousRoute();
@@ -39,7 +44,7 @@ const CoursePage: NextPage = ({ courseHasPassword }: CoursePageProps) => {
 
   const { data: course, refetch } = trpc.course.findCourseBySlug.useQuery(
     { slug: router.query.slug as string },
-    { enabled: !!router.query.slug && isUnlocked },
+    { enabled: !!router.query.slug && isUnlocked && verified },
   );
 
   const { data: wishList, refetch: refetchWishlist } =
@@ -153,6 +158,10 @@ const CoursePage: NextPage = ({ courseHasPassword }: CoursePageProps) => {
     }
   }, [course]);
 
+  if (!verified) {
+    return <BlankCoursePage />;
+  }
+
   if (
     course &&
     course?.verified !== 'APPROVED' &&
@@ -237,13 +246,14 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
   const course = await prisma?.course.findUnique({
     where: { slug: slug as string },
-    select: { password: true },
+    select: { password: true, verified: true },
   });
 
   const courseHasPassword = course?.password !== null;
+  const verified = course?.verified === 'APPROVED';
 
   return {
-    props: { courseHasPassword },
+    props: { courseHasPassword, verified },
   };
 };
 
