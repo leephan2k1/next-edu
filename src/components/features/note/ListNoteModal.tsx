@@ -7,6 +7,7 @@ import { trpc } from '~/utils/trpc';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/solid';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import Loading from '~/components/buttons/Loading';
 import useLecture from '~/contexts/LearningContext';
 import NoteItem from './NoteItem';
@@ -96,9 +97,12 @@ function ListNoteModal() {
               >
                 <Dialog.Panel className="h-[75vh] w-[35rem] transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-dark-background md:w-[65rem] lg:h-[90vh]">
                   <Dialog.Title as="div" className="flex justify-between">
-                    <h1 className="text-2xl font-medium leading-6 md:text-3xl">
-                      Ghi chú của tôi
-                    </h1>
+                    <div className="flex w-full space-x-4">
+                      <PencilSquareIcon className="h-8 w-8" />
+                      <h1 className="text-2xl font-medium leading-6 md:text-3xl">
+                        Ghi chú của tôi
+                      </h1>
+                    </div>
 
                     <button
                       onClick={() => setIsOpen(false)}
