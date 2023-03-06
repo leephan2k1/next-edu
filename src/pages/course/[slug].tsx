@@ -107,6 +107,10 @@ const CoursePage: NextPage = ({
     deleteWishCourse({ wishlistId });
   };
 
+  const refetchCourse = () => {
+    refetch();
+  };
+
   const ratingValue = useMemo(() => {
     if (!course && !course?.reviews) return 0;
 
@@ -228,9 +232,12 @@ const CoursePage: NextPage = ({
             <CourseDescription description={course.detailDescription || ''} />
           </CourseBody>
 
-          <CourseFooter course={course as CourseType} />
+          <CourseFooter
+            course={course as CourseType}
+            refetchCourse={refetchCourse}
+          />
 
-          <CommentModal />
+          <CommentModal courseId={course?.id} />
 
           <BuyOnly course={course as CourseType} ratingValue={ratingValue} />
         </>

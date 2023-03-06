@@ -7,11 +7,11 @@ import { useSession } from 'next-auth/react';
 
 interface CourseFooterProps {
   course?: CourseType;
+  refetchCourse: () => void;
 }
 
-function CourseFooter({ course }: CourseFooterProps) {
+function CourseFooter({ course, refetchCourse }: CourseFooterProps) {
   const { data: session } = useSession();
-  console.log('course:: ', course);
 
   return (
     <div className="my-16 w-full text-gray-600 dark:text-white/80">
@@ -29,7 +29,9 @@ function CourseFooter({ course }: CourseFooterProps) {
         {course &&
           course?.students.some(
             (student) => student.userId === session?.user?.id,
-          ) && <CourseRating courseId={course?.id} />}
+          ) && (
+            <CourseRating courseId={course?.id} refetchCourse={refetchCourse} />
+          )}
       </div>
     </div>
   );

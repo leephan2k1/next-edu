@@ -7,9 +7,13 @@ import Loading from '../buttons/Loading';
 
 interface CourseRatingProps {
   courseId?: string;
+  refetchCourse: () => void;
 }
 
-export default function CourseRating({ courseId }: CourseRatingProps) {
+export default function CourseRating({
+  courseId,
+  refetchCourse,
+}: CourseRatingProps) {
   const { data: session } = useSession();
   const [value, setValue] = useState('');
   const [ratings, setRating] = useState<{ rating: number; checked: boolean }[]>(
@@ -54,6 +58,7 @@ export default function CourseRating({ courseId }: CourseRatingProps) {
   useEffect(() => {
     if (status === 'success') {
       toast.success('Đánh giá thành công!');
+      refetchCourse();
       setValue('');
     }
 
