@@ -226,9 +226,7 @@ export const courseRouter = router({
           },
           reviews: true,
           students: true,
-          instructor: {
-            include: { bio: true },
-          },
+          instructor: true,
           category: true,
         },
       });

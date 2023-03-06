@@ -2,6 +2,22 @@ import { z } from 'zod';
 import { publicProcedure, router, protectedProcedure } from '../trpc';
 
 export const userRouter = router({
+  findInstructor: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { userId } = input;
+
+      const instructor = await ctx.prisma?.user.findUnique({
+        where: { id: userId },
+        include: {
+          bio: { include: { socialContacts: true } },
+          Course: { select: { students: true, reviews: true } },
+        },
+      });
+
+      return instructor;
+    }),
+
   updateBio: protectedProcedure
     .input(
       z.object({

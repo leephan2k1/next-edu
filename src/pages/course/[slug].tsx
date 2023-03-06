@@ -230,7 +230,7 @@ const CoursePage: NextPage = ({
             <CourseDescription description={course.detailDescription || ''} />
           </CourseBody>
 
-          <CourseFooter />
+          <CourseFooter course={course as CourseType} />
 
           <CommentModal />
 
