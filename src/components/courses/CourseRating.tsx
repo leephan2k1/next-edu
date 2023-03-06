@@ -1,13 +1,17 @@
-import { useState, useEffect } from 'react';
-import DiscussStandalone from '../features/discussion/DiscussStandalone';
-import { trpc } from '~/utils/trpc';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { useEffect, useState, useRef } from 'react';
 import toast from 'react-hot-toast';
+import { trpc } from '~/utils/trpc';
+import Loading from '../buttons/Loading';
 
 interface CourseRatingProps {
   courseId?: string;
 }
 
 export default function CourseRating({ courseId }: CourseRatingProps) {
+  const { data: session } = useSession();
+  const [value, setValue] = useState('');
   const [ratings, setRating] = useState<{ rating: number; checked: boolean }[]>(
     [
       { rating: 1, checked: false },
@@ -18,11 +22,20 @@ export default function CourseRating({ courseId }: CourseRatingProps) {
     ],
   );
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   const { mutate, status } = trpc.user.addRating.useMutation();
 
   const handleSubmit = (content: string) => {
-    if (content.replace(/<\/?[^>]+(>|$)/g, '').length < 3) {
+    console.log('content:: ', content);
+
+    if (content.trim().length < 3) {
       toast.error('Cần ít nhất 3 ký tự');
+      return;
+    }
+
+    if (content.trim().length > 150) {
+      toast.error('Giới hạn 150 ký tự');
       return;
     }
 
@@ -32,7 +45,7 @@ export default function CourseRating({ courseId }: CourseRatingProps) {
     }
 
     mutate({
-      content,
+      content: content.trim(),
       courseId,
       rating: ratings.find((rt) => rt.checked)?.rating || 5,
     });
@@ -41,6 +54,7 @@ export default function CourseRating({ courseId }: CourseRatingProps) {
   useEffect(() => {
     if (status === 'success') {
       toast.success('Đánh giá thành công!');
+      setValue('');
     }
 
     if (status === 'error') {
@@ -88,11 +102,36 @@ export default function CourseRating({ courseId }: CourseRatingProps) {
         </div>
       </div>
 
-      <DiscussStandalone
-        inputType="comment"
-        customSubmit={handleSubmit}
-        customStatus={status}
-      />
+      <div className="flex space-x-4">
+        <figure className="relative h-[6rem] min-h-[6rem] w-[6rem] min-w-[6rem] overflow-hidden rounded-full">
+          <Image
+            src={session?.user?.image || ''}
+            alt="user-avatar"
+            fill
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          />
+        </figure>
+
+        <input
+          value={value}
+          onChange={(e) => setValue(e.currentTarget.value)}
+          ref={inputRef}
+          type="text"
+          className="flex-1 rounded-xl px-4"
+        />
+      </div>
+
+      <div className="mt-4 flex w-full justify-end">
+        <button
+          disabled={status === 'loading'}
+          onClick={() => {
+            handleSubmit(value);
+          }}
+          className="absolute-center min-h-[3.9rem] w-fit min-w-[8.4rem] rounded-xl bg-yellow-200 px-4 py-3 text-gray-600"
+        >
+          {status === 'loading' ? <Loading /> : 'Đánh giá'}
+        </button>
+      </div>
     </div>
   );
 }
