@@ -106,8 +106,9 @@ const LearningPage: NextPage<LearningPageProps> = ({ studentsEnrolled }) => {
         const prevLecture = allLecturesByChapters[currentIdx - 1];
 
         if (
+          prevLecture &&
           !studentProgress?.progress[0]?.Lecture.some(
-            (lc) => lc.id === prevLecture.id,
+            (lc) => lc.id === prevLecture?.id,
           )
         ) {
           return false;
