@@ -2,6 +2,29 @@ import { z } from 'zod';
 import { publicProcedure, router, protectedProcedure } from '../trpc';
 
 export const userRouter = router({
+  addRating: protectedProcedure
+    .input(
+      z.object({
+        content: z.string(),
+        rating: z.number(),
+        courseId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { content, rating, courseId } = input;
+
+      const review = await ctx.prisma.review.create({
+        data: {
+          content,
+          rating,
+          author: { connect: { id: ctx.session.user.id } },
+          Course: { connect: { id: courseId } },
+        },
+      });
+
+      return review;
+    }),
+
   findInstructor: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {

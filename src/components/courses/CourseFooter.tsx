@@ -2,12 +2,17 @@ import { memo } from 'react';
 import type { CourseType } from '~/types';
 import CourseComments from './CourseComments';
 import Instructor from './Instructor';
+import CourseRating from './CourseRating';
+import { useSession } from 'next-auth/react';
 
 interface CourseFooterProps {
   course?: CourseType;
 }
 
 function CourseFooter({ course }: CourseFooterProps) {
+  const { data: session } = useSession();
+  console.log('course:: ', course);
+
   return (
     <div className="my-16 w-full text-gray-600 dark:text-white/80">
       <div className="mx-auto flex w-full flex-col space-y-14 px-4 md:max-w-[720px] lg:max-w-[1200px]">
@@ -20,6 +25,11 @@ function CourseFooter({ course }: CourseFooterProps) {
         </section>
 
         <CourseComments />
+
+        {course &&
+          course?.students.some(
+            (student) => student.userId === session?.user?.id,
+          ) && <CourseRating courseId={course?.id} />}
       </div>
     </div>
   );
