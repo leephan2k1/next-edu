@@ -111,21 +111,18 @@ model User {
   id            String       @id @default(cuid())
   name          String?
   email         String?      @unique
-  bio           Bio?         @relation(fields: [bioId], references: [id])
+  bio           Bio?
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   role          Role         @default(STUDENT)
-  bioId         String?
   Review        Review[]
   courseId      String?
   Course        Course[]
   Discussion    Discussion[]
   notes         Note[]
   wishlist      Wishlist[]
-
-  @@index([bioId])
 }
 
 model Wishlist {
@@ -289,18 +286,19 @@ model Session {
 model Bio {
   id             String          @id @default(cuid())
   specialist     String
-  bioDescription String
+  bioDescription String          @db.Text
   socialContacts SocialContact[]
-  User           User[]
+  User           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
+  userId         String          @unique
 }
 
 model SocialContact {
   id    String @id @default(cuid())
   title String
   url   String
-  Bio   Bio    @relation(fields: [bioId], references: [id])
+  Bio   Bio    @relation(fields: [bioId], references: [id], onDelete: Cascade)
   bioId String
 
   @@index([bioId])
