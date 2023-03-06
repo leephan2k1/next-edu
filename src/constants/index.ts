@@ -23,12 +23,7 @@ export const UPLOADER_PB_KEY = process.env.NEXT_PUBLIC_UPLOADER_KEY as string;
 // Initialize once (at the start of your app).
 export const uploader = Uploader({ apiKey: UPLOADER_PB_KEY });
 
-export const LEVELS_LABEL = [
-  'Sơ cấp',
-  'Trung cấp',
-  'Chuyên gia',
-  'Tất cả đối tượng',
-];
+export const LEVELS_LABEL = ['Sơ cấp', 'Trung cấp', 'Chuyên gia', 'Tất cả'];
 
 export const MAPPING_PUBLISH_MODE_LANGUAGE = {
   'Công khai': 'PUBLIC',
