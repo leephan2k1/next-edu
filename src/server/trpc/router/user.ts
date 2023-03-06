@@ -2,6 +2,51 @@ import { z } from 'zod';
 import { publicProcedure, router, protectedProcedure } from '../trpc';
 
 export const userRouter = router({
+  updateBio: protectedProcedure
+    .input(
+      z.object({
+        specialist: z.string(),
+        bioDescription: z.string(),
+        socialContacts: z
+          .array(z.object({ title: z.string(), url: z.string() }))
+          .optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { specialist, bioDescription, socialContacts } = input;
+
+      try {
+        //clear old bio & social contacts:
+        await ctx.prisma.bio.delete({ where: { userId: ctx.session.user.id } });
+      } catch (error) {}
+
+      const userWithBio = await ctx.prisma.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          bio: {
+            create: {
+              specialist,
+              bioDescription,
+              socialContacts: {
+                create: socialContacts && socialContacts?.map((elem) => elem),
+              },
+            },
+          },
+        },
+      });
+
+      return userWithBio;
+    }),
+
+  findBio: protectedProcedure.query(async ({ ctx }) => {
+    const userWithBio = await ctx.prisma.user.findUnique({
+      where: { id: ctx.session.user.id },
+      include: { bio: { include: { socialContacts: true } } },
+    });
+
+    return userWithBio;
+  }),
+
   findWishlist: protectedProcedure
     .input(z.object({ includeCourse: z.boolean().optional() }))
     .query(async ({ input, ctx }) => {
