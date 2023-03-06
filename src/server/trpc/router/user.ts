@@ -25,6 +25,18 @@ export const userRouter = router({
       return review;
     }),
 
+  deleteRating: protectedProcedure
+    .input(z.object({ ratingId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { ratingId } = input;
+
+      const deletedRating = await ctx.prisma.review.delete({
+        where: { id: ratingId },
+      });
+
+      return deletedRating;
+    }),
+
   findInstructor: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {

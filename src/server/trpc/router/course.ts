@@ -3,6 +3,20 @@ import { router, protectedProcedure, publicProcedure } from '../trpc';
 import exclude from '~/server/helper/excludeFields';
 
 export const courseRouter = router({
+  findAllReviews: publicProcedure
+    .input(z.object({ courseId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { courseId } = input;
+
+      const reviews = await ctx.prisma.review.findMany({
+        where: { courseId },
+        include: { author: true },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return reviews;
+    }),
+
   checkCoursePassword: publicProcedure
     .input(z.object({ password: z.string(), courseSlug: z.string() }))
     .mutation(async ({ input, ctx }) => {
