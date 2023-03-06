@@ -24,7 +24,7 @@ function CourseFooter({ course }: CourseFooterProps) {
           <Instructor instructorId={course?.instructor.id || ''} />
         </section>
 
-        <CourseComments />
+        <CourseComments reviews={course?.reviews} />
 
         {course &&
           course?.students.some(

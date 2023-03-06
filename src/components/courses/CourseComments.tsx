@@ -2,8 +2,13 @@ import { memo } from 'react';
 import TestimonialCard from '../shared/TestimonialCard';
 import { useSetAtom } from 'jotai';
 import { commentModalState } from '~/atoms/commentModal';
+import type { Review } from '@prisma/client';
 
-function CourseComment() {
+interface CourseCommentProps {
+  reviews?: Review[];
+}
+
+function CourseComment({ reviews }: CourseCommentProps) {
   const setCommentModalState = useSetAtom(commentModalState);
 
   return (
@@ -12,11 +17,16 @@ function CourseComment() {
         Nhận xét của học viên
       </h1>
 
-      <div className="grid-col-1 grid grid-rows-2 gap-4 text-gray-600 md:grid-cols-2">
-        <TestimonialCard />
-        <TestimonialCard />
-        <TestimonialCard />
-        <TestimonialCard />
+      <div
+        className={`grid-col-1 grid ${
+          Number(reviews?.length) > 2 ? 'grid-rows-2' : 'grid-rows-1'
+        } gap-4 text-gray-600 md:grid-cols-2`}
+      >
+        {reviews &&
+          reviews.length > 0 &&
+          reviews.map((review) => {
+            return <TestimonialCard key={review.id} review={review} />;
+          })}
       </div>
 
       <button

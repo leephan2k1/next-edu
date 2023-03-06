@@ -224,7 +224,11 @@ export const courseRouter = router({
               },
             },
           },
-          reviews: true,
+          reviews: {
+            orderBy: { createdAt: 'desc' },
+            take: 4,
+            include: { author: true },
+          },
           students: true,
           instructor: true,
           category: true,

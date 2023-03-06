@@ -108,18 +108,16 @@ const CoursePage: NextPage = ({
   };
 
   const ratingValue = useMemo(() => {
-    if (!course) return 0;
+    if (!course && !course?.reviews) return 0;
 
-    return (
-      Math.floor(
-        course.reviews.reduce((point, review) => {
-          if (review.rating) {
-            return point + review.rating;
-          }
+    return Math.floor(
+      course.reviews.reduce((point, review) => {
+        if (review.rating) {
+          return point + review.rating;
+        }
 
-          return point + 0;
-        }, 0),
-      ) / (course.reviews.length > 0 ? course.reviews.length : 1)
+        return point + 0;
+      }, 0) / (course.reviews.length > 0 ? course.reviews.length : 1),
     );
   }, [course]);
 
