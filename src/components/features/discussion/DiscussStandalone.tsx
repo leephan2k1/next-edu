@@ -10,10 +10,17 @@ import { trpc } from '~/utils/trpc';
 
 interface DiscussStandaloneProps {
   inputType: 'announcement' | 'discuss' | 'comment';
+  customStatus?: string;
+  customSubmit?: (content: string) => void;
   refetch?: () => void;
 }
 
-function DiscussStandalone({ inputType, refetch }: DiscussStandaloneProps) {
+function DiscussStandalone({
+  inputType,
+  customStatus,
+  refetch,
+  customSubmit,
+}: DiscussStandaloneProps) {
   const editorRef = useRef<QuillComponent | null>(null);
 
   const { data: session } = useSession();
@@ -69,13 +76,24 @@ function DiscussStandalone({ inputType, refetch }: DiscussStandaloneProps) {
       </div>
 
       <Editor
-        key={String(isCreateAnnouncementSuccess)}
-        contents={isCreateAnnouncementSuccess ? '' : undefined}
-        isLoadingSubmit={isCreateAnnouncementLoading}
+        key={String(isCreateAnnouncementSuccess || customStatus)}
+        contents={
+          isCreateAnnouncementSuccess || customStatus === 'success'
+            ? ''
+            : undefined
+        }
+        isLoadingSubmit={
+          isCreateAnnouncementLoading || customStatus === 'loading'
+        }
         getInstance={(editor) => {
           editorRef.current = editor;
         }}
         onSubmit={() => {
+          if (customSubmit && typeof customSubmit === 'function') {
+            customSubmit(editorRef.current?.value as string);
+            return;
+          }
+
           handleSubmitContent();
         }}
       />
