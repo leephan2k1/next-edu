@@ -79,7 +79,7 @@ export default function PublicProfile({ user }: PublicProfileProps) {
 
         <div className="flex flex-col space-y-2">
           <h2 className="text-3xl font-bold text-gray-400">Khoá học</h2>
-          <ul className="grid w-full grid-cols-2 gap-4 space-x-4 md:grid-cols-3 lg:grid-cols-4">
+          <ul className="grid w-full grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {user?.Course &&
               user.Course.length > 0 &&
               user.Course.map((course) => {
