@@ -172,7 +172,7 @@ function ProfileForms() {
           <div className="flex flex-col space-y-4 md:w-4/5">
             <label className="text-3xl">Linkedin</label>
             <div className="flex items-center">
-              <span className="h-full">https://www.linkedin.com/</span>
+              <span className="h-full">https://www.linkedin.com/in/</span>
               <input
                 {...register('linkedin')}
                 className="w-full rounded-xl p-3 shadow focus:ring-1 focus:ring-white"
