@@ -14,8 +14,10 @@ function CourseComment({ reviews }: CourseCommentProps) {
   return (
     <section className="mx-auto w-full lg:w-[70%]">
       <h1 className="mb-6 text-2xl font-semibold md:text-3xl">
-        Nhận xét của học viên
+        Đánh giá của học viên
       </h1>
+
+      <p>Chưa có đánh giá nào!</p>
 
       <div
         className={`grid-col-1 grid ${
@@ -29,12 +31,14 @@ function CourseComment({ reviews }: CourseCommentProps) {
           })}
       </div>
 
-      <button
-        onClick={() => setCommentModalState(true)}
-        className="btn-follow-theme btn-lg btn mt-6"
-      >
-        Xem thêm
-      </button>
+      {reviews?.length !== 0 && (
+        <button
+          onClick={() => setCommentModalState(true)}
+          className="btn-follow-theme btn-lg btn mt-6"
+        >
+          Xem thêm
+        </button>
+      )}
     </section>
   );
 }
