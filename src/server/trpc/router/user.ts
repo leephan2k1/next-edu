@@ -2,6 +2,34 @@ import { z } from 'zod';
 import { publicProcedure, router, protectedProcedure } from '../trpc';
 
 export const userRouter = router({
+  addCOurseToCart: protectedProcedure
+    .input(z.object({ courseId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { courseId } = input;
+
+      const user = await ctx.prisma.user.update({
+        where: { id: ctx.session.user.id },
+        data: {
+          cart: {
+            create: {
+              course: { connect: { id: courseId } },
+            },
+          },
+        },
+      });
+
+      return user;
+    }),
+
+  findCartByUser: protectedProcedure.query(async ({ ctx }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: { id: ctx.session.user.id },
+      select: { cart: true },
+    });
+
+    return user;
+  }),
+
   addRating: protectedProcedure
     .input(
       z.object({

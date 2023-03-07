@@ -1,9 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { BsStarFill } from 'react-icons/bs';
 import { Else, If, Then } from 'react-if';
-
+import { PATHS } from '~/constants';
+import useCourse from '~/contexts/CourseContext';
+import useIsAddToCart from '~/hooks/useIsAddToCart';
 import {
   ClockIcon,
   HeartIcon,
@@ -39,6 +42,10 @@ export default function CourseHeader({
   isLoading,
   handleDeleteWishCourse,
 }: CourseHeaderProps) {
+  const courseCtx = useCourse();
+  const router = useRouter();
+  const isAddToCart = useIsAddToCart({ course });
+
   const wishlistItem = useMemo(() => {
     if (course && wishlist) {
       return wishlist.find((fvCourse) => fvCourse.courseId === course?.id);
@@ -46,6 +53,22 @@ export default function CourseHeader({
 
     return null;
   }, [course, wishlist]);
+
+  const handleAddCourseToCart = () => {
+    if (
+      !course ||
+      !courseCtx?.userWithCart ||
+      courseCtx?.addCourseToCartStatus === 'loading'
+    )
+      return;
+
+    if (isAddToCart) {
+      router.push(`/${PATHS.CART}`);
+      return;
+    }
+
+    courseCtx?.addCourseToCart(course.id);
+  };
 
   return (
     <div className="relative w-full bg-white py-10 text-gray-600 dark:bg-dark-background dark:text-white/60 lg:px-6 lg:py-6">
@@ -165,8 +188,19 @@ export default function CourseHeader({
 
           <div className="mx-auto flex w-[70%] space-x-6 lg:hidden">
             {course && Number(course.coursePrice) > 0 && (
-              <button className="btn-primary btn-lg btn w-[80%] grow">
-                Thêm vào giỏ hàng
+              <button
+                onClick={handleAddCourseToCart}
+                disabled={!course}
+                className="absolute-center btn-primary btn-lg btn w-[80%] grow"
+              >
+                <If condition={courseCtx?.addCourseToCartStatus === 'loading'}>
+                  <Then>
+                    <Loading />
+                  </Then>
+                  <Else>
+                    {isAddToCart ? 'Đi đến giỏ hàng' : 'Thêm vào giỏ hàng'}
+                  </Else>
+                </If>
               </button>
             )}
 

@@ -23,6 +23,7 @@ import Loading from '../buttons/Loading';
 import type { Wishlist } from '@prisma/client';
 
 import type { CourseType } from '~/types';
+import useIsAddToCart from '~/hooks/useIsAddToCart';
 interface CourseSidebarProps {
   course?: CourseType;
   totalVideoDuration: number;
@@ -51,6 +52,7 @@ function CourseSidebar({
   const courseCtx = useCourse();
 
   const isEnrolled = useIsEnrolled({ course });
+  const isAddToCart = useIsAddToCart({ course });
 
   useEffect(() => {
     setSidebarState(!!entry?.isIntersecting);
@@ -108,6 +110,22 @@ function CourseSidebar({
     }
   };
 
+  const handleAddCourseToCart = () => {
+    if (
+      !course ||
+      !courseCtx?.userWithCart ||
+      courseCtx?.addCourseToCartStatus === 'loading'
+    )
+      return;
+
+    if (isAddToCart) {
+      router.push(`/${PATHS.CART}`);
+      return;
+    }
+
+    courseCtx?.addCourseToCart(course.id);
+  };
+
   return (
     <aside
       className={`glass hidden h-[80vh] max-w-[30rem] flex-1 space-y-8 overflow-hidden rounded-2xl text-gray-600 dark:text-white/60 lg:block`}
@@ -143,9 +161,20 @@ function CourseSidebar({
       )}
 
       <div className="flex w-full space-x-4 px-4">
-        {course && Number(course.coursePrice) > 0 && (
-          <button disabled={!course} className="btn-primary btn-lg btn w-[70%]">
-            Thêm vào giỏ hàng
+        {course && Number(course.coursePrice) > 0 && !isEnrolled && (
+          <button
+            onClick={handleAddCourseToCart}
+            disabled={!course}
+            className="absolute-center btn-primary btn-lg btn w-[70%]"
+          >
+            <If condition={courseCtx?.addCourseToCartStatus === 'loading'}>
+              <Then>
+                <Loading />
+              </Then>
+              <Else>
+                {isAddToCart ? 'Đi đến giỏ hàng' : 'Thêm vào giỏ hàng'}
+              </Else>
+            </If>
           </button>
         )}
         <button
