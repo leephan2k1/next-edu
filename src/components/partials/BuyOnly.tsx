@@ -12,6 +12,7 @@ import { StarIcon } from '@heroicons/react/24/outline';
 import Loading from '../buttons/Loading';
 
 import type { CourseType } from '~/types';
+import useIsAddToCart from '~/hooks/useIsAddToCart';
 interface BuyOnlyProps {
   course?: CourseType;
   ratingValue: number;
@@ -24,6 +25,7 @@ export default function BuyOnly({ course, ratingValue }: BuyOnlyProps) {
   const router = useRouter();
 
   const isEnrolled = useIsEnrolled({ course });
+  const isAddToCart = useIsAddToCart({ course });
 
   const handleEnrollCourse = () => {
     if (
@@ -35,6 +37,17 @@ export default function BuyOnly({ course, ratingValue }: BuyOnlyProps) {
       router.push(
         `/${PATHS.LEARNING}/${course?.slug}/${course?.chapters[0]?.lectures[0]?.id}`,
       );
+      return;
+    }
+
+    if (!isAddToCart && course) {
+      router.push(`/${PATHS.CART}`);
+      courseCtx?.addCourseToCart(course.id);
+      return;
+    }
+
+    if (!isEnrolled && isAddToCart) {
+      router.push(`/${PATHS.CART}`);
       return;
     }
 

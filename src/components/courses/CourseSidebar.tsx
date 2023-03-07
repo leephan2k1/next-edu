@@ -105,6 +105,17 @@ function CourseSidebar({
       return;
     }
 
+    if (!isAddToCart && course) {
+      router.push(`/${PATHS.CART}`);
+      courseCtx?.addCourseToCart(course.id);
+      return;
+    }
+
+    if (!isEnrolled && isAddToCart) {
+      router.push(`/${PATHS.CART}`);
+      return;
+    }
+
     if (course?.slug) {
       courseCtx?.enrollCourse(course.slug);
     }
