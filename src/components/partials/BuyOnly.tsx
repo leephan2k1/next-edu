@@ -76,7 +76,7 @@ export default function BuyOnly({ course, ratingValue }: BuyOnlyProps) {
             ? new Intl.NumberFormat('vi-VN', {
                 style: 'currency',
                 currency: 'VND',
-              }).format(1950000)
+              }).format(Number(course?.coursePrice || 0))
             : 'Miễn phí'}
         </h1>
         <button
