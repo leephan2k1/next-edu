@@ -74,6 +74,7 @@ model Course {
   categoryId         String
   announcements      Announcement[]
   Wishlist           Wishlist[]
+  Cart               Cart[]
 
   @@index([userId])
   @@index([categoryId])
@@ -123,6 +124,20 @@ model User {
   Discussion    Discussion[]
   notes         Note[]
   wishlist      Wishlist[]
+  cart          Cart[]
+}
+
+model Cart {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  course    Course   @relation(fields: [courseId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  courseId  String
+  userId    String
+
+  @@index([courseId])
+  @@index([userId])
 }
 
 model Wishlist {
