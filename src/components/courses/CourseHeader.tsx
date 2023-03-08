@@ -1,12 +1,3 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useMemo } from 'react';
-import { BsStarFill } from 'react-icons/bs';
-import { Else, If, Then } from 'react-if';
-import { PATHS } from '~/constants';
-import useCourse from '~/contexts/CourseContext';
-import useIsAddToCart from '~/hooks/useIsAddToCart';
 import {
   ClockIcon,
   HeartIcon,
@@ -14,12 +5,21 @@ import {
   UserIcon,
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useMemo } from 'react';
+import { BsStarFill } from 'react-icons/bs';
+import { Else, If, Then } from 'react-if';
+import { PATHS } from '~/constants';
+import useIsAddToCart from '~/hooks/useIsAddToCart';
 
 import Loading from '../buttons/Loading';
 import Breadcrumbs from '../shared/Breadcrumbs';
 
 import type { Wishlist } from '@prisma/client';
 import type { ReactNode } from 'react';
+import useCart from '~/contexts/CartContext';
 import type { CourseType } from '~/types';
 
 interface CourseHeaderProps {
@@ -42,7 +42,7 @@ export default function CourseHeader({
   isLoading,
   handleDeleteWishCourse,
 }: CourseHeaderProps) {
-  const courseCtx = useCourse();
+  const cartCtx = useCart();
   const router = useRouter();
   const isAddToCart = useIsAddToCart({ course });
 
@@ -57,8 +57,8 @@ export default function CourseHeader({
   const handleAddCourseToCart = () => {
     if (
       !course ||
-      !courseCtx?.userWithCart ||
-      courseCtx?.addCourseToCartStatus === 'loading'
+      !cartCtx?.userWithCart ||
+      cartCtx?.addCourseToCartStatus === 'loading'
     )
       return;
 
@@ -67,7 +67,7 @@ export default function CourseHeader({
       return;
     }
 
-    courseCtx?.addCourseToCart(course.id);
+    cartCtx?.addCourseToCart(course.id);
   };
 
   return (
@@ -193,7 +193,7 @@ export default function CourseHeader({
                 disabled={!course}
                 className="absolute-center btn-primary btn-lg btn w-[80%] grow"
               >
-                <If condition={courseCtx?.addCourseToCartStatus === 'loading'}>
+                <If condition={cartCtx?.addCourseToCartStatus === 'loading'}>
                   <Then>
                     <Loading />
                   </Then>

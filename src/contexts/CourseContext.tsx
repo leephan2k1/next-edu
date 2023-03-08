@@ -28,20 +28,12 @@ export interface CourseType extends Omit<Course, 'id' | 'categoryId'> {
 
 interface CourseContextValues {
   enrollStatus: 'error' | 'success' | 'idle' | 'loading';
-  addCourseToCartStatus: 'error' | 'success' | 'idle' | 'loading';
   course: CourseType | null;
   dispatchUpdate: boolean;
   dispatch: () => void;
   enrollCourse: (courseSlug: string) => void;
-  addCourseToCart: (courseId: string) => void;
   updateCourse: (course: Partial<CourseType>) => void;
   resetCourse: () => void;
-  userWithCart:
-    | {
-        cart: Cart[];
-      }
-    | null
-    | undefined;
 }
 
 interface CourseContextProps {
@@ -58,25 +50,9 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
   const { data: session, status: sessionStatus } = useSession();
 
   // console.log('course updating:: ', course);
-  const { data: userWithCart, refetch: refetchUserWithCart } =
-    trpc.user.findCartByUser.useQuery(undefined, {
-      enabled: sessionStatus === 'authenticated',
-    });
 
   const { mutate: enrollCourseMutate, status: enrollStatus } =
     trpc.course.enrollCourse.useMutation();
-
-  const { mutate: addCourseToCartMutate, status: addCourseToCartStatus } =
-    trpc.user.addCOurseToCart.useMutation();
-
-  const addCourseToCart = (courseId: string) => {
-    if (sessionStatus === 'unauthenticated') {
-      router.push(`/${PATHS.LOGIN}`);
-      return;
-    }
-
-    addCourseToCartMutate({ courseId });
-  };
 
   const updateCourse = (courseParam: Partial<CourseType>) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -95,18 +71,6 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
 
     enrollCourseMutate({ slug: courseSlug, userId: session?.user?.id });
   };
-
-  // effect notify toast add course to cart
-  useEffect(() => {
-    if (addCourseToCartStatus === 'success') {
-      toast.success('Thêm vào giỏ hàng thành công!');
-      refetchUserWithCart();
-    }
-
-    if (addCourseToCartStatus === 'error') {
-      toast.error('Thêm vào giỏ hàng thất bạn! Thử lại sau!');
-    }
-  }, [addCourseToCartStatus]);
 
   // effect notify toast enroll
   useEffect(() => {
@@ -142,9 +106,6 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
   return (
     <CourseContext.Provider
       value={{
-        addCourseToCartStatus,
-        userWithCart,
-        addCourseToCart,
         enrollStatus,
         dispatchUpdate,
         enrollCourse,

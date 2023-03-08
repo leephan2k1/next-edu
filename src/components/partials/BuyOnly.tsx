@@ -13,6 +13,7 @@ import Loading from '../buttons/Loading';
 
 import type { CourseType } from '~/types';
 import useIsAddToCart from '~/hooks/useIsAddToCart';
+import useCart from '~/contexts/CartContext';
 interface BuyOnlyProps {
   course?: CourseType;
   ratingValue: number;
@@ -21,6 +22,7 @@ interface BuyOnlyProps {
 export default function BuyOnly({ course, ratingValue }: BuyOnlyProps) {
   const sidebarInViewport = useAtomValue(courseSidebarInViewport);
   const courseCtx = useCourse();
+  const cartCtx = useCart();
 
   const router = useRouter();
 
@@ -42,7 +44,7 @@ export default function BuyOnly({ course, ratingValue }: BuyOnlyProps) {
 
     if (!isAddToCart && course) {
       router.push(`/${PATHS.CART}`);
-      courseCtx?.addCourseToCart(course.id);
+      cartCtx?.addCourseToCart(course.id);
       return;
     }
 

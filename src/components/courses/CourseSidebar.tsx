@@ -22,8 +22,9 @@ import Loading from '../buttons/Loading';
 
 import type { Wishlist } from '@prisma/client';
 
-import type { CourseType } from '~/types';
+import useCart from '~/contexts/CartContext';
 import useIsAddToCart from '~/hooks/useIsAddToCart';
+import type { CourseType } from '~/types';
 interface CourseSidebarProps {
   course?: CourseType;
   totalVideoDuration: number;
@@ -50,6 +51,7 @@ function CourseSidebar({
   const router = useRouter();
 
   const courseCtx = useCourse();
+  const cartCtx = useCart();
 
   const isEnrolled = useIsEnrolled({ course });
   const isAddToCart = useIsAddToCart({ course });
@@ -107,7 +109,7 @@ function CourseSidebar({
 
     if (!isAddToCart && course) {
       router.push(`/${PATHS.CART}`);
-      courseCtx?.addCourseToCart(course.id);
+      cartCtx?.addCourseToCart(course.id);
       return;
     }
 
@@ -124,8 +126,8 @@ function CourseSidebar({
   const handleAddCourseToCart = () => {
     if (
       !course ||
-      !courseCtx?.userWithCart ||
-      courseCtx?.addCourseToCartStatus === 'loading'
+      !cartCtx?.userWithCart ||
+      cartCtx?.addCourseToCartStatus === 'loading'
     )
       return;
 
@@ -134,7 +136,7 @@ function CourseSidebar({
       return;
     }
 
-    courseCtx?.addCourseToCart(course.id);
+    cartCtx?.addCourseToCart(course.id);
   };
 
   return (
@@ -178,7 +180,7 @@ function CourseSidebar({
             disabled={!course}
             className="absolute-center btn-primary btn-lg btn w-[70%]"
           >
-            <If condition={courseCtx?.addCourseToCartStatus === 'loading'}>
+            <If condition={cartCtx?.addCourseToCartStatus === 'loading'}>
               <Then>
                 <Loading />
               </Then>

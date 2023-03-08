@@ -10,6 +10,7 @@ import MainLayout from '~/components/layouts/MainLayout';
 import { trpc } from '~/utils/trpc';
 import { CourseContextProvider } from '~/contexts/CourseContext';
 import { HistoryRouteContextProvider } from '~/contexts/HistoryRouteContext';
+import { CartContextProvider } from '~/contexts/CartContext';
 
 import type { NextPage } from 'next';
 import type { Session } from 'next-auth';
@@ -45,7 +46,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <ThemeProvider enableSystem={false} attribute="class">
           <CourseContextProvider>
             <HistoryRouteContextProvider>
-              {getLayout(<Component {...pageProps} />)}
+              <CartContextProvider>
+                {getLayout(<Component {...pageProps} />)}
+              </CartContextProvider>
             </HistoryRouteContextProvider>
           </CourseContextProvider>
         </ThemeProvider>
