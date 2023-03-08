@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { publicProcedure, router, protectedProcedure } from '../trpc';
+import exclude from '~/server/helper/excludeFields';
 
 export const userRouter = router({
   addCOurseToCart: protectedProcedure
@@ -21,14 +22,50 @@ export const userRouter = router({
       return user;
     }),
 
-  findCartByUser: protectedProcedure.query(async ({ ctx }) => {
-    const user = await ctx.prisma.user.findUnique({
-      where: { id: ctx.session.user.id },
-      select: { cart: true },
-    });
+  deleteCourseFromCart: protectedProcedure
+    .input(z.object({ cartId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { cartId } = input;
 
-    return user;
-  }),
+      const deletedCart = await ctx.prisma.cart.delete({
+        where: { id: cartId },
+      });
+
+      return deletedCart;
+    }),
+
+  findCartByUser: protectedProcedure
+    .input(z.object({ includeCourse: z.boolean() }))
+    .query(async ({ ctx, input }) => {
+      const { includeCourse } = input;
+
+      const user = await ctx.prisma.user.findUnique({
+        where: { id: ctx.session.user.id },
+        select: {
+          wishlist: true,
+          cart: {
+            include: {
+              course: includeCourse
+                ? {
+                    select: {
+                      slug: true,
+                      instructor: true,
+                      chapters: { include: { lectures: true } },
+                      thumbnail: true,
+                      name: true,
+                      coursePrice: true,
+                      courseLevel: true,
+                    },
+                  }
+                : includeCourse,
+            },
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+      });
+
+      return user;
+    }),
 
   addRating: protectedProcedure
     .input(
