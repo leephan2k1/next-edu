@@ -79,21 +79,26 @@ export default function Cart() {
         <div className="mb-8 flex flex-1 flex-col space-y-6 md:mb-0">
           <h2 className="text-3xl font-semibold">Tổng:</h2>
           <p className="text-4xl font-bold text-rose-500">
-            {' '}
             {new Intl.NumberFormat('vi-VI', {
               style: 'currency',
               currency: 'VND',
             }).format(cartCtx?.totalAmount || 0)}
           </p>
 
-          <button
-            onClick={handleCheckout}
-            ref={refBtnCheckout}
-            disabled={cartCtx?.checkoutState === 'loading'}
-            className="absolute-center min-h-[4.4rem] rounded-lg bg-yellow-400 p-4 text-black"
-          >
-            {cartCtx?.checkoutState === 'loading' ? <Loading /> : 'Thanh toán'}
-          </button>
+          {cartCtx?.totalAmount && cartCtx?.totalAmount !== 0 ? (
+            <button
+              onClick={handleCheckout}
+              ref={refBtnCheckout}
+              disabled={cartCtx?.checkoutState === 'loading'}
+              className="absolute-center min-h-[4.4rem] rounded-lg bg-yellow-400 p-4 text-black"
+            >
+              {cartCtx?.checkoutState === 'loading' ? (
+                <Loading />
+              ) : (
+                'Thanh toán'
+              )}
+            </button>
+          ) : null}
         </div>
       </div>
     </div>
