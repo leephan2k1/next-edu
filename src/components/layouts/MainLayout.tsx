@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic';
 import { nunito } from '~/constants';
 import { Toaster } from 'react-hot-toast';
+import SearchModal from '../shared/SearchModal';
 
 import type { ReactNode } from 'react';
 interface MainLayoutProps {
@@ -24,6 +25,8 @@ export default function MainLayout({
     <div
       className={`${nunito.className} bg-light-background text-gray-600 dark:bg-black dark:text-white`}
     >
+      <SearchModal />
+
       <Toaster toastOptions={{ duration: 3500 }} />
 
       {showHeader && <Header showCategories={showCategoriesHeader} />}
