@@ -9,7 +9,8 @@ export async function middleware(req: NextRequest) {
     req.nextUrl.pathname.includes(PATHS.TEACHING) ||
     req.nextUrl.pathname.includes(PATHS.USER_PROFILE) ||
     req.nextUrl.pathname.includes(PATHS.LEARNING) ||
-    req.nextUrl.pathname.includes(PATHS.ADMIN)
+    req.nextUrl.pathname.includes(PATHS.ADMIN) ||
+    req.nextUrl.pathname.includes(PATHS.CART)
   ) {
     const session = await getToken({
       req,
