@@ -44,6 +44,12 @@ enum VERIFIED_STATE {
   REJECT
 }
 
+enum PAYMENT_STATUS {
+  PENDING
+  SUCCESS
+  ERROR
+}
+
 model Course {
   id                 String              @id @default(cuid())
   name               String              @unique @db.VarChar(60)
@@ -75,6 +81,7 @@ model Course {
   announcements      Announcement[]
   Wishlist           Wishlist[]
   Cart               Cart[]
+  payments           Payment[]
 
   @@index([userId])
   @@index([categoryId])
@@ -125,6 +132,37 @@ model User {
   notes         Note[]
   wishlist      Wishlist[]
   cart          Cart[]
+  payments      Payment[]
+  revenue       Revenue?
+}
+
+model Revenue {
+  id        String    @id @default(cuid())
+  amount    BigInt
+  user      User      @relation(fields: [userId], references: [id])
+  payments  Payment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  userId    String    @unique
+}
+
+model Payment {
+  id         String         @id @default(cuid())
+  paymentGId String
+  orderId    String?
+  status     PAYMENT_STATUS
+  user       User           @relation(fields: [userId], references: [id])
+  course     Course         @relation(fields: [courseId], references: [id])
+  courseId   String
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+  userId     String
+  Revenue    Revenue?       @relation(fields: [revenueId], references: [id])
+  revenueId  String?
+
+  @@index([courseId])
+  @@index([userId])
+  @@index([revenueId])
 }
 
 model Cart {
