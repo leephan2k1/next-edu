@@ -5,7 +5,6 @@ import Loading from '~/components/buttons/Loading';
 import useCart from '~/contexts/CartContext';
 
 import { ShoppingCartIcon } from '@heroicons/react/24/outline';
-
 import CartItem from './CartItem';
 import CheckoutOnly from './CheckoutOnly';
 
@@ -13,6 +12,10 @@ export default function Cart() {
   const refBtnCheckout = useRef<HTMLButtonElement | null>(null);
   const entry = useIntersectionObserver(refBtnCheckout, {});
   const cartCtx = useCart();
+
+  const handleCheckout = async () => {
+    await cartCtx?.handleCheckout();
+  };
 
   return (
     <div className="flex w-full flex-col px-4 md:px-6 lg:px-8">
@@ -48,17 +51,20 @@ export default function Cart() {
                       <CartItem
                         courseId={item.courseId}
                         wishlistId={
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                           // @ts-ignore
                           cartCtx?.userWithCart.wishlist.find(
                             (elem) => elem.courseId === item.courseId,
                           )?.id || null
                         }
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore
                         isFavorite={cartCtx?.userWithCart.wishlist.some(
                           (elem) => elem.courseId === item.courseId,
                         )}
                         cartId={item.id}
                         key={item.id}
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                         // @ts-ignore
                         course={item.course}
                         refetchData={cartCtx.refetchData}
@@ -77,23 +83,16 @@ export default function Cart() {
             {new Intl.NumberFormat('vi-VI', {
               style: 'currency',
               currency: 'VND',
-            }).format(
-              cartCtx?.userWithCart && cartCtx?.userWithCart.cart
-                ? cartCtx?.userWithCart.cart.reduce((acc, curr) => {
-                    //@ts-ignore
-                    if (!curr.course.coursePrice) return acc;
-                    //@ts-ignore
-                    return acc + curr.course.coursePrice;
-                  }, 0)
-                : 0,
-            )}
+            }).format(cartCtx?.totalAmount || 0)}
           </p>
 
           <button
+            onClick={handleCheckout}
             ref={refBtnCheckout}
-            className="rounded-lg bg-yellow-400 p-4 text-black"
+            disabled={cartCtx?.checkoutState === 'loading'}
+            className="absolute-center min-h-[4.4rem] rounded-lg bg-yellow-400 p-4 text-black"
           >
-            Thanh toán
+            {cartCtx?.checkoutState === 'loading' ? <Loading /> : 'Thanh toán'}
           </button>
         </div>
       </div>
