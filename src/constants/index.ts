@@ -17,6 +17,7 @@ export const PATHS = {
   EDIT_COURSE: 'edit',
   ADMIN: 'admin',
   CART: 'cart',
+  PAYMENT_STATUS: 'payment_status',
 };
 
 import { Uploader } from 'uploader';
