@@ -1,67 +1,96 @@
 import { WalletIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import { ClockIcon } from '@heroicons/react/24/outline';
+import Loading from '../buttons/Loading';
+import { trpc } from '~/utils/trpc';
+import { PATHS } from '~/constants';
+import Link from 'next/link';
 
 export default function PaymentHistory() {
+  const { data: payments, status } = trpc.user.findPayments.useQuery();
+
   return (
     <section className="mt-4 flex w-full flex-col space-y-6 px-2 md:px-14 lg:px-20">
       <h1 className="flex space-x-2 text-3xl">
         <WalletIcon className="h-10 w-10" /> <span>Các khoá học đã mua</span>
       </h1>
 
-      <ul className="flex flex-col space-y-4">
-        <PaymentItem />
-        <PaymentItem />
-        <PaymentItem />
-        <PaymentItem />
-        <PaymentItem />
-        <PaymentItem />
-      </ul>
-
-      {/* <h2 className="my-6 mx-auto w-fit rounded-xl border border-white p-4 text-center">
-        Bạn chưa mua khoá học nào!
-      </h2> */}
+      {status === 'loading' ? (
+        <div className="absolute-center min-h-[10rem] w-full">
+          <Loading />
+        </div>
+      ) : (
+        <ul className="flex flex-col space-y-4">
+          {payments && payments.length > 0 ? (
+            payments.map((payment) => {
+              return (
+                <PaymentItem
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  //@ts-ignore
+                  course={payment.course}
+                  key={payment.id}
+                  createdAt={payment.createdAt}
+                />
+              );
+            })
+          ) : (
+            <li>Bạn chưa thanh toán khoá học nào</li>
+          )}
+        </ul>
+      )}
     </section>
   );
 }
 
 // purchase date + course title + course image + instructor
-function PaymentItem() {
+function PaymentItem({
+  course,
+  createdAt,
+}: {
+  course: {
+    coursePrice: number;
+    instructor: { name: string };
+    name: string;
+    slug: string;
+    thumbnail: string;
+  };
+  createdAt: Date;
+}) {
   return (
-    <li className="flex h-fit w-full cursor-pointer items-center space-x-4 rounded-xl bg-white py-4 px-2 shadow-xl dark:bg-dark-background">
-      <div className="my-auto w-[25%] md:w-[20%] lg:w-[15%]">
-        <figure className="relative overflow-hidden rounded-xl pb-[56.25%]">
-          <Image
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            fill
-            alt="course-thumbnail"
-            src={
-              'https://img-b.udemycdn.com/course/750x422/1565838_e54e_16.jpg'
-            }
-          />
-        </figure>
-      </div>
-
-      <div className="h-full flex-1">
-        <h2 className="line-clamp-1">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi enim
-          distinctio animi soluta nemo aspernatur odio sint ut reiciendis
-          exercitationem alias dolorem necessitatibus tempora, voluptatibus,
-          aliquam placeat magnam, tempore repellat.
-        </h2>
-        <h3 className="text-xl">Instructor name</h3>
-        <div className="mt-2 flex items-center justify-between pr-6">
-          <time className="flex items-center space-x-2 text-sm">
-            <ClockIcon className="h-4 w-4" /> <span>10/1/2022</span>{' '}
-          </time>
-          <h4 className="font-bold text-rose-400">
-            {new Intl.NumberFormat('en', { notation: 'compact' }).format(
-              1_522_00,
-            )}{' '}
-            vnđ
-          </h4>
+    <li>
+      <Link
+        className="flex h-fit w-full cursor-pointer items-center space-x-4 rounded-xl bg-white py-4 px-2 shadow-xl dark:bg-dark-background"
+        href={`/${PATHS.COURSE}/${course.slug}`}
+      >
+        <div className="my-auto w-[25%] md:w-[20%] lg:w-[15%]">
+          <figure className="relative overflow-hidden rounded-xl pb-[56.25%]">
+            <Image
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+              fill
+              alt="course-thumbnail"
+              src={course.thumbnail}
+            />
+          </figure>
         </div>
-      </div>
+
+        <div className="h-full flex-1">
+          <h2 className="line-clamp-1">{course.name}</h2>
+          <h3 className="my-2 text-xl">{course.instructor.name}</h3>
+          <div className="mt-2 flex items-center justify-between pr-6">
+            <time className="flex items-center space-x-2 text-lg">
+              <ClockIcon className="h-4 w-4" />{' '}
+              <span>{new Date(createdAt).toLocaleDateString('vi-VI')}</span>{' '}
+            </time>
+            <h4 className="font-bold text-rose-400">
+              {new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+              }).format(course.coursePrice as number)}{' '}
+              vnđ
+            </h4>
+          </div>
+        </div>
+      </Link>
     </li>
   );
 }

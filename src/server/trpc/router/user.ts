@@ -3,6 +3,26 @@ import { publicProcedure, router, protectedProcedure } from '../trpc';
 import exclude from '~/server/helper/excludeFields';
 
 export const userRouter = router({
+  findPayments: protectedProcedure.query(async ({ ctx }) => {
+    const payments = ctx.prisma.payment.findMany({
+      where: { userId: ctx.session.user.id },
+      include: {
+        course: {
+          select: {
+            name: true,
+            slug: true,
+            instructor: true,
+            thumbnail: true,
+            coursePrice: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return payments;
+  }),
+
   addCOurseToCart: protectedProcedure
     .input(z.object({ courseId: z.string() }))
     .mutation(async ({ ctx, input }) => {
