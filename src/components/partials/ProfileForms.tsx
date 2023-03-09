@@ -1,13 +1,15 @@
+import Link from 'next/link';
 import { memo, useEffect, useState } from 'react';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { trpc } from '~/utils/trpc';
-
+import { PATHS } from '~/constants';
 import { ExclamationCircleIcon } from '@heroicons/react/20/solid';
 
 import Loading from '../buttons/Loading';
 import Editor from '../shared/Editor';
 
+import type { SubmitHandler } from 'react-hook-form';
 import type QuillComponent from 'react-quill';
 interface Inputs {
   linkedin: string;
@@ -222,8 +224,15 @@ function ProfileForms() {
           </div>
 
           <div className="flex space-x-4 md:w-4/5 lg:justify-end">
-            <button className="smooth-effect w-fit rounded-xl border bg-stone-100 p-4 shadow dark:border-white dark:bg-dark-background dark:hover:bg-white/20">
-              Xem hồ sơ công khai
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+              className="smooth-effect w-fit rounded-xl border bg-stone-100 p-4 shadow dark:border-white dark:bg-dark-background dark:hover:bg-white/20"
+            >
+              <Link href={`/${PATHS.USER}/${user?.id}`}>
+                Xem hồ sơ công khai
+              </Link>
             </button>
 
             {updateBioStatus === 'loading' ? (

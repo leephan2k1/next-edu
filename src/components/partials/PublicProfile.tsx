@@ -14,8 +14,6 @@ interface PublicProfileProps {
 }
 
 export default function PublicProfile({ user }: PublicProfileProps) {
-  console.log('user:: ', user);
-
   const totalStudents = useMemo(() => {
     if (!user) return 0;
     return user.Course.reduce((acc, course) => {
