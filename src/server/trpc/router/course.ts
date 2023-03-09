@@ -260,4 +260,29 @@ export const courseRouter = router({
 
       return courseWithoutPassword;
     }),
+
+  findCoursesByName: publicProcedure
+    .input(z.object({ name: z.string(), limit: z.number().optional() }))
+    .query(async ({ ctx, input }) => {
+      const { name, limit } = input;
+
+      const courses = await ctx.prisma.course.findMany({
+        where: {
+          name: {
+            search: `*${name}*`,
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          instructor: true,
+          thumbnail: true,
+        },
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return courses;
+    }),
 });
