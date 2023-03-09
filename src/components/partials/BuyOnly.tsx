@@ -86,14 +86,17 @@ export default function BuyOnly({ course, ratingValue }: BuyOnlyProps) {
       </div>
 
       <div className="flex w-full items-center space-x-6 px-4 md:w-[30%] lg:w-[25%]">
-        <h1 className="text-2xl font-bold">
-          {Number(course?.coursePrice) > 0
-            ? new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-              }).format(Number(course?.coursePrice || 0))
-            : 'Miễn phí'}
-        </h1>
+        {!isEnrolled && (
+          <h1 className="text-2xl font-bold">
+            {Number(course?.coursePrice) > 0
+              ? new Intl.NumberFormat('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND',
+                }).format(Number(course?.coursePrice || 0))
+              : 'Miễn phí'}
+          </h1>
+        )}
+
         <button
           onClick={handleEnrollCourse}
           disabled={courseCtx?.enrollStatus === 'loading' || !course}

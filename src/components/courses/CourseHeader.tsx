@@ -21,6 +21,7 @@ import type { Wishlist } from '@prisma/client';
 import type { ReactNode } from 'react';
 import useCart from '~/contexts/CartContext';
 import type { CourseType } from '~/types';
+import useIsEnrolled from '~/hooks/useIsEnrolled';
 
 interface CourseHeaderProps {
   course?: CourseType;
@@ -45,6 +46,8 @@ export default function CourseHeader({
   const cartCtx = useCart();
   const router = useRouter();
   const isAddToCart = useIsAddToCart({ course });
+
+  const isEnrolled = useIsEnrolled({ course });
 
   const wishlistItem = useMemo(() => {
     if (course && wishlist) {
@@ -187,7 +190,7 @@ export default function CourseHeader({
           </div>
 
           <div className="mx-auto flex w-[70%] space-x-6 lg:hidden">
-            {course && Number(course.coursePrice) > 0 && (
+            {course && Number(course.coursePrice) > 0 && !isEnrolled && (
               <button
                 onClick={handleAddCourseToCart}
                 disabled={!course}
@@ -214,7 +217,7 @@ export default function CourseHeader({
                   handleDeleteWishCourse(wishlistItem.id);
                 }
               }}
-              className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60"
+              className="btn-ghost btn-active btn-lg btn flex-1 text-gray-600 dark:text-white/60"
             >
               <If condition={isLoading}>
                 <Then>

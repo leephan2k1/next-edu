@@ -160,17 +160,21 @@ function CourseSidebar({
         </div>
       </div>
 
-      {course ? (
-        <h1 className="px-6 text-4xl font-bold">
-          {course.coursePrice === 0
-            ? 'Miễn phí'
-            : new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-              }).format(course.coursePrice as number)}
-        </h1>
-      ) : (
-        <div className="ml-6 h-[4rem] w-2/3 animate-pulse rounded-xl bg-gray-300 dark:bg-gray-700"></div>
+      {!isEnrolled && (
+        <>
+          {course ? (
+            <h1 className="px-6 text-4xl font-bold">
+              {course.coursePrice === 0
+                ? 'Miễn phí'
+                : new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                  }).format(course.coursePrice as number)}
+            </h1>
+          ) : (
+            <div className="ml-6 h-[4rem] w-2/3 animate-pulse rounded-xl bg-gray-300 dark:bg-gray-700"></div>
+          )}
+        </>
       )}
 
       <div className="flex w-full space-x-4 px-4">
@@ -201,7 +205,7 @@ function CourseSidebar({
               handleDeleteWishCourse(wishlistItem.id);
             }
           }}
-          className="btn-active btn-ghost btn-lg btn flex-1 text-gray-600 dark:text-white/60"
+          className="btn-ghost btn-active btn-lg btn flex-1 text-gray-600 dark:text-white/60"
         >
           <If condition={isLoading}>
             <Then>
