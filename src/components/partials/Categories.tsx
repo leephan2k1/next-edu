@@ -1,4 +1,6 @@
+import Link from 'next/link';
 import { categories } from '~/constants';
+
 import CategoriesDropDown from './CategoriesDropDown';
 
 export default function Categories() {
@@ -13,7 +15,7 @@ export default function Categories() {
               key={String(Math.random())}
               className="smooth-effect rounded-3xl p-2 hover:bg-primary hover:px-3 hover:text-gray-500 dark:hover:text-gray-600"
             >
-              {category}
+              <Link href={category.url}>{category.title}</Link>
             </button>
           );
         })}
