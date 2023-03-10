@@ -23,7 +23,7 @@ function CourseDescription({ description }: CourseDescriptionProps) {
       <article
         ref={parent}
         className={`prose-xl prose ${
-          disclosure.open && isOverflow ? 'h-fit' : 'h-[40rem]'
+          disclosure.open && isOverflow ? 'h-fit' : 'h-[21rem]'
         } min-h-fit min-w-full overflow-hidden overflow-x-hidden text-gray-600 prose-img:max-w-[60vw] prose-img:rounded-2xl dark:text-white/80 lg:prose-2xl`}
         dangerouslySetInnerHTML={{ __html: description }}
       ></article>
@@ -33,10 +33,10 @@ function CourseDescription({ description }: CourseDescriptionProps) {
           className="absolute-center flex w-full flex-col"
           state={disclosure}
         >
-          <span>{disclosure.open ? 'Thu gọn' : 'Xem thêm'}</span>
+          <span>{disclosure.open ? 'Xem thêm' : 'Thu gọn'}</span>
           <ChevronDownIcon
             className={`smooth-effect h-6 w-6 ${
-              disclosure.open ? 'rotate-180 transform' : ''
+              disclosure.open ? '' : 'rotate-180 transform'
             }`}
           />
         </Disclosure>

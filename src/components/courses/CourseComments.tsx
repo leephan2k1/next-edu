@@ -17,7 +17,7 @@ function CourseComment({ reviews }: CourseCommentProps) {
         Đánh giá của học viên
       </h1>
 
-      <p>Chưa có đánh giá nào!</p>
+      {reviews && reviews.length === 0 && <p>Chưa có đánh giá nào!</p>}
 
       <div
         className={`grid-col-1 grid ${
