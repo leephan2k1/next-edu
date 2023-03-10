@@ -39,7 +39,7 @@ export default function FilterResult() {
           )}
         </Else>
       </If>
-      {data?.totalPages && <Pagination totalPages={data?.totalPages} />}
+      {data?.totalPages ? <Pagination totalPages={data?.totalPages} /> : null}
     </div>
   );
 }
