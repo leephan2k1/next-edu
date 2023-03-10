@@ -298,7 +298,7 @@ export const courseRouter = router({
         price: z.string().optional(),
         courseState: z.string().optional(),
         limit: z.number(),
-        page: z.number(),
+        page: z.string(),
       }),
     )
     .query(async ({ input, ctx }) => {
@@ -364,7 +364,7 @@ export const courseRouter = router({
       whereConditions.set('verified', 'APPROVED');
 
       const [totalRecords, courses] = await ctx.prisma.$transaction([
-        ctx.prisma.course.count(),
+        ctx.prisma.course.count({ where: Object.fromEntries(whereConditions) }),
         ctx.prisma.course.findMany({
           where: Object.fromEntries(whereConditions),
           select: {
@@ -377,7 +377,7 @@ export const courseRouter = router({
           },
           orderBy: Object.fromEntries(sortCondition),
           take: limit,
-          skip: (page - 1) * limit,
+          skip: (Number(page) - 1) * limit,
         }),
       ]);
 
