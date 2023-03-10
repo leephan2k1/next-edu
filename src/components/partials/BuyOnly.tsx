@@ -42,7 +42,7 @@ export default function BuyOnly({ course, ratingValue }: BuyOnlyProps) {
       return;
     }
 
-    if (!isAddToCart && course) {
+    if (!isAddToCart && course && Number(course.coursePrice) > 0) {
       router.push(`/${PATHS.CART}`);
       cartCtx?.addCourseToCart(course.id);
       return;
