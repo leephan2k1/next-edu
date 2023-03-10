@@ -1,10 +1,10 @@
-import React from 'react';
-import CourseCard, { CardSkeleton } from '~/components/shared/CourseCard';
-import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { trpc } from '~/utils/trpc';
+import { Else, If, Then } from 'react-if';
 import { useMediaQuery } from 'usehooks-ts';
-import { If, Then, Else } from 'react-if';
+import CourseCard, { CardSkeleton } from '~/components/shared/CourseCard';
+import { trpc } from '~/utils/trpc';
+
+import Pagination from '~/components/features/browse/Pagination';
 
 export default function FilterResult() {
   const matchesMobile = useMediaQuery('(max-width: 768px)');
@@ -12,14 +12,12 @@ export default function FilterResult() {
   const numberSkeleton = matchesMobile ? 4 : 12;
 
   const { data, status } = trpc.course.findCoursesByFilters.useQuery({
-    limit: 12,
-    page: 1,
+    limit: 2,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    page: router.query?.page ? router.query.page : '1',
     ...router.query,
   });
-
-  useEffect(() => {
-    // console.log('query router:: ', router.query);
-  }, [router.query]);
 
   return (
     <div className="mt-10 grid w-full grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-6">
@@ -41,6 +39,7 @@ export default function FilterResult() {
           )}
         </Else>
       </If>
+      {data?.totalPages && <Pagination totalPages={data?.totalPages} />}
     </div>
   );
 }
