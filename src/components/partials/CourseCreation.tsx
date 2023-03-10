@@ -64,7 +64,7 @@ export default function CourseCreation() {
 
             <button
               onClick={() => {
-                router.push(`/${PATHS.TEACHING}/${PATHS.TEACHING_DASHBOARD}`);
+                router.push(`/${PATHS.TEACHING}/${PATHS.DASHBOARD}`);
               }}
               className="smooth-effect flex w-fit items-center space-x-2 rounded-xl bg-yellow-400 px-4 py-3 text-gray-600"
             >

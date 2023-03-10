@@ -11,7 +11,7 @@ export const PATHS = {
   LEARNING: 'learning',
   COURSE: 'course',
   TEACHING: 'teaching',
-  TEACHING_DASHBOARD: 'dashboard',
+  DASHBOARD: 'dashboard',
   LOGIN: 'login',
   CREATE_COURSE: 'create',
   EDIT_COURSE: 'edit',
@@ -19,6 +19,7 @@ export const PATHS = {
   CART: 'cart',
   BROWSE: 'browse',
   PAYMENT_STATUS: 'payment_status',
+  MY_LEARNING: 'my-learning',
 };
 
 export const QUERY_FILTERS = {

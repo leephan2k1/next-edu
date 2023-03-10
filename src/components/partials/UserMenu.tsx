@@ -100,16 +100,22 @@ function UserMenu({ show, setShow }: UserMenuProps) {
 
         <hr className="mx-auto my-4 w-[80%] dark:border-white/30" />
 
-        <h2 className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black">
+        <Link
+          href={`/${PATHS.MY_LEARNING}/${PATHS.COURSE}`}
+          className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
+        >
           <BookOpenIcon className="h-6 w-6" /> <span>Khoá học của tôi</span>
-        </h2>
-
-        <h2 className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black">
-          <ChartBarIcon className="h-6 w-6" /> <span>Quá trình học</span>
-        </h2>
+        </Link>
 
         <Link
-          href={`/${PATHS.TEACHING}/${PATHS.TEACHING_DASHBOARD}`}
+          href={`/${PATHS.MY_LEARNING}/${PATHS.DASHBOARD}`}
+          className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
+        >
+          <ChartBarIcon className="h-6 w-6" /> <span>Quá trình học</span>
+        </Link>
+
+        <Link
+          href={`/${PATHS.TEACHING}/${PATHS.DASHBOARD}`}
           className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
         >
           <FaChalkboardTeacher className="h-6 w-6" /> <span>Giảng dạy</span>
