@@ -1,6 +1,10 @@
 import { z } from 'zod';
-import { router, protectedProcedure, publicProcedure } from '../trpc';
 import exclude from '~/server/helper/excludeFields';
+import {
+  MAPPING_COURSE_STATE_LANGUAGE,
+  MAPPING_LEVEL_LANGUAGE,
+} from '~/constants';
+import { protectedProcedure, publicProcedure, router } from '../trpc';
 
 export const courseRouter = router({
   findAllReviews: publicProcedure
@@ -284,5 +288,99 @@ export const courseRouter = router({
       });
 
       return courses;
+    }),
+  findCoursesByFilters: publicProcedure
+    .input(
+      z.object({
+        category: z.string().optional(),
+        sortBy: z.string().optional(),
+        object: z.string().optional(),
+        price: z.string().optional(),
+        courseState: z.string().optional(),
+        limit: z.number(),
+        page: z.number(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const { category, courseState, sortBy, object, price, limit, page } =
+        input;
+
+      const whereConditions = new Map();
+      const sortCondition = new Map();
+
+      if (category && category !== 'Tất cả')
+        whereConditions.set('category', { name: category });
+
+      if (courseState) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
+        const _courseState = MAPPING_COURSE_STATE_LANGUAGE[courseState]; // -> mapping to english value
+        whereConditions.set('courseState', _courseState);
+      }
+
+      if (object) {
+        // -> mapping to english value:
+        const _object = MAPPING_LEVEL_LANGUAGE[object]; // -> mapping to english value
+
+        whereConditions.set('courseLevel', _object);
+      }
+
+      if (price) {
+        const stringPrice = price.toLowerCase();
+
+        if (stringPrice === 'miễn phí') {
+          whereConditions.set('coursePrice', 0);
+        }
+        if (stringPrice === 'có phí') {
+          whereConditions.set('coursePrice', { gt: 0 });
+        }
+      }
+
+      if (sortBy) {
+        const sort_by = sortBy.toLowerCase();
+        if (sort_by === 'mới nhất') {
+          sortCondition.set('createdAt', 'desc');
+        }
+
+        if (sort_by === 'đánh giá nhiều') {
+          sortCondition.set('reviews', { _count: 'desc' });
+          whereConditions.set('reviews', { some: { id: { not: undefined } } });
+        }
+
+        if (sort_by === 'mua nhiều') {
+          sortCondition.set('payments', { _count: 'desc' });
+          whereConditions.set('payments', { some: { id: { not: undefined } } });
+        }
+
+        if (sort_by === 'được ghi danh nhiều') {
+          sortCondition.set('students', { _count: 'desc' });
+          whereConditions.set('students', { some: { id: { not: undefined } } });
+        }
+      }
+
+      // ignore private course:
+      whereConditions.set('publishMode', 'PUBLIC');
+      // ignore pending apprev:
+      whereConditions.set('verified', 'APPROVED');
+
+      const [totalRecords, courses] = await ctx.prisma.$transaction([
+        ctx.prisma.course.count(),
+        ctx.prisma.course.findMany({
+          where: Object.fromEntries(whereConditions),
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+            instructor: true,
+            thumbnail: true,
+            coursePrice: true,
+          },
+          orderBy: Object.fromEntries(sortCondition),
+          take: limit,
+          skip: (page - 1) * limit,
+        }),
+      ]);
+
+      return { courses, totalPages: Math.ceil(totalRecords / limit) };
     }),
 });
