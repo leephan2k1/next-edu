@@ -12,7 +12,7 @@ export default function FilterResult() {
   const numberSkeleton = matchesMobile ? 4 : 12;
 
   const { data, status } = trpc.course.findCoursesByFilters.useQuery({
-    limit: 2,
+    limit: 12,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     page: router.query?.page ? router.query.page : '1',
