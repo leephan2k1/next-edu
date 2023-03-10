@@ -20,6 +20,14 @@ export const PATHS = {
   PAYMENT_STATUS: 'payment_status',
 };
 
+export const QUERY_FILTERS = {
+  SORT: 'sortBy',
+  CATEGORY: 'category',
+  OBJECT: 'object',
+  PRICE: 'price',
+  COURSE_STATE: 'courseState',
+};
+
 import { Uploader } from 'uploader';
 export const UPLOADER_PB_KEY = process.env.NEXT_PUBLIC_UPLOADER_KEY as string;
 // Initialize once (at the start of your app).
