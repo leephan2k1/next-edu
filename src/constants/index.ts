@@ -17,12 +17,14 @@ export const PATHS = {
   EDIT_COURSE: 'edit',
   ADMIN: 'admin',
   CART: 'cart',
+  BROWSE: 'browse',
   PAYMENT_STATUS: 'payment_status',
 };
 
 export const QUERY_FILTERS = {
   SORT: 'sortBy',
   CATEGORY: 'category',
+  SUB_CATEGORY: 'subCategory',
   OBJECT: 'object',
   PRICE: 'price',
   COURSE_STATE: 'courseState',
@@ -80,11 +82,11 @@ export const playerOptions = {
 };
 
 export const categories = [
-  'Khoá học',
-  'Chứng chỉ',
-  'Hỏi đáp',
-  'Giáo viên',
-  'Tổ chức',
+  { title: 'Khoá học', url: `/${PATHS.BROWSE}` },
+  { title: 'Chứng chỉ', url: `/` },
+  { title: 'Hỏi đáp', url: `/` },
+  { title: 'Giáo viên', url: `/` },
+  { title: 'Tổ chức', url: `/` },
 ];
 
 export const swiperBreakPoints = {
