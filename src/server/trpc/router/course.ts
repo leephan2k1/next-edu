@@ -293,6 +293,7 @@ export const courseRouter = router({
     .input(
       z.object({
         category: z.string().optional(),
+        subCategory: z.string().optional(),
         sortBy: z.string().optional(),
         object: z.string().optional(),
         price: z.string().optional(),
@@ -302,11 +303,23 @@ export const courseRouter = router({
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { category, courseState, sortBy, object, price, limit, page } =
-        input;
+      const {
+        category,
+        courseState,
+        sortBy,
+        object,
+        price,
+        limit,
+        page,
+        subCategory,
+      } = input;
 
       const whereConditions = new Map();
       const sortCondition = new Map();
+
+      if (subCategory && subCategory !== 'Tất cả') {
+        whereConditions.set('subCategory', subCategory);
+      }
 
       if (category && category !== 'Tất cả')
         whereConditions.set('category', { name: category });
