@@ -5,13 +5,13 @@ import { Fragment, useRef, useState } from 'react';
 import Teleport from '../shared/Teleport';
 import Logo from './Logo';
 
-interface TeachingDashBoardSidebarProps {
+interface DashBoardSidebarSidebarProps {
   children: ReactNode;
 }
 
-export default function TeachingDashBoardSidebar({
+export default function DashBoardSidebar({
   children,
-}: TeachingDashBoardSidebarProps) {
+}: DashBoardSidebarSidebarProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
 

@@ -5,7 +5,7 @@ import { AiOutlineFundProjectionScreen } from 'react-icons/ai';
 import Loading from '~/components/buttons/Loading';
 import CourseDashboard from '~/components/features/admin/CourseDashboard';
 import MainLayout from '~/components/layouts/MainLayout';
-import TeachingDashBoardSidebar from '~/components/partials/TeachingDashboardSideBar';
+import DashBoardSidebar from '~/components/partials/DashBoardSidebar';
 import usePreviousRoute from '~/contexts/HistoryRouteContext';
 import { trpc } from '~/utils/trpc';
 
@@ -34,12 +34,12 @@ const Admin: NextPage = () => {
 
   return (
     <div className="min-h-screen w-full text-gray-600 dark:bg-black dark:text-white md:pl-[16rem]">
-      <TeachingDashBoardSidebar>
+      <DashBoardSidebar>
         <button className="smooth-effect flex max-w-[9rem] flex-col items-center space-y-2 rounded-2xl bg-slate-200 p-4 dark:bg-black">
           <AiOutlineFundProjectionScreen className="h-10 w-10" />
           <span>Quản lý khoá học</span>
         </button>
-      </TeachingDashBoardSidebar>
+      </DashBoardSidebar>
 
       <CourseDashboard />
     </div>

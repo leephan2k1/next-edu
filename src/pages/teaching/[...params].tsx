@@ -4,7 +4,7 @@ import { Case, Default, Switch } from 'react-if';
 import MainLayout from '~/components/layouts/MainLayout';
 import CourseCreation from '~/components/partials/CourseCreation';
 import CourseSummary from '~/components/partials/CourseSummary';
-import TeachingDashBoardSidebar from '~/components/partials/TeachingDashboardSideBar';
+import DashBoardSidebar from '~/components/partials/DashBoardSidebar';
 import { PATHS } from '~/constants';
 
 import {
@@ -19,7 +19,7 @@ const TeachingDashboard: NextPage = () => {
 
   return (
     <div className="relative min-h-screen text-gray-600 dark:text-white md:pl-[16rem]">
-      <TeachingDashBoardSidebar>
+      <DashBoardSidebar>
         <button className="smooth-effect flex flex-col items-center space-y-2 rounded-2xl bg-slate-200 p-4 dark:bg-black">
           <AiOutlineFundProjectionScreen className="h-10 w-10" />
           <span>Khoá học</span>
@@ -39,7 +39,7 @@ const TeachingDashboard: NextPage = () => {
           <InformationCircleIcon className="h-10 w-10" />
           <span>Hướng dẫn</span>
         </button>
-      </TeachingDashBoardSidebar>
+      </DashBoardSidebar>
 
       <Switch>
         <Case condition={router.asPath.includes('dashboard')}>
