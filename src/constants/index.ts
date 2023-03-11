@@ -1,9 +1,24 @@
 import { Inter, Nunito, Preahvihear } from '@next/font/google';
+import { i18n } from 'dateformat';
 
 // Fonts
 export const nunito = Nunito({ subsets: ['vietnamese'], weight: '400' });
 export const inter = Inter({ subsets: ['vietnamese'], weight: '700' });
 export const preahvihear = Preahvihear({ weight: '400' });
+
+export const dInVietnamese = new Map([
+  [i18n.dayNames[1], 'Thứ 2'],
+  [i18n.dayNames[2], 'Thứ 3'],
+  [i18n.dayNames[3], 'Thứ 4'],
+  [i18n.dayNames[4], 'Thứ 5'],
+  [i18n.dayNames[5], 'Thứ 6'],
+  [i18n.dayNames[6], 'Thứ 7'],
+  [i18n.dayNames[0], 'Chủ nhật'],
+]);
+
+export const mInVietnamese = Array.from(new Array(12).keys()).map(
+  (e) => `Tháng ${e + 1}`,
+);
 
 export const PATHS = {
   USER: 'user',
