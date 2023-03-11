@@ -7,15 +7,17 @@ import { ThemeProvider } from 'next-themes';
 import Router from 'next/router';
 import NProgress from 'nprogress';
 import MainLayout from '~/components/layouts/MainLayout';
-import { trpc } from '~/utils/trpc';
+import { CartContextProvider } from '~/contexts/CartContext';
 import { CourseContextProvider } from '~/contexts/CourseContext';
 import { HistoryRouteContextProvider } from '~/contexts/HistoryRouteContext';
-import { CartContextProvider } from '~/contexts/CartContext';
+import { SocketContextProvider } from '~/contexts/SocketContext';
+import { trpc } from '~/utils/trpc';
 
 import type { NextPage } from 'next';
 import type { Session } from 'next-auth';
 import type { AppProps, AppType } from 'next/app';
 import type { ReactElement, ReactNode } from 'react';
+
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -47,7 +49,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
           <CourseContextProvider>
             <HistoryRouteContextProvider>
               <CartContextProvider>
-                {getLayout(<Component {...pageProps} />)}
+                <SocketContextProvider>
+                  {getLayout(<Component {...pageProps} />)}
+                </SocketContextProvider>
               </CartContextProvider>
             </HistoryRouteContextProvider>
           </CourseContextProvider>
