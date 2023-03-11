@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useIsClient } from 'usehooks-ts';
 import CourseContentCollapse from '~/components/features/learning/CourseContentCollapse';
 import CourseContentsBar from '~/components/features/learning/CourseContentsBar';
@@ -9,13 +9,15 @@ import LearningBody from '~/components/features/learning/LearningBody';
 import LearningHeader from '~/components/features/learning/LearningHeader';
 import ListNoteModal from '~/components/features/note/ListNoteModal';
 import MainLayout from '~/components/layouts/MainLayout';
+import BlankLearningPage from '~/components/shared/BlankLearningPage';
 import { PATHS } from '~/constants';
-import { trpc } from '~/utils/trpc';
 import { LearningContextProvider } from '~/contexts/LearningContext';
 import { prisma } from '~/server/db/client';
-import BlankLearningPage from '~/components/shared/BlankLearningPage';
+import { trpc } from '~/utils/trpc';
+import dateFormat from 'dateformat';
 
 import type { ReactNode } from 'react';
+import useSocket from '~/contexts/SocketContext';
 import type { CourseType, Progress } from '~/types';
 
 interface LearningPageProps {
@@ -24,8 +26,10 @@ interface LearningPageProps {
 
 const LearningPage: NextPage<LearningPageProps> = ({ studentsEnrolled }) => {
   const router = useRouter();
+  const socketCtx = useSocket();
   const isClient = useIsClient();
   const { data: session } = useSession();
+  const isEmitted = useRef(false);
 
   const courseSlug = useMemo(() => {
     if (router.query.params?.length) {
@@ -118,6 +122,26 @@ const LearningPage: NextPage<LearningPageProps> = ({ studentsEnrolled }) => {
       return true;
     }
   }, [allLecturesByChapters, studentProgress, router.query]);
+
+  useEffect(() => {
+    if (socketCtx?.connected && session?.user?.id && !isEmitted.current) {
+      socketCtx.socket.emit('start learning', {
+        userId: session?.user?.id,
+        date: dateFormat(new Date(), 'yyyy-mm-dd'),
+      });
+
+      isEmitted.current = true;
+    }
+
+    return () => {
+      if (socketCtx?.connected && session?.user?.id && isEmitted.current) {
+        socketCtx.socket.emit('stop learning', {
+          userId: session?.user?.id,
+          date: dateFormat(new Date(), 'yyyy-mm-dd'),
+        });
+      }
+    };
+  }, [socketCtx?.connected, session]);
 
   useEffect(() => {
     const userId = session?.user?.id;
