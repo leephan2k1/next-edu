@@ -1,8 +1,36 @@
 import { z } from 'zod';
 import { publicProcedure, router, protectedProcedure } from '../trpc';
-import exclude from '~/server/helper/excludeFields';
 
 export const userRouter = router({
+  findProgressTimeStatus: protectedProcedure.query(async ({ ctx }) => {
+    const timesStatus = await ctx.prisma.trackingProgress.findMany({
+      where: { userId: ctx.session.user.id },
+    });
+
+    return timesStatus;
+  }),
+
+  findEnrolledCourses: protectedProcedure.query(async ({ ctx }) => {
+    const courses = await ctx.prisma.student.findUnique({
+      where: { userId: ctx.session.user.id },
+      include: {
+        courses: {
+          select: {
+            id: true,
+            name: true,
+            instructor: true,
+            category: { select: { name: true } },
+            slug: true,
+            thumbnail: true,
+            coursePrice: true,
+          },
+        },
+      },
+    });
+
+    return courses;
+  }),
+
   findPayments: protectedProcedure.query(async ({ ctx }) => {
     const payments = ctx.prisma.payment.findMany({
       where: { userId: ctx.session.user.id },
