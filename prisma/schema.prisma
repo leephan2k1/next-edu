@@ -101,10 +101,25 @@ model Announcement {
 }
 
 model Student {
-  id       String             @id @default(cuid())
-  userId   String             @unique
-  progress LearningProgress[]
-  courses  Course[]
+  id               String             @id @default(cuid())
+  userId           String             @unique
+  progress         LearningProgress[]
+  courses          Course[]
+  trackingProgress TrackingProgress[]
+}
+
+model TrackingProgress {
+  id              String   @id @default(cuid())
+  timeInSecond    Int      @default(0)
+  socketId        String   @unique
+  date            String
+  learningSession DateTime @default(now())
+  student         Student  @relation(fields: [studentId], references: [id])
+  studentId       String
+  userId          String
+
+  @@unique([userId, date])
+  @@index([studentId])
 }
 
 model LearningProgress {
