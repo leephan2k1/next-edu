@@ -38,7 +38,7 @@ function LearningVideo() {
           url: lectureCtx?.currentLecture
             ? lectureCtx?.currentLecture?.resources.find(
                 (rsc) => rsc.type === 'video',
-              ).url
+              )?.url
             : '',
           title: lectureCtx?.currentLecture?.title || '',
         }}

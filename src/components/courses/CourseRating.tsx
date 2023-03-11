@@ -31,8 +31,6 @@ export default function CourseRating({
   const { mutate, status } = trpc.user.addRating.useMutation();
 
   const handleSubmit = (content: string) => {
-    console.log('content:: ', content);
-
     if (content.trim().length < 3) {
       toast.error('Cần ít nhất 3 ký tự');
       return;
