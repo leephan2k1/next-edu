@@ -2,6 +2,31 @@ import { z } from 'zod';
 import { publicProcedure, router, protectedProcedure } from '../trpc';
 
 export const userRouter = router({
+  findCoursesByInstructor: protectedProcedure.query(async ({ ctx }) => {
+    const courses = await ctx.prisma.course.findMany({
+      where: { instructor: { id: ctx.session.user.id } },
+      select: {
+        id: true,
+        name: true,
+        students: true,
+        reviews: true,
+        coursePrice: true,
+        payments: {
+          where: {
+            status: 'SUCCESS',
+            createdAt: {
+              gt: new Date(new Date().getFullYear(), 0, 1),
+              lt: new Date(new Date().getFullYear(), 11, 31),
+            },
+          },
+          select: { id: true, createdAt: true },
+        },
+      },
+    });
+
+    return courses;
+  }),
+
   findProgressTimeStatus: protectedProcedure.query(async ({ ctx }) => {
     const timesStatus = await ctx.prisma.trackingProgress.findMany({
       where: { userId: ctx.session.user.id },
