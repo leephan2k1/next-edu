@@ -35,6 +35,7 @@ export const PATHS = {
   BROWSE: 'browse',
   PAYMENT_STATUS: 'payment_status',
   MY_LEARNING: 'my-learning',
+  INSTRUCTIONS: 'instructions',
 };
 
 export const QUERY_FILTERS = {
