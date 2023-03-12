@@ -194,15 +194,16 @@ export default function MyDashboard({ data }: MyDashboardProps) {
                             }
                           });
 
-                          return value
-                            ? // convert second to minute
-                              Math.trunc(
-                                value.reduce(
-                                  (acc, e) => acc + e.timeInSecond,
-                                  0,
-                                ) / 60,
-                              )
+                          const totalTimes = value
+                            ? value.reduce(
+                                (acc, e) => acc + e.timeInSecond,
+                                0,
+                              ) / 60
                             : 0;
+
+                          return totalTimes > 1
+                            ? Math.trunc(totalTimes)
+                            : Number.parseFloat(String(totalTimes)).toFixed(1);
                         }),
                         fill: true,
                         label: 'Phút đã học',
