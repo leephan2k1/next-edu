@@ -33,7 +33,7 @@ export const userRouter = router({
 
   findPayments: protectedProcedure.query(async ({ ctx }) => {
     const payments = ctx.prisma.payment.findMany({
-      where: { userId: ctx.session.user.id },
+      where: { userId: ctx.session.user.id, status: 'SUCCESS' },
       include: {
         course: {
           select: {

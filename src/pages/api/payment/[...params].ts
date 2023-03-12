@@ -139,7 +139,7 @@ const payment = async (req: NextApiRequest, res: NextApiResponse) => {
 
         return res.redirect(`/${PATHS.PAYMENT_STATUS}?success=true`);
       } else {
-        return res.redirect(`/${PATHS.PAYMENT_STATUS}?success=false`);
+        return res.redirect(`/${PATHS.CART}`);
       }
     }
   } catch (error) {
