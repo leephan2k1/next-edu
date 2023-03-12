@@ -13,7 +13,9 @@ const PaymentStatus: NextPage = () => {
         </h1>
 
         <div className="absolute-center w-full space-x-6">
-          <button className="btn-primary btn-lg btn">Học ngay</button>
+          <button className="btn-primary btn-lg btn">
+            <Link href={`/${PATHS.MY_LEARNING}/${PATHS.COURSE}`}>Học ngay</Link>
+          </button>
           <button className="btn-follow-theme btn-lg btn">
             <Link
               href={`/${PATHS.USER}/${PATHS.USER_PROFILE}?section=payment-history`}
