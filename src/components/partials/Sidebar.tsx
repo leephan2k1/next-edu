@@ -6,15 +6,31 @@ import { sidebarState } from '~/atoms/sidebarAtom';
 import Logo from './Logo';
 import Collapse from '../shared/Collapse';
 import { categories, categories_detail } from '~/constants';
+import { useRouter } from 'next/router';
+import { useEffectOnce } from 'usehooks-ts';
 
 export default function Sidebar() {
   const [value, setValue] = useAtom(sidebarState);
+  const router = useRouter();
+
+  //effect turn off the UI when user navigate
+  useEffectOnce(() => {
+    const handleRouteChange = () => {
+      setValue(false);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  });
 
   return (
     <Transition appear show={value} as={Fragment}>
       <Dialog
         as="div"
-        className="relative z-[500]"
+        className="relative z-[500] text-black dark:text-white"
         onClose={() => {
           setValue(false);
         }}
@@ -52,7 +68,7 @@ export default function Sidebar() {
                     <Collapse
                       key={category.title}
                       title={category.title}
-                      contents={category.fields}
+                      contents={[category.title].concat(category.fields)}
                     />
                   );
                 })}
@@ -60,8 +76,11 @@ export default function Sidebar() {
                 {categories.length > 0 &&
                   categories.map((category) => {
                     return (
-                      <h2 key={category} className="p-2 text-left text-2xl">
-                        {category}
+                      <h2
+                        key={category.title}
+                        className="p-2 text-left text-2xl"
+                      >
+                        {category.title}
                       </h2>
                     );
                   })}

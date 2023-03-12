@@ -6,17 +6,20 @@ import {
   useRef,
   useState,
 } from 'react';
-import { categories_detail } from '~/constants';
+import { useEffectOnce, useOnClickOutside } from 'usehooks-ts';
+import { categories_detail, PATHS } from '~/constants';
 
 import { Transition } from '@headlessui/react';
 import { Bars3Icon } from '@heroicons/react/24/outline';
-import { useOnClickOutside } from 'usehooks-ts';
+
 import CategoryItem from './CategoryItem';
+import { useRouter } from 'next/router';
 
 function CategoriesDropDown() {
   const [open, setOpen] = useState(false);
   const [hoverKey, setKey] = useState('');
   const ref = useRef(null);
+  const router = useRouter();
 
   const setHoverKey = useCallback((state: string) => {
     setKey(state);
@@ -24,6 +27,19 @@ function CategoriesDropDown() {
 
   useOnClickOutside(ref, () => {
     setOpen(false);
+  });
+
+  //effect turn off the UI when user navigate
+  useEffectOnce(() => {
+    const handleRouteChange = () => {
+      setOpen(false);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
   });
 
   useEffect(() => {
@@ -59,6 +75,7 @@ function CategoriesDropDown() {
                 categories_detail.map((category) => {
                   return (
                     <CategoryItem
+                      path={`/${PATHS.BROWSE}?category=${category.title}`}
                       displayArrow
                       key={category.title}
                       title={category.title}
@@ -73,7 +90,13 @@ function CategoriesDropDown() {
                 categories_detail
                   .find((e) => e.title.toLowerCase() === hoverKey.toLowerCase())
                   ?.fields.map((field) => {
-                    return <CategoryItem key={field} title={field} />;
+                    return (
+                      <CategoryItem
+                        key={field}
+                        title={field}
+                        path={`/${PATHS.BROWSE}?subCategory=${field}`}
+                      />
+                    );
                   })}
             </ul>
           </div>

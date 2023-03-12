@@ -1,6 +1,8 @@
 import { Disclosure } from '@headlessui/react';
 import { ChevronUpIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import Link from 'next/link';
+import { PATHS } from '~/constants';
 
 interface CollapseProps {
   title: string;
@@ -27,11 +29,20 @@ export default function Collapse({ contents, title }: CollapseProps) {
               <Disclosure.Panel>
                 <ul className="space-y-6 px-2 py-4 text-lg md:text-xl">
                   {contents.length &&
-                    contents.map((content) => {
+                    contents.map((content, idx) => {
                       return (
-                        <li key={content} className="flex items-center">
-                          {content}
-                          <ChevronRightIcon className="h-6 w-6" />
+                        <li key={content}>
+                          <Link
+                            className="flex items-center"
+                            href={`/${PATHS.BROWSE}?${
+                              idx === 0
+                                ? `category=${content}`
+                                : `subCategory=${content}`
+                            }`}
+                          >
+                            {content}
+                            <ChevronRightIcon className="h-6 w-6" />
+                          </Link>
                         </li>
                       );
                     })}
