@@ -1,20 +1,22 @@
-import { useState, useMemo } from 'react';
-import { ChartPieIcon, ClockIcon } from '@heroicons/react/24/outline';
-import PieChart from './PieChart';
-import type { Student, User } from '@prisma/client';
-import { CountUp } from 'use-count-up';
-import { group } from 'radash';
-import AreaChart from './AreaChart';
-import { trpc } from '~/utils/trpc';
 import dateFormat from 'dateformat';
+import { group } from 'radash';
+import { useMemo, useState } from 'react';
+import { Else, If, Then } from 'react-if';
+import Loading from '~/components/buttons/Loading';
+import DashboardCard from '~/components/shared/DashboardCard';
 import { dInVietnamese, mInVietnamese } from '~/constants';
 import {
   getDaysInMonth,
   getFirstAndLastDayOfCurrWeek,
 } from '~/utils/dateHandler';
-import Loading from '~/components/buttons/Loading';
-import { If, Then, Else } from 'react-if';
+import { trpc } from '~/utils/trpc';
 
+import { ChartPieIcon, ClockIcon } from '@heroicons/react/24/outline';
+
+import AreaChart from '../../shared/AreaChart';
+import PieChart from '../../shared/PieChart';
+
+import type { Student, User } from '@prisma/client';
 interface MyDashboardProps {
   status: 'error' | 'success' | 'loading';
   data: Student & {
@@ -223,29 +225,6 @@ export default function MyDashboard({ data }: MyDashboardProps) {
           </If>
         </div>
       </div>
-    </div>
-  );
-}
-
-function DashboardCard({
-  title,
-  data,
-  subData,
-}: {
-  title: string;
-  data: number;
-  subData?: string;
-}) {
-  return (
-    <div className="flex h-[20rem] w-full flex-col items-center rounded-2xl bg-white p-6 dark:bg-dark-background md:w-1/2 lg:w-[30%]">
-      <h1 className="font-semibold capitalize text-gray-400">{title}</h1>
-      <h4 className="my-14 text-5xl font-bold md:my-10">
-        <CountUp isCounting end={data} duration={1.5} />
-      </h4>
-
-      {subData ? (
-        <span className="text-xl italic text-gray-400">{subData}</span>
-      ) : null}
     </div>
   );
 }
