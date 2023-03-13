@@ -31,12 +31,13 @@ export const options = {
     },
     title: {
       display: true,
-      text: 'Thời gian học trên Next Edu',
+      text: 'Default chart title',
     },
   },
 };
 
 interface AreaChartProps {
+  chartTitle: string;
   labels: string[];
   datasets: {
     fill: boolean;
@@ -47,6 +48,21 @@ interface AreaChartProps {
   }[];
 }
 
-export default function AreaChart({ labels, datasets }: AreaChartProps) {
-  return <Line options={options} data={{ labels, datasets }} />;
+export default function AreaChart({
+  labels,
+  datasets,
+  chartTitle,
+}: AreaChartProps) {
+  return (
+    <Line
+      options={{
+        ...options,
+        plugins: {
+          ...options.plugins,
+          title: { ...options.plugins.title, text: chartTitle },
+        },
+      }}
+      data={{ labels, datasets }}
+    />
+  );
 }

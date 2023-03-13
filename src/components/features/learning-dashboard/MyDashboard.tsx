@@ -167,6 +167,7 @@ export default function MyDashboard({ data }: MyDashboardProps) {
                 <div className="absolute-center h-[30rem] max-h-[25rem] w-full md:max-h-[30rem] lg:max-h-[45rem]">
                   <AreaChart
                     labels={labelsAreaChart}
+                    chartTitle="Thời gian học trên Next Edu"
                     datasets={[
                       {
                         data: labelsAreaChart?.map((e) => {

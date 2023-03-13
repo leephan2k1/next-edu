@@ -152,6 +152,7 @@ export default function TeachingDashboard() {
             <Else>
               <div className="absolute-center h-[30rem] max-h-[25rem] w-full md:max-h-[30rem] lg:max-h-[45rem]">
                 <AreaChart
+                  chartTitle="Báo cáo doanh thu từ khoá học"
                   labels={labelsAreaChart}
                   datasets={[
                     {
