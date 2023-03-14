@@ -7,6 +7,53 @@ import {
 import { protectedProcedure, publicProcedure, router } from '../trpc';
 
 export const courseRouter = router({
+  findAnalysisData: protectedProcedure.query(async ({ ctx }) => {
+    const [
+      numberCourses,
+      numberStudents,
+      numberResources,
+      totalCourses,
+      totalPaidCourse,
+      topPaidCourse,
+    ] = await ctx.prisma.$transaction([
+      ctx.prisma.course.count(),
+      ctx.prisma.student.count(),
+      ctx.prisma.resource.count(),
+      ctx.prisma.course.findMany({
+        where: { students: { some: { id: { not: undefined } } } },
+        select: {
+          students: true,
+          category: true,
+        },
+      }),
+      ctx.prisma.course.findMany({
+        where: { payments: { some: { id: { not: undefined } } } },
+        select: {
+          coursePrice: true,
+          payments: {
+            where: { status: 'SUCCESS' },
+            select: { id: true, createdAt: true },
+          },
+        },
+      }),
+      ctx.prisma.course.findMany({
+        where: { coursePrice: { not: 0 } },
+        select: { id: true, name: true, payments: true },
+        orderBy: { payments: { _count: 'desc' } },
+        take: 10,
+      }),
+    ]);
+
+    return {
+      numberCourses,
+      numberStudents,
+      numberResources,
+      totalCourses,
+      totalPaidCourse,
+      topPaidCourse,
+    };
+  }),
+
   findAllReviews: publicProcedure
     .input(z.object({ courseId: z.string() }))
     .query(async ({ ctx, input }) => {
