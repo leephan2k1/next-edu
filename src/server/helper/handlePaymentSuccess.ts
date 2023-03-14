@@ -9,18 +9,18 @@ interface handlePaymentSuccessParams {
 export default async function handlePaymentSuccess({
   paymentGId,
   orderId,
-  amount,
 }: handlePaymentSuccessParams) {
   //update & find payment table:
   const [paymentsWithResult] = await Promise.allSettled([
-    await prisma.payment.findMany({ where: { paymentGId } }),
+    await prisma.payment.findMany({
+      where: { paymentGId },
+      include: { course: { include: { instructor: true } } },
+    }),
     await prisma.payment.updateMany({
       where: { paymentGId },
       data: { orderId, status: 'SUCCESS' },
     }),
   ]);
-
-  // console.log('paymentsWithResult:: ', paymentsWithResult);
 
   const payments = paymentsWithResult?.value;
   const userId = payments[0].userId;
@@ -44,24 +44,15 @@ export default async function handlePaymentSuccess({
     await prisma.cart.deleteMany({ where: { userId } }),
   ]);
 
-  // incremental revenue:
-  const revenue = await prisma.revenue.findUnique({
-    where: { userId },
-  });
-
-  if (!revenue) {
-    await prisma.revenue.create({
-      data: {
-        amount,
-        user: { connect: { id: userId } },
-      },
-    });
-  } else {
-    await prisma.revenue.update({
-      where: { userId },
-      data: {
-        amount: revenue.amount + BigInt(amount),
-      },
-    });
-  }
+  // create revenues for instructors:
+  await Promise.all(
+    payments.map(async (payment) => {
+      await prisma.revenue.create({
+        data: {
+          amount: BigInt(payment.course.coursePrice),
+          user: { connect: { id: payment.course.instructor.id } },
+        },
+      });
+    }),
+  );
 }
