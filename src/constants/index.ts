@@ -81,6 +81,7 @@ export const PATHS = {
   MY_LEARNING: 'my-learning',
   INSTRUCTIONS: 'instructions',
   MY_WALLET: 'my-wallet',
+  MONEY: 'money',
 };
 
 export const QUERY_FILTERS = {
