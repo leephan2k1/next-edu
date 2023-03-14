@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { publicProcedure, router, protectedProcedure } from '../trpc';
+import type { WITHDRAWAL_STATUS } from '@prisma/client';
 
 export const userRouter = router({
   findCoursesByInstructor: protectedProcedure.query(async ({ ctx }) => {
@@ -75,6 +76,72 @@ export const userRouter = router({
 
     return payments;
   }),
+
+  findRevenues: protectedProcedure.query(async ({ ctx }) => {
+    const revenues = await ctx.prisma.revenue.findMany({
+      where: { userId: ctx.session.user.id },
+    });
+
+    return revenues;
+  }),
+
+  findWithdrawals: protectedProcedure
+    .input(z.object({ status: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { status } = input;
+
+      const withdrawals = await ctx.prisma.withdrawal.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          status: status as WITHDRAWAL_STATUS,
+        },
+        include: { transaction: true },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return withdrawals;
+    }),
+
+  withdrawMoney: protectedProcedure
+    .input(
+      z.object({
+        amount: z.number(),
+        bankCode: z.string(),
+        bankAccount: z.string(),
+        bankName: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { amount, bankAccount, bankCode, bankName } = input;
+
+      const newWithdrawal = await ctx.prisma.withdrawal.create({
+        data: {
+          user: { connect: { id: ctx.session.user.id } },
+          transaction: {
+            create: {
+              amount,
+              bankAccount,
+              bankCode,
+              bankName,
+            },
+          },
+        },
+      });
+
+      return newWithdrawal;
+    }),
+
+  deleteWithdrawal: protectedProcedure
+    .input(z.object({ withdrawalId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { withdrawalId } = input;
+
+      const deletedWithdrawal = await ctx.prisma.withdrawal.delete({
+        where: { id: withdrawalId },
+      });
+
+      return deletedWithdrawal;
+    }),
 
   addCOurseToCart: protectedProcedure
     .input(z.object({ courseId: z.string() }))
