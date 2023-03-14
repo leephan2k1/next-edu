@@ -166,7 +166,10 @@ export default function CourseHeader({
               <UserIcon className="hidden h-6 w-6 md:inline-block" />
               <span>Người hướng dẫn: </span>
               {course ? (
-                <Link className="text-blue-500" href="/">
+                <Link
+                  className="text-blue-500"
+                  href={`/${PATHS.USER}/${course.instructor.id}`}
+                >
                   {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
                   {/* @ts-ignore */}
                   {course.instructor.name}
