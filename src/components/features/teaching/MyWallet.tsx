@@ -37,6 +37,14 @@ export default function MyWallet() {
     refetch: refetchWithdrawals,
   } = trpc.user.findWithdrawals.useQuery({ status: 'PENDING' });
 
+  const { data: successfulWithdrawals, status: successfulWithdrawalsStatus } =
+    trpc.user.findWithdrawals.useQuery({ status: 'SUCCESS' });
+
+  const {
+    data: rejectedWithdrawals,
+    status: rejectedWithdrawalsStatus,
+  } = trpc.user.findWithdrawals.useQuery({ status: 'CANCEL' });
+
   const { mutate: withdrawMoney, status: withdrawStatus } =
     trpc.user.withdrawMoney.useMutation();
 
@@ -301,49 +309,136 @@ export default function MyWallet() {
             <span className="font-bold">Giao dịch đã thành công</span>
           </h1>
 
-          <table className="table-auto">
-            <thead className="select-none">
-              <tr>
-                <th></th>
+          <If condition={successfulWithdrawalsStatus === 'loading'}>
+            <Then>
+              <div className="absolute-center min-h-[20rem] w-full">
+                <Loading />
+              </div>
+            </Then>
 
-                <th className="whitespace-nowrap  px-4 py-3">Ngân hàng</th>
-                <th className="whitespace-nowrap  px-4 py-3">Ngày tạo</th>
-                <th className="whitespace-nowrap  px-4 py-3">Số tài khoản</th>
-                <th className="whitespace-nowrap  px-4 py-3">
-                  Tên chủ tài khoản
-                </th>
-                <th className="whitespace-nowrap  px-4 py-3">Số tiền</th>
-              </tr>
-            </thead>
-            <tbody className="rounded-xl">
-              <tr
-                // onClick={handleEditCourse}
-                className="smooth-effect cursor-pointer rounded-2xl odd:bg-slate-300 odd:dark:bg-dark-background "
-              >
-                <th className="px-4">1</th>
-                <td className="min-w-[20rem] py-6 lg:min-w-min lg:py-4">
-                  sadadadada
-                </td>
-                <td className="text-center">adsadsada</td>
-                <td className="text-center">adsadsada</td>
-                <td className={`text-center`}>ádsadadadad</td>
-                <td className={`text-center`}>1111</td>
-              </tr>
-              <tr
-                // onClick={handleEditCourse}
-                className="smooth-effect cursor-pointer rounded-2xl odd:bg-slate-300 odd:dark:bg-dark-background "
-              >
-                <th className="px-4">1</th>
-                <td className="min-w-[20rem] py-6 lg:min-w-min lg:py-4">
-                  sadadadada
-                </td>
-                <td className="text-center">adsadsada</td>
-                <td className="text-center">adsadsada</td>
-                <td className={`text-center`}>ádsadadadad</td>
-                <td className={`text-center`}>1111</td>
-              </tr>
-            </tbody>
-          </table>
+            <Else>
+              {successfulWithdrawals && successfulWithdrawals.length > 0 ? (
+                <table className="table-auto">
+                  <thead className="select-none">
+                    <tr>
+                      <th></th>
+
+                      <th className="whitespace-nowrap  px-4 py-3">
+                        Ngân hàng
+                      </th>
+                      <th className="whitespace-nowrap  px-4 py-3">Ngày tạo</th>
+                      <th className="whitespace-nowrap  px-4 py-3">
+                        Số tài khoản
+                      </th>
+                      <th className="whitespace-nowrap  px-4 py-3">
+                        Tên chủ tài khoản
+                      </th>
+                      <th className="whitespace-nowrap  px-4 py-3">Số tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody className="rounded-xl">
+                    {successfulWithdrawals.map((w, idx) => {
+                      return (
+                        <tr
+                          key={w.id}
+                          className="smooth-effect cursor-pointer rounded-2xl odd:bg-slate-300 odd:dark:bg-dark-background "
+                        >
+                          <th className="px-4">{idx + 1}</th>
+                          <td className="min-w-[20rem] py-6 lg:min-w-min lg:py-4">
+                            {w.transaction.bankCode}
+                          </td>
+                          <td className="text-center">
+                            {new Date(w.createdAt).toLocaleString('vi-VI')}
+                          </td>
+                          <td className="text-center">
+                            {w.transaction.bankAccount}
+                          </td>
+                          <td className={`text-center`}>
+                            {w.transaction.bankName}
+                          </td>
+                          <td className={`text-center`}>
+                            {new Intl.NumberFormat('vi-VN', {
+                              style: 'currency',
+                              currency: 'VND',
+                            }).format(Number(w.transaction.amount))}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              ) : null}
+            </Else>
+          </If>
+        </div>
+
+        <div className="mt-14 flex w-full flex-col space-y-6">
+          <h1 className="flex space-x-4 text-3xl">
+            <CheckIcon className="h-8 w-8" />{' '}
+            <span className="font-bold">Giao dịch bị từ chối</span>
+          </h1>
+
+          <If condition={rejectedWithdrawalsStatus === 'loading'}>
+            <Then>
+              <div className="absolute-center min-h-[20rem] w-full">
+                <Loading />
+              </div>
+            </Then>
+
+            <Else>
+              {rejectedWithdrawals && rejectedWithdrawals.length > 0 ? (
+                <table className="table-auto">
+                  <thead className="select-none">
+                    <tr>
+                      <th></th>
+
+                      <th className="whitespace-nowrap  px-4 py-3">
+                        Ngân hàng
+                      </th>
+                      <th className="whitespace-nowrap  px-4 py-3">Ngày tạo</th>
+                      <th className="whitespace-nowrap  px-4 py-3">
+                        Số tài khoản
+                      </th>
+                      <th className="whitespace-nowrap  px-4 py-3">
+                        Tên chủ tài khoản
+                      </th>
+                      <th className="whitespace-nowrap  px-4 py-3">Số tiền</th>
+                    </tr>
+                  </thead>
+                  <tbody className="rounded-xl">
+                    {rejectedWithdrawals.map((w, idx) => {
+                      return (
+                        <tr
+                          key={w.id}
+                          className="smooth-effect cursor-pointer rounded-2xl odd:bg-slate-300 odd:dark:bg-dark-background "
+                        >
+                          <th className="px-4">{idx + 1}</th>
+                          <td className="min-w-[20rem] py-6 lg:min-w-min lg:py-4">
+                            {w.transaction.bankCode}
+                          </td>
+                          <td className="text-center">
+                            {new Date(w.createdAt).toLocaleString('vi-VI')}
+                          </td>
+                          <td className="text-center">
+                            {w.transaction.bankAccount}
+                          </td>
+                          <td className={`text-center`}>
+                            {w.transaction.bankName}
+                          </td>
+                          <td className={`text-center`}>
+                            {new Intl.NumberFormat('vi-VN', {
+                              style: 'currency',
+                              currency: 'VND',
+                            }).format(Number(w.transaction.amount))}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              ) : null}
+            </Else>
+          </If>
         </div>
       </div>
     </div>
