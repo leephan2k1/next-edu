@@ -157,7 +157,7 @@ model User {
   wishlist      Wishlist[]
   cart          Cart[]
   payments      Payment[]
-  revenue       Revenue?
+  revenue       Revenue[]
   withdrawals   Withdrawal[]
 }
 
@@ -193,7 +193,9 @@ model Revenue {
   payments  Payment[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  userId    String    @unique
+  userId    String
+
+  @@index([userId])
 }
 
 model Payment {
