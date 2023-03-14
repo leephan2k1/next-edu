@@ -33,7 +33,7 @@ function CourseCard({ course }: CourseCardProps) {
             className="absolute inset-0 h-auto w-full bg-cover bg-center bg-no-repeat"
           />
         </figure>
-        <h1 className="mt-4 min-h-[4rem] overflow-hidden px-2 text-xl font-bold line-clamp-2 md:my-3 md:text-2xl">
+        <h1 className="mt-4 min-h-[3.8rem] overflow-hidden px-2 text-xl font-bold line-clamp-2 md:my-3 md:text-2xl">
           {course.name}
         </h1>
         <h2 className="px-2 text-lg font-light line-clamp-1 dark:text-white/80 md:text-xl">

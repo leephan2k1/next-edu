@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import { inter } from '~/constants';
+import { PATHS } from '~/constants';
+import Link from 'next/link';
 
 export default function TeacherBanner() {
   return (
@@ -29,7 +31,11 @@ export default function TeacherBanner() {
           </p>
         </div>
 
-        <button className="btn-primary btn-lg btn">Bắt đầu dạy hôm nay</button>
+        <button className="btn-primary btn-lg btn">
+          <Link href={`/${PATHS.TEACHING}/${PATHS.COURSE}`}>
+            Bắt đầu dạy hôm nay
+          </Link>
+        </button>
       </div>
     </div>
   );

@@ -1,30 +1,15 @@
-import { inter } from '~/constants';
 import {
   AcademicCapIcon,
-  LightBulbIcon,
   FireIcon,
+  LightBulbIcon,
   SparklesIcon,
 } from '@heroicons/react/24/outline';
+import type { Category } from '@prisma/client';
 import type { ReactNode } from 'react';
+import { inter } from '~/constants';
 
-const dummy_top_categories = [
-  {
-    label: 'lập trình',
-    backgroundColor: '#d2b6ff',
-    Icon: AcademicCapIcon,
-  },
-  {
-    label: 'học thuật',
-    backgroundColor: '#abc5fe',
-    Icon: LightBulbIcon,
-  },
-  {
-    label: 'nghệ thuật',
-    backgroundColor: '#ffbaaa',
-    Icon: FireIcon,
-  },
-  { label: 'thiết kế', backgroundColor: '#ffea9f', Icon: SparklesIcon },
-];
+const palette_colors = ['#d2b6ff', '#abc5fe', '#ffbaaa', '#ffea9f'];
+const icons = [AcademicCapIcon, LightBulbIcon, FireIcon, SparklesIcon];
 
 const TopCategoryItem = ({
   label,
@@ -52,7 +37,11 @@ const TopCategoryItem = ({
   );
 };
 
-export default function TopCategories() {
+interface TopCategoriesProps {
+  categories: Category[];
+}
+
+export default function TopCategories({ categories }: TopCategoriesProps) {
   return (
     <div className="my-10 w-full space-y-4 text-gray-600 dark:text-white">
       <h1
@@ -65,15 +54,17 @@ export default function TopCategories() {
       </h1>
 
       <div className="grid grid-cols-2 gap-y-16 gap-x-6 p-4 md:grid-cols-4">
-        {dummy_top_categories.length > 0 &&
-          dummy_top_categories.map((category) => {
+        {categories?.length > 0 &&
+          categories.map((category, idx) => {
+            const Icon = icons[idx];
+
             return (
               <TopCategoryItem
-                backgroundColor={category.backgroundColor}
-                label={category.label}
-                key={category.label}
+                backgroundColor={palette_colors[idx]}
+                label={category.name}
+                key={category.id}
               >
-                {<category.Icon className="text-gray-600" />}
+                <Icon className="text-gray-600" />
               </TopCategoryItem>
             );
           })}

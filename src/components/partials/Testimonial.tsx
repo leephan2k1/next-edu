@@ -10,6 +10,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 import TestimonialCard from '../shared/TestimonialCard';
 
+import type { Review } from '@prisma/client';
 import type { Swiper as SwiperCore } from 'swiper/types';
 
 const swiperBreakPoints = {
@@ -23,7 +24,11 @@ const swiperBreakPoints = {
   },
 };
 
-function Testimonial() {
+interface TestimonialProps {
+  latestReviews: Review[];
+}
+
+function Testimonial({ latestReviews }: TestimonialProps) {
   const swiperRef = useRef<SwiperCore>();
 
   return (
@@ -34,31 +39,28 @@ function Testimonial() {
         }}
         className="mb-10 text-center text-3xl font-bold dark:text-white md:text-4xl"
       >
-        Đánh giá từ người dùng
+        Đánh giá mới nhất từ người dùng
       </h1>
 
       <div className="mx-auto w-full px-10 lg:w-3/4">
-        <Swiper
-          loop
-          onBeforeInit={(swiper) => {
-            swiperRef.current = swiper;
-          }}
-          breakpoints={swiperBreakPoints}
-          modules={[Pagination, FreeMode]}
-        >
-          <SwiperSlide>
-            <TestimonialCard />
-          </SwiperSlide>
-          <SwiperSlide>
-            <TestimonialCard />
-          </SwiperSlide>
-          <SwiperSlide>
-            <TestimonialCard />
-          </SwiperSlide>
-          <SwiperSlide>
-            <TestimonialCard />
-          </SwiperSlide>
-        </Swiper>
+        {latestReviews && latestReviews.length > 0 && (
+          <Swiper
+            loop
+            onBeforeInit={(swiper) => {
+              swiperRef.current = swiper;
+            }}
+            breakpoints={swiperBreakPoints}
+            modules={[Pagination, FreeMode]}
+          >
+            {latestReviews.map((review) => {
+              return (
+                <SwiperSlide key={review.id}>
+                  <TestimonialCard review={review} />
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        )}
 
         <div className="mt-4 flex w-full items-center justify-center space-x-6">
           <button
