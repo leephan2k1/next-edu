@@ -16,36 +16,38 @@ export default function CourseDashboard() {
 
   return (
     <>
-      <PreviewCourseModal
-        course={course}
-        openPreviewModal={openPreviewModal}
-        setOpenPreviewModal={setOpenPreviewModal}
-      />
+      <div className="mx-auto flex w-[90%] flex-col md:w-[80%]">
+        <PreviewCourseModal
+          course={course}
+          openPreviewModal={openPreviewModal}
+          setOpenPreviewModal={setOpenPreviewModal}
+        />
 
-      <VerifyCourses
-        setOpenPreviewModal={setOpenPreviewModal}
-        setCourse={setCourse}
-        shouldRefetch={shouldRefetch.pending}
-        setShouldRefetch={setShouldRefetch}
-        queryKeys={{ published: true, verified: 'PENDING' }}
-        title="Khoá học chờ phê duyệt"
-      />
-      <VerifyCourses
-        setOpenPreviewModal={setOpenPreviewModal}
-        setCourse={setCourse}
-        shouldRefetch={shouldRefetch.approved}
-        setShouldRefetch={setShouldRefetch}
-        queryKeys={{ published: true, verified: 'APPROVED' }}
-        title="Khoá học đã phê duyệt"
-      />
-      <VerifyCourses
-        setOpenPreviewModal={setOpenPreviewModal}
-        setCourse={setCourse}
-        shouldRefetch={shouldRefetch.reject}
-        setShouldRefetch={setShouldRefetch}
-        queryKeys={{ published: true, verified: 'REJECT' }}
-        title="Khoá học đã từ chối"
-      />
+        <VerifyCourses
+          setOpenPreviewModal={setOpenPreviewModal}
+          setCourse={setCourse}
+          shouldRefetch={shouldRefetch.pending}
+          setShouldRefetch={setShouldRefetch}
+          queryKeys={{ published: true, verified: 'PENDING' }}
+          title="Khoá học chờ phê duyệt"
+        />
+        <VerifyCourses
+          setOpenPreviewModal={setOpenPreviewModal}
+          setCourse={setCourse}
+          shouldRefetch={shouldRefetch.approved}
+          setShouldRefetch={setShouldRefetch}
+          queryKeys={{ published: true, verified: 'APPROVED' }}
+          title="Khoá học đã phê duyệt"
+        />
+        <VerifyCourses
+          setOpenPreviewModal={setOpenPreviewModal}
+          setCourse={setCourse}
+          shouldRefetch={shouldRefetch.reject}
+          setShouldRefetch={setShouldRefetch}
+          queryKeys={{ published: true, verified: 'REJECT' }}
+          title="Khoá học đã từ chối"
+        />
+      </div>
     </>
   );
 }

@@ -8,6 +8,10 @@ import MainLayout from '~/components/layouts/MainLayout';
 import DashBoardSidebar from '~/components/partials/DashBoardSidebar';
 import usePreviousRoute from '~/contexts/HistoryRouteContext';
 import { trpc } from '~/utils/trpc';
+import AdminDashboardSidebar from '~/components/features/admin/AdminDashboardSidebar';
+import { Switch, Case, Default } from 'react-if';
+import { PATHS } from '~/constants';
+import MoneyHandling from '~/components/features/admin/MoneyHandling';
 
 const Admin: NextPage = () => {
   const prevRoute = usePreviousRoute();
@@ -34,14 +38,19 @@ const Admin: NextPage = () => {
 
   return (
     <div className="min-h-screen w-full text-gray-600 dark:bg-black dark:text-white md:pl-[16rem]">
-      <DashBoardSidebar>
-        <button className="smooth-effect flex max-w-[9rem] flex-col items-center space-y-2 rounded-2xl bg-slate-200 p-4 dark:bg-black">
-          <AiOutlineFundProjectionScreen className="h-10 w-10" />
-          <span>Quản lý khoá học</span>
-        </button>
-      </DashBoardSidebar>
+      <AdminDashboardSidebar />
 
-      <CourseDashboard />
+      <Switch>
+        <Case condition={router.asPath.includes(PATHS.COURSE) && !isLoading}>
+          <CourseDashboard />
+        </Case>
+
+        <Case condition={router.asPath.includes(PATHS.MONEY) && !isLoading}>
+          <MoneyHandling />
+        </Case>
+
+        <Default>{null}</Default>
+      </Switch>
     </div>
   );
 };
