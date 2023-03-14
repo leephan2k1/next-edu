@@ -4,27 +4,44 @@ import { useMemo, useState } from 'react';
 import { Else, If, Then } from 'react-if';
 import Loading from '~/components/buttons/Loading';
 import DashboardCard from '~/components/shared/DashboardCard';
+import HorizontalBarChart from '~/components/shared/HorizontalBarChart';
 import { mInVietnamese } from '~/constants';
 import { getDaysInMonth } from '~/utils/dateHandler';
-import { trpc } from '~/utils/trpc';
-import HorizontalBarChart from '~/components/shared/HorizontalBarChart';
 
 import {
+  ChartBarIcon,
   ChartPieIcon,
   CurrencyDollarIcon,
-  ChartBarIcon,
 } from '@heroicons/react/24/outline';
 
+import type { Review, Student } from '@prisma/client';
 import AreaChart from '../../shared/AreaChart';
 import PieChart from '../../shared/PieChart';
 
 type FilterTimeType = 'month' | 'day';
 
-export default function TeachingDashboard() {
-  const [filterTimeType, setFilterTimeType] = useState<FilterTimeType>('day');
+interface TeachingDashboardProps {
+  courses:
+    | {
+        payments: {
+          id: string;
+          createdAt: Date;
+        }[];
+        reviews: Review[];
+        students: Student[];
+        id: string;
+        name: string;
+        coursePrice: number | null;
+      }[]
+    | undefined;
+  status: 'error' | 'success' | 'loading';
+}
 
-  const { data: courses, status } =
-    trpc.user.findCoursesByInstructor.useQuery();
+export default function TeachingDashboard({
+  courses,
+  status,
+}: TeachingDashboardProps) {
+  const [filterTimeType, setFilterTimeType] = useState<FilterTimeType>('day');
 
   const totalStudentsEnrolled = useMemo(() => {
     if (!courses) return 0;
@@ -77,7 +94,7 @@ export default function TeachingDashboard() {
     if (!courses) return 0;
 
     return courses.reduce((acc, course) => {
-      return course.payments.length * Number(course.coursePrice);
+      return acc + course.payments.length * Number(course.coursePrice);
     }, 0);
   }, [courses]);
 
@@ -103,20 +120,14 @@ export default function TeachingDashboard() {
           <DashboardCard
             title="Số khoá học đã dạy"
             data={courses ? courses.length : 0}
-            subData={`khoá học có phí`}
           />
 
           <DashboardCard
             title="Số học sinh đã ghi danh"
             data={totalStudentsEnrolled}
-            subData={`khoá học có phí`}
           />
 
-          <DashboardCard
-            title="Số lượng đánh giá"
-            data={totalReviews}
-            subData={`khoá học có phí`}
-          />
+          <DashboardCard title="Số lượng đánh giá" data={totalReviews} />
         </div>
 
         <div className="mt-14 flex w-full flex-col space-y-6">
@@ -158,7 +169,7 @@ export default function TeachingDashboard() {
                     {
                       data: labelsAreaChart?.map((e) => {
                         if (paymentsGroupByDate && paymentsGroupByDate[e])
-                          return paymentsGroupByDate[e].totalPrices;
+                          return paymentsGroupByDate[e]?.totalPrices;
 
                         return 0;
                       }),
