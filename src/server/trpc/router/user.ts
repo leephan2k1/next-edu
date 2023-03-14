@@ -86,20 +86,55 @@ export const userRouter = router({
   }),
 
   findWithdrawals: protectedProcedure
-    .input(z.object({ status: z.string() }))
+    .input(
+      z.object({
+        status: z.string(),
+        isAdmin: z.boolean().optional(),
+        includeUser: z.boolean().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
-      const { status } = input;
+      const { status, isAdmin, includeUser } = input;
 
       const withdrawals = await ctx.prisma.withdrawal.findMany({
         where: {
-          userId: ctx.session.user.id,
+          userId: isAdmin ? undefined : ctx.session.user.id,
           status: status as WITHDRAWAL_STATUS,
         },
-        include: { transaction: true },
+        include: { transaction: true, user: !!includeUser },
         orderBy: { createdAt: 'desc' },
       });
 
       return withdrawals;
+    }),
+
+  approveWithdrawal: protectedProcedure
+    .input(
+      z.object({
+        withdrawalsId: z.array(z.string()),
+        status: z.union([
+          z.literal('PENDING'),
+          z.literal('SUCCESS'),
+          z.literal('ERROR'),
+          z.literal('CANCEL'),
+        ]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { withdrawalsId, status } = input;
+
+      const [approveWithdrawalsStatus] = await Promise.allSettled(
+        withdrawalsId.map(async (id) => {
+          await ctx.prisma.withdrawal.update({
+            where: { id },
+            data: {
+              status,
+            },
+          });
+        }),
+      );
+
+      return approveWithdrawalsStatus?.value;
     }),
 
   withdrawMoney: protectedProcedure
