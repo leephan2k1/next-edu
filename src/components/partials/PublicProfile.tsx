@@ -29,12 +29,12 @@ export default function PublicProfile({ user }: PublicProfileProps) {
   }, [user]);
 
   const socialContacts = useMemo(() => {
+    if (!user || !user?.bio) return null;
+
     return Object.fromEntries(
       new Map(user.bio.socialContacts.map((e) => [e.title, e.url])),
     );
   }, [user]);
-
-  console.log('socialContacts;: ', socialContacts);
 
   return (
     <div className="flex w-full flex-col-reverse px-4 md:flex-row md:space-x-6">
@@ -104,74 +104,78 @@ export default function PublicProfile({ user }: PublicProfileProps) {
           />
         </figure>
 
-        {socialContacts['webUrl'] && (
-          <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
-            <a
-              target={'_blank'}
-              rel="noreferrer"
-              href={socialContacts['webUrl'] as string}
-              className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
-            >
-              <LinkIcon className="inline h-8 w-8" />
-              <span>{socialContacts['webUrl'] as string}</span>
-            </a>
-          </button>
-        )}
+        {socialContacts && (
+          <>
+            {socialContacts['webUrl'] && (
+              <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
+                <a
+                  target={'_blank'}
+                  rel="noreferrer"
+                  href={socialContacts['webUrl'] as string}
+                  className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
+                >
+                  <LinkIcon className="inline h-8 w-8" />
+                  <span>{socialContacts['webUrl'] as string}</span>
+                </a>
+              </button>
+            )}
 
-        {socialContacts['facebook'] && (
-          <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
-            <a
-              target={'_blank'}
-              rel="noreferrer"
-              href={`https://www.facebook.com/${socialContacts['facebook']}`}
-              className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
-            >
-              <BsFacebook className="inline h-8 w-8" />
-              <span>{socialContacts['facebook'] as string}</span>
-            </a>
-          </button>
-        )}
+            {socialContacts['facebook'] && (
+              <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
+                <a
+                  target={'_blank'}
+                  rel="noreferrer"
+                  href={`https://www.facebook.com/${socialContacts['facebook']}`}
+                  className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
+                >
+                  <BsFacebook className="inline h-8 w-8" />
+                  <span>{socialContacts['facebook'] as string}</span>
+                </a>
+              </button>
+            )}
 
-        {socialContacts['twitter'] && (
-          <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
-            <a
-              target={'_blank'}
-              rel="noreferrer"
-              href={`https://twitter.com/${socialContacts['twitter']}`}
-              className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
-            >
-              <BsTwitter className="inline h-8 w-8" />
-              <span>{socialContacts['twitter'] as string}</span>
-            </a>
-          </button>
-        )}
+            {socialContacts['twitter'] && (
+              <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
+                <a
+                  target={'_blank'}
+                  rel="noreferrer"
+                  href={`https://twitter.com/${socialContacts['twitter']}`}
+                  className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
+                >
+                  <BsTwitter className="inline h-8 w-8" />
+                  <span>{socialContacts['twitter'] as string}</span>
+                </a>
+              </button>
+            )}
 
-        {socialContacts['youtube'] && (
-          <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
-            <a
-              target={'_blank'}
-              rel="noreferrer"
-              href={`https://www.youtube.com/${socialContacts['youtube']}`}
-              className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
-            >
-              <BsYoutube className="inline h-8 w-8" />
-              <span>{socialContacts['youtube'] as string}</span>
-            </a>
-          </button>
-        )}
+            {socialContacts['youtube'] && (
+              <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
+                <a
+                  target={'_blank'}
+                  rel="noreferrer"
+                  href={`https://www.youtube.com/${socialContacts['youtube']}`}
+                  className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
+                >
+                  <BsYoutube className="inline h-8 w-8" />
+                  <span>{socialContacts['youtube'] as string}</span>
+                </a>
+              </button>
+            )}
 
-        {socialContacts['linkedin'] && (
-          <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
-            <a
-              target={'_blank'}
-              rel="noreferrer"
-              href={`https://www.linkedin.com/in/${socialContacts['linkedin']}`}
-              className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
-            >
-              <BsLinkedin className="inline h-8 w-8" />
-              <span>{socialContacts['linkedin'] as string}</span>
-            </a>
-          </button>
+            {socialContacts['linkedin'] && (
+              <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
+                <a
+                  target={'_blank'}
+                  rel="noreferrer"
+                  href={`https://www.linkedin.com/in/${socialContacts['linkedin']}`}
+                  className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
+                >
+                  <BsLinkedin className="inline h-8 w-8" />
+                  <span>{socialContacts['linkedin'] as string}</span>
+                </a>
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
