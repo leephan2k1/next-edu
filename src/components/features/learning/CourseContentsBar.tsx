@@ -1,18 +1,33 @@
 import { useAtom } from 'jotai';
+import { useRouter } from 'next/router';
 import { Fragment, memo } from 'react';
+import { useEffectOnce } from 'usehooks-ts';
 import { courseContentBarState } from '~/atoms/courseContentBarState';
 
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
 import type { ReactNode } from 'react';
-
 interface CourseContentsBarProps {
   children: ReactNode;
 }
 
 function CourseContentsBar({ children }: CourseContentsBarProps) {
+  const router = useRouter();
   const [open, setOpen] = useAtom(courseContentBarState);
+
+  //effect turn off the UI when user navigate
+  useEffectOnce(() => {
+    const handleRouteChange = () => {
+      setOpen(false);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  });
 
   return (
     <Transition appear show={open} as={Fragment}>
