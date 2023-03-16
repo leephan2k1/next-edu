@@ -499,4 +499,89 @@ export const userRouter = router({
 
       return notes;
     }),
+
+  addDiscussion: protectedProcedure
+    .input(
+      z.object({
+        content: z.string(),
+        lectureId: z.string(),
+        replyId: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { content, lectureId, replyId } = input;
+
+      const discussion = await ctx.prisma.discussion.create({
+        data: {
+          content,
+          lecture: { connect: { id: lectureId } },
+          author: { connect: { id: ctx.session.user.id } },
+        },
+      });
+
+      if (replyId) {
+        await ctx.prisma.discussion.update({
+          where: { id: replyId },
+          data: {
+            replies: {
+              connect: { id: discussion.id },
+            },
+          },
+        });
+      }
+
+      return discussion;
+    }),
+
+  updateDiscussion: protectedProcedure
+    .input(z.object({ content: z.string(), id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { content, id } = input;
+
+      const discussion = await ctx.prisma.discussion.update({
+        where: { id },
+        data: {
+          content,
+        },
+      });
+
+      return discussion;
+    }),
+
+  deleteDiscussion: protectedProcedure
+    .input(z.object({ discussionId: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const { discussionId } = input;
+
+      // idk how to delete 1-m relations in prisma, so i do it in query raw ?:b?
+      const [deletedDiscussion] = await ctx.prisma.$transaction([
+        ctx.prisma.$queryRaw`DELETE FROM Discussion WHERE id = ${discussionId}`,
+        ctx.prisma.discussion.deleteMany({
+          where: { parentDiscussionId: discussionId },
+        }),
+      ]);
+
+      return deletedDiscussion;
+    }),
+
+  findDiscussions: publicProcedure
+    .input(z.object({ lectureId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { lectureId } = input;
+
+      const discussions = await ctx.prisma.discussion.findMany({
+        where: { lectureId, parentDiscussionId: { equals: null } },
+        include: {
+          replies: {
+            include: {
+              author: { select: { name: true, image: true, id: true } },
+            },
+          },
+          author: { select: { name: true, image: true, id: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return discussions;
+    }),
 });
