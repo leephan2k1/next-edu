@@ -9,14 +9,22 @@ import useLecture from '~/contexts/LearningContext';
 import { trpc } from '~/utils/trpc';
 
 interface DiscussStandaloneProps {
-  inputType: 'announcement' | 'discuss' | 'comment';
+  inputType: 'announcement' | 'discuss' | 'reply' | 'editDiscuss';
   customStatus?: string;
+  prevContent?: string;
+  discussionId?: string;
+  originalDiscussionId?: string;
   customSubmit?: (content: string) => void;
   refetch?: () => void;
+  handleCancel?: () => void;
 }
 
 function DiscussStandalone({
   inputType,
+  discussionId,
+  prevContent,
+  handleCancel,
+  originalDiscussionId,
   customStatus,
   refetch,
   customSubmit,
@@ -33,6 +41,12 @@ function DiscussStandalone({
     isLoading: isCreateAnnouncementLoading,
   } = trpc.course.createAnnouncement.useMutation();
 
+  const { mutate: addDiscussion, status: addDiscussionStatus } =
+    trpc.user.addDiscussion.useMutation();
+
+  const { mutate: updateDiscussion, status: updateDiscussionStatus } =
+    trpc.user.updateDiscussion.useMutation();
+
   const handleSubmitContent = () => {
     if (inputType === 'announcement') {
       const payload = {
@@ -46,8 +60,95 @@ function DiscussStandalone({
       }
 
       createAnnouncement({ content: payload.content, id: payload.courseId });
+      return;
+    }
+
+    if (inputType === 'discuss') {
+      const payload = {
+        content: editorRef.current?.value as string,
+        courseId: lectureCtx?.currentLecture?.id,
+      };
+
+      if (!payload.content || !lectureCtx?.currentLecture?.id) {
+        toast.error('Oops! Có lỗi, thử lại sau!');
+        return;
+      }
+
+      addDiscussion({
+        content: payload.content,
+        lectureId: lectureCtx?.currentLecture?.id,
+      });
+      return;
+    }
+
+    if (inputType === 'reply') {
+      const payload = {
+        content: editorRef.current?.value as string,
+        courseId: lectureCtx?.currentLecture?.id,
+        originalDiscussionId,
+      };
+
+      if (!payload.content || !lectureCtx?.currentLecture?.id) {
+        toast.error('Oops! Có lỗi, thử lại sau!');
+        return;
+      }
+
+      addDiscussion({
+        content: payload.content,
+        lectureId: lectureCtx?.currentLecture?.id,
+        replyId: payload.originalDiscussionId,
+      });
+      return;
+    }
+
+    if (inputType === 'editDiscuss' && discussionId) {
+      const payload = {
+        content: editorRef.current?.value as string,
+        id: discussionId,
+      };
+
+      if (
+        prevContent === editorRef.current?.value &&
+        refetch &&
+        typeof refetch === 'function'
+      ) {
+        refetch();
+        return;
+      }
+
+      updateDiscussion({ content: payload.content, id: payload.id });
+
+      return;
     }
   };
+
+  useEffect(() => {
+    if (
+      updateDiscussionStatus === 'success' &&
+      refetch &&
+      typeof refetch === 'function'
+    ) {
+      refetch();
+    }
+
+    if (updateDiscussionStatus === 'error') {
+      toast.error('Oops! Có lỗi, thử lại sau!');
+    }
+  }, [updateDiscussionStatus]);
+
+  useEffect(() => {
+    if (
+      addDiscussionStatus === 'success' &&
+      refetch &&
+      typeof refetch === 'function'
+    ) {
+      refetch();
+    }
+
+    if (addDiscussionStatus === 'error') {
+      toast.error('Oops! Có lỗi, thử lại sau!');
+    }
+  }, [addDiscussionStatus]);
 
   useEffect(() => {
     if (isCreateAnnouncementSuccess && inputType === 'announcement') {
@@ -76,14 +177,29 @@ function DiscussStandalone({
       </div>
 
       <Editor
-        key={String(isCreateAnnouncementSuccess || customStatus)}
+        handleCancel={() => {
+          if (handleCancel && typeof handleCancel === 'function') {
+            handleCancel();
+          }
+        }}
+        removeMessage={inputType === 'editDiscuss' ? 'Huỷ' : undefined}
+        key={String(
+          isCreateAnnouncementSuccess || customStatus || addDiscussionStatus,
+        )}
         contents={
-          isCreateAnnouncementSuccess || customStatus === 'success'
+          isCreateAnnouncementSuccess ||
+          customStatus === 'success' ||
+          addDiscussionStatus === 'success'
             ? ''
+            : prevContent !== undefined
+            ? prevContent
             : undefined
         }
         isLoadingSubmit={
-          isCreateAnnouncementLoading || customStatus === 'loading'
+          isCreateAnnouncementLoading ||
+          customStatus === 'loading' ||
+          addDiscussionStatus === 'loading' ||
+          updateDiscussionStatus === 'loading'
         }
         getInstance={(editor) => {
           editorRef.current = editor;
