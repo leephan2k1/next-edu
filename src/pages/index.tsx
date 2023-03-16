@@ -11,7 +11,11 @@ import Testimonial from '~/components/partials/Testimonial';
 
 interface HomePageProps {
   topCategories: Category[];
-  latestReviews: Review[];
+  latestReviews: (Review & {
+    Course: {
+      slug: string;
+    } | null;
+  })[];
   totalCourses: number;
   totalStudents: number;
   totalInstructors: number;
@@ -77,6 +81,7 @@ export const getStaticProps: GetStaticProps = async () => {
     prisma.review.findMany({
       take: 8,
       orderBy: { createdAt: 'desc' },
+      include: { Course: { select: { slug: true } } },
     }),
   ]);
 

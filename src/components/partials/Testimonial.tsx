@@ -1,10 +1,11 @@
 import 'swiper/css';
 import 'swiper/css/pagination';
 
+import Link from 'next/link';
 import { memo, useRef } from 'react';
 import { FreeMode, Pagination } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { inter } from '~/constants';
+import { inter, PATHS } from '~/constants';
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
@@ -25,7 +26,11 @@ const swiperBreakPoints = {
 };
 
 interface TestimonialProps {
-  latestReviews: Review[];
+  latestReviews: (Review & {
+    Course: {
+      slug: string;
+    } | null;
+  })[];
 }
 
 function Testimonial({ latestReviews }: TestimonialProps) {
@@ -55,7 +60,9 @@ function Testimonial({ latestReviews }: TestimonialProps) {
             {latestReviews.map((review) => {
               return (
                 <SwiperSlide key={review.id}>
-                  <TestimonialCard review={review} />
+                  <Link href={`/${PATHS.COURSE}/${review.Course?.slug}`}>
+                    <TestimonialCard review={review} />
+                  </Link>
                 </SwiperSlide>
               );
             })}
