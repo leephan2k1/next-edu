@@ -306,18 +306,17 @@ model Lecture {
 }
 
 model Discussion {
-  id        String   @id @default(cuid())
-  content   String   @db.Text
-  author    User     @relation(fields: [userId], references: [id])
-  userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  parentDiscussionId String
-  parentCategory     Discussion   @relation("ParentDiscussion", fields: [parentDiscussionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  reply              Discussion[] @relation("ParentDiscussion")
-  Lecture            Lecture?     @relation(fields: [lectureId], references: [id])
-  lectureId          String?
+  id                 String       @id @default(cuid())
+  content            String       @db.Text
+  author             User         @relation(fields: [userId], references: [id])
+  userId             String
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  parentDiscussionId String?
+  parentDiscussion   Discussion?  @relation("ParentDiscussion", fields: [parentDiscussionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies            Discussion[] @relation("ParentDiscussion")
+  lecture            Lecture      @relation(fields: [lectureId], references: [id])
+  lectureId          String
 
   @@index([userId])
   @@index([parentDiscussionId])
