@@ -220,7 +220,7 @@ export default function AdminDashboard() {
                         analysisData?.topPaidCourse.map((e) => e.name) || [],
                       datasets: [
                         {
-                          label: 'Số lượng đánh giá',
+                          label: 'Số lượng mua',
                           data:
                             analysisData?.topPaidCourse.map(
                               (e) => e.payments.length,

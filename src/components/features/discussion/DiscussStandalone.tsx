@@ -2,7 +2,9 @@ import Image from 'next/image';
 import { memo, useEffect, useRef } from 'react';
 import Editor from '~/components/shared/Editor';
 
+import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import toast from 'react-hot-toast';
 import type QuillComponent from 'react-quill';
 import useLecture from '~/contexts/LearningContext';
@@ -14,6 +16,7 @@ interface DiscussStandaloneProps {
   prevContent?: string;
   discussionId?: string;
   originalDiscussionId?: string;
+  authorId?: string | null;
   customSubmit?: (content: string) => void;
   refetch?: () => void;
   handleCancel?: () => void;
@@ -27,12 +30,14 @@ function DiscussStandalone({
   originalDiscussionId,
   customStatus,
   refetch,
+  authorId,
   customSubmit,
 }: DiscussStandaloneProps) {
   const editorRef = useRef<QuillComponent | null>(null);
 
   const { data: session } = useSession();
   const lectureCtx = useLecture();
+  const router = useRouter();
 
   const {
     mutate: createAnnouncement,
@@ -47,78 +52,92 @@ function DiscussStandalone({
   const { mutate: updateDiscussion, status: updateDiscussionStatus } =
     trpc.user.updateDiscussion.useMutation();
 
-  const handleSubmitContent = () => {
-    if (inputType === 'announcement') {
-      const payload = {
-        content: editorRef.current?.value as string,
-        courseId: (lectureCtx?.course && lectureCtx?.course.id) || '',
-      };
+  const handleSubmitContent = async () => {
+    try {
+      if (inputType === 'announcement') {
+        const payload = {
+          content: editorRef.current?.value as string,
+          courseId: (lectureCtx?.course && lectureCtx?.course.id) || '',
+        };
 
-      if (!payload.content || !payload.courseId) {
-        toast.error('Oops! Có lỗi, thử lại sau!');
+        if (!payload.content || !payload.courseId) {
+          toast.error('Oops! Có lỗi, thử lại sau!');
+          return;
+        }
+
+        createAnnouncement({ content: payload.content, id: payload.courseId });
         return;
       }
 
-      createAnnouncement({ content: payload.content, id: payload.courseId });
-      return;
-    }
+      if (inputType === 'discuss') {
+        const payload = {
+          content: editorRef.current?.value as string,
+          courseId: lectureCtx?.currentLecture?.id,
+        };
 
-    if (inputType === 'discuss') {
-      const payload = {
-        content: editorRef.current?.value as string,
-        courseId: lectureCtx?.currentLecture?.id,
-      };
+        if (!payload.content || !lectureCtx?.currentLecture?.id) {
+          toast.error('Oops! Có lỗi, thử lại sau!');
+          return;
+        }
 
-      if (!payload.content || !lectureCtx?.currentLecture?.id) {
-        toast.error('Oops! Có lỗi, thử lại sau!');
+        addDiscussion({
+          content: payload.content,
+          lectureId: lectureCtx?.currentLecture?.id,
+        });
+        await axios.post(`/api/notification`, {
+          location: router.asPath,
+          userId: lectureCtx?.course?.instructor.id,
+          content: `Có học sinh thảo luận khoá học ${lectureCtx.course?.name} của bạn`,
+        });
         return;
       }
 
-      addDiscussion({
-        content: payload.content,
-        lectureId: lectureCtx?.currentLecture?.id,
-      });
-      return;
-    }
+      if (inputType === 'reply') {
+        const payload = {
+          content: editorRef.current?.value as string,
+          courseId: lectureCtx?.currentLecture?.id,
+          originalDiscussionId,
+        };
 
-    if (inputType === 'reply') {
-      const payload = {
-        content: editorRef.current?.value as string,
-        courseId: lectureCtx?.currentLecture?.id,
-        originalDiscussionId,
-      };
+        if (!payload.content || !lectureCtx?.currentLecture?.id) {
+          toast.error('Oops! Có lỗi, thử lại sau!');
+          return;
+        }
 
-      if (!payload.content || !lectureCtx?.currentLecture?.id) {
-        toast.error('Oops! Có lỗi, thử lại sau!');
+        addDiscussion({
+          content: payload.content,
+          lectureId: lectureCtx?.currentLecture?.id,
+          replyId: payload.originalDiscussionId,
+        });
+        await axios.post(`/api/notification`, {
+          location: router.asPath,
+          userId: authorId,
+          content: `Có người trả lời thảo luận khoá học ${lectureCtx.course?.name} của bạn`,
+        });
         return;
       }
 
-      addDiscussion({
-        content: payload.content,
-        lectureId: lectureCtx?.currentLecture?.id,
-        replyId: payload.originalDiscussionId,
-      });
-      return;
-    }
+      if (inputType === 'editDiscuss' && discussionId) {
+        const payload = {
+          content: editorRef.current?.value as string,
+          id: discussionId,
+        };
 
-    if (inputType === 'editDiscuss' && discussionId) {
-      const payload = {
-        content: editorRef.current?.value as string,
-        id: discussionId,
-      };
+        if (
+          prevContent === editorRef.current?.value &&
+          refetch &&
+          typeof refetch === 'function'
+        ) {
+          refetch();
+          return;
+        }
 
-      if (
-        prevContent === editorRef.current?.value &&
-        refetch &&
-        typeof refetch === 'function'
-      ) {
-        refetch();
+        updateDiscussion({ content: payload.content, id: payload.id });
+
         return;
       }
-
-      updateDiscussion({ content: payload.content, id: payload.id });
-
-      return;
+    } catch (error) {
+      toast.error('Oops! Có lỗi, thử lại sau!');
     }
   };
 
@@ -165,7 +184,7 @@ function DiscussStandalone({
 
   return (
     <div className="flex">
-      <div className="flex w-[20%] md:w-[8%]">
+      <div className="flex w-[15%] sm:w-[10%] md:w-[8%]">
         <figure className="relative h-20 w-20 overflow-hidden rounded-full">
           <Image
             fill

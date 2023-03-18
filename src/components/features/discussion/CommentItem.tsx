@@ -72,6 +72,7 @@ function CommentItem({ discussion, originalDiscussionId }: CommentItemProps) {
         <div className="flex h-fit flex-1 flex-col space-y-2">
           <DiscussStandalone
             discussionId={discussion.id}
+            authorId={discussion.author.id}
             handleCancel={() => setOpenEditComment(false)}
             inputType="editDiscuss"
             prevContent={discussion.content}
@@ -128,6 +129,7 @@ function CommentItem({ discussion, originalDiscussionId }: CommentItemProps) {
           {openEditor && (
             <DiscussStandalone
               inputType="reply"
+              authorId={discussion.author.id}
               originalDiscussionId={originalDiscussionId}
               refetch={() => {
                 setOpenEditor(false);

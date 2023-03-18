@@ -3,13 +3,15 @@ import toast from 'react-hot-toast';
 import { Else, If, Then } from 'react-if';
 import Loading from '~/components/buttons/Loading';
 import { trpc } from '~/utils/trpc';
-
+import { PATHS } from '~/constants';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 import type { CourseType } from '~/types';
 
 import type { VerifiedStateType } from '~/types';
 import type { Dispatch, SetStateAction } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 
 interface VerifyCoursesProps {
   title: string;
@@ -37,6 +39,7 @@ function VerifyCourses({
   shouldRefetch,
   setShouldRefetch,
 }: VerifyCoursesProps) {
+  const router = useRouter();
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
 
   const {
@@ -44,8 +47,6 @@ function VerifyCourses({
     isLoading,
     refetch,
   } = trpc.course.findWaitingListCourses.useQuery(queryKeys);
-
-  // console.log('courses:: ', courses);
 
   const {
     mutate: approveCourse,
@@ -97,16 +98,40 @@ function VerifyCourses({
     }
   }, [isSuccess, isError]);
 
-  const handleAction = (action: VerifiedStateType, isAll?: boolean) => {
-    if (isAll && courses) {
-      approveCourse({
-        verified: action,
-        coursesId: courses.map((course) => course.id),
-      });
-      return;
-    }
+  const handleAction = async (action: VerifiedStateType, isAll?: boolean) => {
+    if (!courses) return;
 
-    approveCourse({ verified: action, coursesId: selectedCourses });
+    try {
+      if (isAll && courses) {
+        approveCourse({
+          verified: action,
+          coursesId: courses.map((course) => course.id),
+        });
+        await Promise.allSettled(
+          courses?.map(async (c) => {
+            return await axios.post(`/api/notification`, {
+              location: `/${PATHS.COURSE}/${c.slug}`,
+              content: `Khoá học ${c.name} của bạn đã được phê duyệt`,
+              userId: c.instructor.id,
+            });
+          }),
+        );
+        return;
+      }
+
+      approveCourse({ verified: action, coursesId: selectedCourses });
+      await Promise.allSettled(
+        courses?.map(async (c) => {
+          return await axios.post(`/api/notification`, {
+            location: `/${PATHS.COURSE}/${c.slug}`,
+            content: `Khoá học ${c.name} của bạn đã được phê duyệt`,
+            userId: c.instructor.id,
+          });
+        }),
+      );
+    } catch (error) {
+      console.error('handle action error: ', error);
+    }
   };
 
   return (
