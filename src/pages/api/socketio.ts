@@ -61,6 +61,17 @@ export default async function socketio(
       await handleUpdateLearningTime();
     });
 
+    socket.on('online', async (data) => {
+      if (!data?.userId) return;
+
+      await prisma.user.update({
+        where: { id: data?.userId },
+        data: {
+          socketId: socket.id,
+        },
+      });
+    });
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     socket.on('start learning', async (data) => {

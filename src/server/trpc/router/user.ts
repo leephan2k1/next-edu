@@ -584,4 +584,13 @@ export const userRouter = router({
 
       return discussions;
     }),
+
+  findNotifications: protectedProcedure.query(async ({ ctx }) => {
+    const notifications = await ctx.prisma.notification.findMany({
+      where: { userId: ctx.session.user.id },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return notifications;
+  }),
 });
