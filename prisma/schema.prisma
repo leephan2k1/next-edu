@@ -140,15 +140,15 @@ model LearningProgress {
 }
 
 model User {
-  id            String       @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?      @unique
+  email         String?        @unique
   bio           Bio?
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  role          Role         @default(STUDENT)
+  role          Role           @default(STUDENT)
   Review        Review[]
   courseId      String?
   Course        Course[]
@@ -159,6 +159,19 @@ model User {
   payments      Payment[]
   revenue       Revenue[]
   withdrawals   Withdrawal[]
+  notifications Notification[]
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  location  String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model Withdrawal {
