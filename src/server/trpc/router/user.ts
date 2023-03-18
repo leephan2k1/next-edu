@@ -593,4 +593,16 @@ export const userRouter = router({
 
     return notifications;
   }),
+
+  deleteNotifications: protectedProcedure
+    .input(z.object({ ids: z.array(z.string()) }))
+    .mutation(async ({ ctx, input }) => {
+      const { ids } = input;
+
+      await ctx.prisma.$transaction(
+        ids.map((id) => {
+          return ctx.prisma.notification.delete({ where: { id } });
+        }),
+      );
+    }),
 });

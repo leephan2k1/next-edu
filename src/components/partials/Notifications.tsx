@@ -4,6 +4,7 @@ import Loading from '../buttons/Loading';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import useSocket from '~/contexts/SocketContext';
+import toast from 'react-hot-toast';
 
 export default function Notifications() {
   const socketCtx = useSocket();
@@ -11,19 +12,51 @@ export default function Notifications() {
   const {
     data: notifications,
     status,
-    refetch,
+    refetch: refetchNotifications,
   } = trpc.user.findNotifications.useQuery();
+
+  const { mutate: deleteNotifications, status: deleteNotificationsStatus } =
+    trpc.user.deleteNotifications.useMutation();
 
   useEffect(() => {
     if (socketCtx?.notificationSignal) {
-      refetch();
+      refetchNotifications();
       socketCtx.setNotificationSignal(false);
     }
   }, [socketCtx?.notificationSignal]);
 
+  const handleDeleteNotification = (id: string, deleteAll?: boolean) => {
+    if (!notifications) return;
+
+    if (deleteAll) {
+      const confirm = window.confirm('Chắc chắn không?');
+      if (!confirm) return;
+
+      deleteNotifications({ ids: notifications.map((e) => e.id) });
+      return;
+    }
+
+    deleteNotifications({ ids: [id] });
+  };
+
+  useEffect(() => {
+    if (deleteNotificationsStatus === 'success') {
+      toast.success('Xoá thông báo thành công!');
+      refetchNotifications();
+      return;
+    }
+
+    if (deleteNotificationsStatus === 'error') {
+      toast.error('Xảy ra lỗi, thử lại sau!');
+    }
+  }, [deleteNotificationsStatus]);
+
   return (
     <section className="mt-4 flex w-full flex-col">
-      <button className="w-fit rounded-xl bg-rose-400 p-3 text-white">
+      <button
+        onClick={() => handleDeleteNotification('', true)}
+        className="w-fit rounded-xl bg-rose-400 p-3 text-white"
+      >
         Xoá tất cả
       </button>
 
@@ -37,21 +70,24 @@ export default function Notifications() {
             notifications.length > 0 &&
             notifications.map((n) => {
               return (
-                <li key={n.id}>
-                  <Link
-                    href={n.location}
-                    className="flex cursor-pointer items-center justify-between space-x-4 rounded-xl bg-white py-4 px-6 shadow dark:bg-dark-background"
-                  >
+                <li
+                  key={n.id}
+                  className="flex cursor-pointer items-center justify-between space-x-4 rounded-xl bg-white py-4 px-6 shadow dark:bg-dark-background"
+                >
+                  <Link href={n.location} className="flex space-x-4">
                     <h1 className="whitespace-nowrap text-xl font-bold">
                       {new Date(n.createdAt).toLocaleDateString('vi-VI')}
                     </h1>
 
                     <p className="text-xl line-clamp-1">{n.content}</p>
-
-                    <button className="p-2">
-                      <TrashIconSolid className="smooth-effect h-6 w-6 text-rose-500 hover:text-rose-700" />
-                    </button>
                   </Link>
+
+                  <button
+                    onClick={() => handleDeleteNotification(n.id)}
+                    className="p-2"
+                  >
+                    <TrashIconSolid className="smooth-effect h-6 w-6 text-rose-500 hover:text-rose-700" />
+                  </button>
                 </li>
               );
             })}
