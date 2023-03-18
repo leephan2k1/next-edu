@@ -5,6 +5,7 @@ import UserAvatar from './UserAvatar';
 import Menu from '../buttons/Menu';
 import Categories from '~/components/partials/Categories';
 import Cart from './Cart';
+import BellNotification from './BellNotification';
 
 interface HeaderProps {
   showCategories?: boolean;
@@ -23,7 +24,6 @@ export default function Header({ showCategories = true }: HeaderProps) {
         {/* desktop & tablet search bar  */}
         <div className="relative z-40 hidden h-fit md:block md:w-1/2">
           <Search />
-          <span className="absolute top-2 left-[2px] -z-10 h-full w-full rounded-full bg-gray-600 dark:bg-primary" />
         </div>
 
         {/* right header  */}
@@ -31,6 +31,8 @@ export default function Header({ showCategories = true }: HeaderProps) {
           <Cart />
 
           <SwitchTheme />
+
+          <BellNotification />
 
           <UserAvatar />
         </div>

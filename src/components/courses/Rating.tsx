@@ -48,7 +48,7 @@ function Rating({ review, refetchAllReviews }: RatingProps) {
   }, [status]);
 
   return (
-    <li className="flex min-h-[15rem] w-full flex-col items-center justify-center rounded-2xl bg-gray-800 px-4 py-2 text-white/60 dark:bg-black">
+    <li className="flex min-h-[15rem] w-full flex-col items-center justify-center rounded-2xl bg-light-background px-4 py-2 dark:bg-black">
       <div className="flex w-full space-x-4">
         <figure className="relative h-[5rem] w-[5rem] overflow-hidden rounded-full">
           <Image

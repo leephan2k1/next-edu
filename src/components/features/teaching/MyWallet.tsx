@@ -1,13 +1,12 @@
-import { useMemo, useEffect, useState } from 'react';
-import { ArrowsUpDownIcon, CheckIcon } from '@heroicons/react/24/outline';
-import type { Review, Student } from '@prisma/client';
+import { ArrowsUpDownIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { Else, If, Then } from 'react-if';
+import Loading from '~/components/buttons/Loading';
 import ComboBox from '~/components/shared/ComboBox';
 import { banksCode } from '~/constants';
-import { useForm } from 'react-hook-form';
 import { trpc } from '~/utils/trpc';
-import toast from 'react-hot-toast';
-import Loading from '~/components/buttons/Loading';
-import { If, Then, Else } from 'react-if';
 
 interface Inputs {
   bankAccount: string;
@@ -374,7 +373,7 @@ export default function MyWallet() {
 
         <div className="mt-14 flex w-full flex-col space-y-6">
           <h1 className="flex space-x-4 text-3xl">
-            <CheckIcon className="h-8 w-8" />{' '}
+            <XMarkIcon className="h-8 w-8" />{' '}
             <span className="font-bold">Giao dịch bị từ chối</span>
           </h1>
 
