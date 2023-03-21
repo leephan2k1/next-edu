@@ -115,7 +115,7 @@ function UserMenu({ show, setShow }: UserMenuProps) {
         </Link>
 
         <Link
-          href={`/${PATHS.TEACHING}/${PATHS.DASHBOARD}`}
+          href={`/${PATHS.TEACHING}/${PATHS.COURSE}`}
           className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
         >
           <FaChalkboardTeacher className="h-6 w-6" /> <span>Giảng dạy</span>
