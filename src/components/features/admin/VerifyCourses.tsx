@@ -1,17 +1,17 @@
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { memo, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Else, If, Then } from 'react-if';
 import Loading from '~/components/buttons/Loading';
-import { trpc } from '~/utils/trpc';
 import { PATHS } from '~/constants';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { trpc } from '~/utils/trpc';
 
 import type { CourseType } from '~/types';
 
-import type { VerifiedStateType } from '~/types';
-import type { Dispatch, SetStateAction } from 'react';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import type { Dispatch, SetStateAction } from 'react';
+import type { VerifiedStateType } from '~/types';
+import type { Course, User } from '@prisma/client';
 
 interface VerifyCoursesProps {
   title: string;
@@ -39,8 +39,9 @@ function VerifyCourses({
   shouldRefetch,
   setShouldRefetch,
 }: VerifyCoursesProps) {
-  const router = useRouter();
-  const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
+  const [selectedCourses, setSelectedCourses] = useState<
+    (Course & { instructor: User })[]
+  >([]);
 
   const {
     data: courses,
@@ -105,7 +106,10 @@ function VerifyCourses({
       if (isAll && courses) {
         approveCourse({
           verified: action,
-          coursesId: courses.map((course) => course.id),
+          courses: courses.map((course) => ({
+            courseId: course.id,
+            instructorId: course.instructor.id,
+          })),
         });
         await Promise.allSettled(
           courses?.map(async (c) => {
@@ -119,7 +123,14 @@ function VerifyCourses({
         return;
       }
 
-      approveCourse({ verified: action, coursesId: selectedCourses });
+      approveCourse({
+        verified: action,
+        courses: selectedCourses.map((c) => ({
+          courseId: c.id,
+          instructorId: c.instructor.id,
+        })),
+      });
+
       await Promise.allSettled(
         courses?.map(async (c) => {
           return await axios.post(`/api/notification`, {
@@ -216,12 +227,12 @@ function VerifyCourses({
                                     if (e.currentTarget.checked) {
                                       setSelectedCourses((prevState) => [
                                         ...prevState,
-                                        course.id,
+                                        course,
                                       ]);
                                     } else {
                                       setSelectedCourses((prevState) =>
                                         prevState.filter(
-                                          (courseId) => courseId !== course.id,
+                                          (c) => c.id !== course.id,
                                         ),
                                       );
                                     }

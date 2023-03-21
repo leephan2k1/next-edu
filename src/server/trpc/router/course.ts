@@ -220,22 +220,27 @@ export const courseRouter = router({
           z.literal('PENDING'),
           z.literal('REJECT'),
         ]),
-        coursesId: z.array(z.string()),
+        courses: z.array(
+          z.object({ courseId: z.string(), instructorId: z.string() }),
+        ),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const { coursesId, verified } = input;
+      const { courses, verified } = input;
 
-      const courses = await Promise.allSettled(
-        coursesId.map(async (id) => {
-          return await ctx.prisma.course.update({
-            where: { id },
-            data: { verified },
+      const [coursesRes] = await ctx.prisma.$transaction(
+        courses.map((c) => {
+          return ctx.prisma.course.update({
+            where: { id: c.courseId },
+            data: {
+              verified,
+              students: { connect: [{ userId: c.instructorId }] },
+            },
           });
         }),
       );
 
-      return courses;
+      return coursesRes;
     }),
 
   enrollCourse: protectedProcedure
