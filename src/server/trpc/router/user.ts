@@ -605,4 +605,64 @@ export const userRouter = router({
         }),
       );
     }),
+
+  addReminder: protectedProcedure
+    .input(
+      z.object({
+        weekly: z.array(z.string()),
+        message: z.string(),
+        time: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { weekly, message, time } = input;
+
+      const [reminders] = await ctx.prisma.$transaction(
+        weekly.map((d) => {
+          return ctx.prisma.reminder.upsert({
+            where: {
+              time_userId_date: {
+                date: d,
+                time,
+                userId: ctx.session.user.id,
+              },
+            },
+            update: {
+              date: d,
+              time,
+              message,
+            },
+            create: {
+              date: d,
+              time,
+              message,
+              userId: ctx.session.user.id,
+            },
+          });
+        }),
+      );
+
+      return reminders;
+    }),
+
+  findReminders: protectedProcedure.query(async ({ ctx }) => {
+    const reminders = await ctx.prisma.reminder.findMany({
+      where: { userId: ctx.session.user.id },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    return reminders;
+  }),
+
+  deleteReminder: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
+
+      const deletedReminder = await ctx.prisma.reminder.delete({
+        where: { id },
+      });
+
+      return deletedReminder;
+    }),
 });
