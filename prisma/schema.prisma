@@ -161,6 +161,21 @@ model User {
   revenue       Revenue[]
   withdrawals   Withdrawal[]
   notifications Notification[]
+  latestAccess  DateTime?
+  reminders     Reminder[]
+}
+
+model Reminder {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  time      String
+  date      String
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+
+  @@index([userId])
 }
 
 model Notification {
