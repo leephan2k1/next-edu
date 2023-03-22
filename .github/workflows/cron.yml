@@ -1,0 +1,19 @@
+name: Trigger Send Reminder Email on CRON Schedule
+
+on:
+  schedule:
+    # run at minute 0 (every 1 hour)
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Product Quantity Update
+        run: |
+          curl -X GET \
+          -H 'Content-type: application/json' \
+          -H 'x-api-key: ${{ secrets.CRON_API_KEY }}' \
+          --url ${{ secrets.CRON_URL }}
