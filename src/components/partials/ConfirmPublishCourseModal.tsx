@@ -9,6 +9,7 @@ import slug from 'slug';
 import useCourse from '~/contexts/CourseContext';
 import { trpc } from '~/utils/trpc';
 import axios from 'axios';
+import Loading from '../buttons/Loading';
 
 interface ConfirmPublishCourseModalProps {
   isOpen: boolean;
@@ -23,8 +24,11 @@ export default function ConfirmPublishCourseModal({
 
   const [missingFields, setMissingFields] = useState<string[]>([]);
 
-  const { mutate: publishCourse, isSuccess } =
-    trpc.course.publishCourse.useMutation();
+  const {
+    mutate: publishCourse,
+    isSuccess,
+    status,
+  } = trpc.course.publishCourse.useMutation();
 
   const handlePublishCourse = async () => {
     try {
@@ -211,11 +215,16 @@ export default function ConfirmPublishCourseModal({
                           handlePublishCourse();
                         }
                       }}
-                      className="smooth-effect rounded-2xl border border-gray-500 py-3 px-4 hover:border-green-300 hover:bg-green-300 dark:border-white dark:hover:text-black"
+                      disabled={status === 'loading'}
+                      className="smooth-effect absolute-center min-h-[4.5rem] min-w-[16.9rem] rounded-2xl border border-gray-500 py-3 px-4 hover:border-green-300 hover:bg-green-300 dark:border-white dark:hover:text-black"
                     >
-                      {missingFields.length > 0
-                        ? 'Đã hiểu'
-                        : 'Đồng ý và phát hành'}
+                      {status === 'loading' ? (
+                        <Loading />
+                      ) : missingFields.length > 0 ? (
+                        'Đã hiểu'
+                      ) : (
+                        'Đồng ý và phát hành'
+                      )}
                     </button>
                   </div>
                 </Dialog.Panel>
