@@ -3,8 +3,11 @@ import { useMemo } from 'react';
 import { BsFacebook, BsLinkedin, BsTwitter, BsYoutube } from 'react-icons/bs';
 import Balancer from 'react-wrap-balancer';
 import { PATHS } from '~/constants';
-
-import { LinkIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import {
+  LinkIcon,
+  ChatBubbleBottomCenterIcon,
+} from '@heroicons/react/24/outline';
 
 import ModernCourseCard from '../shared/ModernCourseCard';
 
@@ -103,6 +106,16 @@ export default function PublicProfile({ user }: PublicProfileProps) {
             src={user?.image || ''}
           />
         </figure>
+
+        <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
+          <Link
+            href={`/${PATHS.USER}/${PATHS.USER_PROFILE}?section=message`}
+            className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
+          >
+            <ChatBubbleBottomCenterIcon className="inline h-8 w-8" />
+            <span>Trò chuyện</span>
+          </Link>
+        </button>
 
         {socialContacts && (
           <>
