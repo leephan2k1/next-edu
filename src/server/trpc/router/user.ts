@@ -630,11 +630,15 @@ export const userRouter = router({
             update: {
               date: d,
               time,
+              timeInHour: time.split(':')[0],
+              timeInMinute: time.split(':')[1],
               message,
             },
             create: {
               date: d,
               time,
+              timeInHour: String(time.split(':')[0]),
+              timeInMinute: String(time.split(':')[1]),
               message,
               userId: ctx.session.user.id,
             },

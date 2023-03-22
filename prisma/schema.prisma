@@ -166,14 +166,16 @@ model User {
 }
 
 model Reminder {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
-  time      String
-  date      String
-  message   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
+  id           String   @id @default(cuid())
+  user         User     @relation(fields: [userId], references: [id])
+  time         String
+  timeInHour   String
+  timeInMinute String
+  date         String
+  message      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  userId       String
 
   @@unique([time, userId, date])
   @@index([userId])
