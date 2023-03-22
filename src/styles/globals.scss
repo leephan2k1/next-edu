@@ -75,6 +75,10 @@ input[type='number'] {
   -moz-appearance: textfield;
 }
 
+textarea {
+  resize: none;
+}
+
 #nprogress .bar {
   background: #facc15 !important;
   z-index: 1500 !important;
@@ -133,4 +137,8 @@ input[type='number'] {
 }
 .excalidraw.excalidraw-modal-container {
   z-index: 500 !important;
+}
+
+.react-ios-time-picker-main {
+  width: fit-content !important;
 }
