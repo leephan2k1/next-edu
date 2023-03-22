@@ -24,6 +24,8 @@ export const serverSchema = z.object({
   FACEBOOK_CLIENT_ID: z.string(),
   FACEBOOK_CLIENT_SECRET: z.string(),
   JWT_SECRET: z.string(),
+  NODEMAILER_CONFIG: z.string(),
+  CRON_API_KEY: z.string(),
 });
 
 /**
