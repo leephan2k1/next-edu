@@ -14,9 +14,7 @@ const Messages = dynamic(() => import('~/components/partials/Messages'));
 const Notifications = dynamic(
   () => import('~/components/partials/Notifications'),
 );
-const ParentsOversee = dynamic(
-  () => import('~/components/partials/ParentsOversee'),
-);
+const Reminder = dynamic(() => import('~/components/partials/Reminder'));
 const PaymentHistory = dynamic(
   () => import('~/components/partials/PaymentHistory'),
 );
@@ -26,7 +24,7 @@ const SECTION_MAPPING: { [key: string]: JSX.Element } = {
   'followed-courses': <FollowedCourses />,
   message: <Messages />,
   notifications: <Notifications />,
-  'parent-control': <ParentsOversee />,
+  reminder: <Reminder />,
   'payment-history': <PaymentHistory />,
 };
 

@@ -65,7 +65,7 @@ export default function Notifications() {
           <Loading />
         </div>
       ) : (
-        <ul className="mx-auto mt-6 w-full space-y-4 md:w-4/5">
+        <ul className="mt-6 w-full space-y-4 md:w-4/5">
           {notifications &&
             notifications.length > 0 &&
             notifications.map((n) => {

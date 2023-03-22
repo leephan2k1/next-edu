@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 export type Section =
   | 'info'
   | 'followed-courses'
-  | 'parent-control'
+  | 'reminder'
   | 'message'
   | 'notifications'
   | 'payment-history';
@@ -16,7 +16,7 @@ const sections: { value: Section; label: string }[] = [
   { value: 'followed-courses', label: 'Khoá học theo dõi' },
   { value: 'message', label: 'Tin nhắn' },
   { value: 'notifications', label: 'Thông báo' },
-  { value: 'parent-control', label: 'Phụ huynh quản lý' },
+  { value: 'reminder', label: 'Nhắc nhở học tập' },
   { value: 'payment-history', label: 'Lịch sử thanh toán' },
 ];
 
@@ -54,7 +54,7 @@ function ProfileMenu() {
                 section === sectionElement.value
                   ? 'bg-yellow-500 text-white'
                   : 'bg-white hover:bg-stone-200 dark:bg-dark-background dark:hover:bg-white/20'
-              } smooth-effect whitespace-nowrap rounded-xl  p-4 shadow-lg`}
+              } smooth-effect w-full whitespace-nowrap  rounded-xl p-4 shadow-lg`}
             >
               {sectionElement.label}
             </button>
@@ -80,7 +80,7 @@ function ProfileInfo() {
       </figure>
 
       <h1 className="text-3xl">{auth?.user?.name}</h1>
-      <h2 className="text-xl">{auth?.user?.email}</h2>
+      <h2 className="mb-6 text-xl">{auth?.user?.email}</h2>
 
       <ProfileMenu />
     </section>

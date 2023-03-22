@@ -7,6 +7,7 @@ import {
   ChartBarIcon,
   CreditCardIcon,
   EnvelopeIcon,
+  ClockIcon,
 } from '@heroicons/react/24/outline';
 import { signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
@@ -131,11 +132,10 @@ function UserMenu({ show, setShow }: UserMenuProps) {
         <hr className="mx-auto my-4 w-[80%] dark:border-white/30" />
 
         <Link
-          href={`/${PATHS.USER}/${PATHS.USER_PROFILE}?section=parent-control`}
+          href={`/${PATHS.USER}/${PATHS.USER_PROFILE}?section=reminder`}
           className="smooth-effect flex cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
         >
-          <MdSupervisorAccount className="h-6 w-6" />{' '}
-          <span>Phụ huynh quản lý</span>
+          <ClockIcon className="h-6 w-6" /> <span>Nhắc nhở học tập</span>
         </Link>
 
         <hr className="mx-auto my-4 w-[80%] dark:border-white/30" />
