@@ -175,6 +175,7 @@ model Reminder {
   updatedAt DateTime @updatedAt
   userId    String
 
+  @@unique([time, userId, date])
   @@index([userId])
 }
 
