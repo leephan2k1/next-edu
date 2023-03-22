@@ -234,7 +234,7 @@ export const courseRouter = router({
             where: { id: c.courseId },
             data: {
               verified,
-              students: { connect: [{ userId: c.instructorId }] },
+              students: { create: [{ userId: c.instructorId }] },
             },
           });
         }),
