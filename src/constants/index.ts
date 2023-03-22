@@ -146,10 +146,7 @@ export const playerOptions = {
 
 export const categories = [
   { title: 'Khoá học', url: `/${PATHS.BROWSE}` },
-  { title: 'Chứng chỉ', url: `/` },
-  { title: 'Hỏi đáp', url: `/` },
-  { title: 'Giáo viên', url: `/` },
-  { title: 'Tổ chức', url: `/` },
+  { title: 'Giáo viên', url: `/${PATHS.TEACHING}/${PATHS.COURSE}` },
 ];
 
 export const swiperBreakPoints = {
