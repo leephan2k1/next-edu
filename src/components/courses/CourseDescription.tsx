@@ -33,10 +33,10 @@ function CourseDescription({ description }: CourseDescriptionProps) {
           className="absolute-center flex w-full flex-col"
           state={disclosure}
         >
-          <span>{disclosure.open ? 'Xem thêm' : 'Thu gọn'}</span>
+          <span>{disclosure.open ? 'Thu gọn' : 'Xem thêm'}</span>
           <ChevronDownIcon
             className={`smooth-effect h-6 w-6 ${
-              disclosure.open ? '' : 'rotate-180 transform'
+              disclosure.open ? 'rotate-180 transform' : ''
             }`}
           />
         </Disclosure>

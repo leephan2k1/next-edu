@@ -73,7 +73,7 @@ function CourseCreationInfo({ course }: CourseCreationInfoProps) {
   } = useForm<IFormInput>({
     defaultValues: {
       courseName: course?.name || '',
-      courseTargets: [' '],
+      courseTargets: ['1', '2', '3', '4'],
       courseRequirements: [' '],
     },
   });
