@@ -163,6 +163,32 @@ model User {
   notifications Notification[]
   latestAccess  DateTime?
   reminders     Reminder[]
+  chatSessions  ChatSession[]
+  messages      Message[]
+}
+
+model ChatSession {
+  id        String    @id @default(cuid())
+  createdAt DateTime  @default(now())
+  users     User[]
+  pOne      String
+  pTwo      String
+  messages  Message[]
+
+  @@unique([pOne, pTwo])
+}
+
+model Message {
+  id            String      @id @default(cuid())
+  content       String      @db.Text
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  userId        String
+  chatSessionId String
+
+  @@index([userId])
+  @@index([chatSessionId])
 }
 
 model Reminder {
