@@ -228,17 +228,40 @@ export const courseRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { courses, verified } = input;
 
-      const [coursesRes] = await ctx.prisma.$transaction(
+      // create student for self instructor if non-exist:
+      await ctx.prisma.$transaction(
         courses.map((c) => {
+          return ctx.prisma.student.upsert({
+            where: { userId: c.instructorId },
+            update: { userId: c.instructorId },
+            create: { userId: c.instructorId },
+          });
+        }),
+      );
+
+      const [coursesRes] = await ctx.prisma.$transaction([
+        ...courses.map((c) => {
           return ctx.prisma.course.update({
             where: { id: c.courseId },
             data: {
               verified,
-              students: { create: [{ userId: c.instructorId }] },
+              students: {
+                connect: { userId: c.instructorId },
+              },
             },
           });
         }),
-      );
+
+        //update user role -> instructor
+        ...courses.map((c) => {
+          return ctx.prisma.user.update({
+            where: { id: c.instructorId },
+            data: {
+              role: 'INSTRUCTOR',
+            },
+          });
+        }),
+      ]);
 
       return coursesRes;
     }),
