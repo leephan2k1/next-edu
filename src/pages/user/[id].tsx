@@ -1,4 +1,4 @@
-import { type NextPage, GetServerSideProps } from 'next';
+import type { NextPage, GetServerSideProps } from 'next';
 import type { User } from '@prisma/client';
 import MainLayout from '~/components/layouts/MainLayout';
 import PublicProfile from '~/components/partials/PublicProfile';

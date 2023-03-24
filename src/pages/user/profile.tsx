@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import MainLayout from '~/components/layouts/MainLayout';
 import ProfileInfo from '~/components/partials/ProfileInfo';
+import { ChatContextProvider } from '~/contexts/ChatContext';
 
 const ProfileForms = dynamic(
   () => import('~/components/partials/ProfileForms'),
@@ -10,7 +11,7 @@ const ProfileForms = dynamic(
 const FollowedCourses = dynamic(
   () => import('~/components/partials/FollowedCourses'),
 );
-const Messages = dynamic(() => import('~/components/partials/Messages'));
+const Messages = dynamic(() => import('~/components/features/chat/Messages'));
 const Notifications = dynamic(
   () => import('~/components/partials/Notifications'),
 );
@@ -32,13 +33,15 @@ const ProfilePage: NextPage = () => {
   const router = useRouter();
 
   return (
-    <div className="flex min-h-screen flex-col text-gray-600 dark:text-white">
-      <div className="mx-auto mt-10 flex h-fit w-full max-w-[1300px] flex-col space-x-4 md:flex-row">
-        <ProfileInfo />
+    <ChatContextProvider>
+      <div className="flex min-h-screen flex-col text-gray-600 dark:text-white">
+        <div className="mx-auto mt-10 flex h-fit w-full max-w-[1300px] flex-col space-x-4 md:flex-row">
+          <ProfileInfo />
 
-        {SECTION_MAPPING[String(router.query?.section || 'info')]}
+          {SECTION_MAPPING[String(router.query?.section || 'info')]}
+        </div>
       </div>
-    </div>
+    </ChatContextProvider>
   );
 };
 
