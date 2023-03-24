@@ -1,12 +1,15 @@
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useMemo } from 'react';
 import { BsFacebook, BsLinkedin, BsTwitter, BsYoutube } from 'react-icons/bs';
 import Balancer from 'react-wrap-balancer';
 import { PATHS } from '~/constants';
-import Link from 'next/link';
+import { trpc } from '~/utils/trpc';
+
 import {
-  LinkIcon,
   ChatBubbleBottomCenterIcon,
+  LinkIcon,
 } from '@heroicons/react/24/outline';
 
 import ModernCourseCard from '../shared/ModernCourseCard';
@@ -17,6 +20,8 @@ interface PublicProfileProps {
 }
 
 export default function PublicProfile({ user }: PublicProfileProps) {
+  const { data: session } = useSession();
+
   const totalStudents = useMemo(() => {
     if (!user) return 0;
     return user.Course.reduce((acc, course) => {
@@ -38,6 +43,15 @@ export default function PublicProfile({ user }: PublicProfileProps) {
       new Map(user.bio.socialContacts.map((e) => [e.title, e.url])),
     );
   }, [user]);
+
+  const { mutate: createChatSession } =
+    trpc.chat.createChatSession.useMutation();
+
+  const handleLocateParticipant = () => {
+    if (session?.user && session?.user?.id) {
+      createChatSession({ userIdOne: session?.user.id, userIdTwo: user.id });
+    }
+  };
 
   return (
     <div className="flex w-full flex-col-reverse px-4 md:flex-row md:space-x-6">
@@ -107,15 +121,20 @@ export default function PublicProfile({ user }: PublicProfileProps) {
           />
         </figure>
 
-        <button className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 py-3 px-4 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]">
-          <Link
-            href={`/${PATHS.USER}/${PATHS.USER_PROFILE}?section=message`}
-            className="flex flex-nowrap items-center justify-center space-x-2 line-clamp-1"
+        {session?.user?.id !== user.id && (
+          <button
+            onClick={handleLocateParticipant}
+            className="absolute-center smooth-effect w-3/4 max-w-[50%] rounded-xl border border-gray-600 hover:bg-white/25 dark:border-gray-400 md:max-w-[70%]"
           >
-            <ChatBubbleBottomCenterIcon className="inline h-8 w-8" />
-            <span>Trò chuyện</span>
-          </Link>
-        </button>
+            <Link
+              href={`/${PATHS.USER}/${PATHS.USER_PROFILE}?section=message`}
+              className="full-size flex flex-nowrap items-center justify-center space-x-2 py-3 px-4 line-clamp-1"
+            >
+              <ChatBubbleBottomCenterIcon className="inline h-8 w-8" />
+              <span>Trò chuyện</span>
+            </Link>
+          </button>
+        )}
 
         {socialContacts && (
           <>
