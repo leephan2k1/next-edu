@@ -43,7 +43,6 @@ export default function Header({ showCategories = true }: HeaderProps) {
       {/* mobile search bar */}
       <div className="relative z-40 mx-auto mt-4 h-fit w-[95%] md:hidden">
         <Search />
-        <span className="absolute top-2 left-[2px] -z-10 h-full w-full rounded-full bg-gray-600 dark:bg-primary" />
       </div>
     </header>
   );
