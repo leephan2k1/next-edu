@@ -215,10 +215,14 @@ export default function ConfirmPublishCourseModal({
                           handlePublishCourse();
                         }
                       }}
-                      disabled={status === 'loading'}
+                      disabled={
+                        status === 'loading' ||
+                        courseCtx?.updateCourseStatus === 'loading'
+                      }
                       className="smooth-effect absolute-center min-h-[4.5rem] min-w-[16.9rem] rounded-2xl border border-gray-500 py-3 px-4 hover:border-green-300 hover:bg-green-300 dark:border-white dark:hover:text-black"
                     >
-                      {status === 'loading' ? (
+                      {status === 'loading' ||
+                      courseCtx?.updateCourseStatus === 'loading' ? (
                         <Loading />
                       ) : missingFields.length > 0 ? (
                         'Đã hiểu'

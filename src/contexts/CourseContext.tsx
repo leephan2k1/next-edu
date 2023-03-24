@@ -1,4 +1,4 @@
-import type { Chapter, Course, Lecture, Resource, Cart } from '@prisma/client';
+import type { Chapter, Course, Lecture, Resource } from '@prisma/client';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -28,6 +28,7 @@ export interface CourseType extends Omit<Course, 'id' | 'categoryId'> {
 
 interface CourseContextValues {
   enrollStatus: 'error' | 'success' | 'idle' | 'loading';
+  updateCourseStatus: 'error' | 'success' | 'idle' | 'loading';
   course: CourseType | null;
   dispatchUpdate: boolean;
   dispatch: () => void;
@@ -47,7 +48,11 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
   const [dispatchUpdate, toggle] = useToggle();
   const [course, setCourse] = useState<CourseType | null>(null);
 
-  const { data: session, status: sessionStatus } = useSession();
+  const { data: session } = useSession();
+
+  const [updateCourseStatus, setUpdateCourseStatus] = useState<
+    'error' | 'success' | 'idle' | 'loading'
+  >('idle');
 
   // console.log('course updating:: ', course);
 
@@ -86,6 +91,8 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
   // effect create/update course
   useEffect(() => {
     if (course?.name) {
+      setUpdateCourseStatus('loading');
+
       (async function () {
         try {
           if (!session?.user?.id) throw new Error();
@@ -94,7 +101,11 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
             ...course,
             userId: session?.user?.id,
           });
-        } catch (error) {}
+
+          setUpdateCourseStatus('success');
+        } catch (error) {
+          setUpdateCourseStatus('error');
+        }
       })();
     }
   }, [course]);
@@ -106,6 +117,7 @@ export const CourseContextProvider = ({ children }: CourseContextProps) => {
   return (
     <CourseContext.Provider
       value={{
+        updateCourseStatus,
         enrollStatus,
         dispatchUpdate,
         enrollCourse,
