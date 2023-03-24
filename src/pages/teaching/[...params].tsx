@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { Case, Default, Switch } from 'react-if';
+import Instructions from '~/components/features/teaching/Instructions';
 import MyWallet from '~/components/features/teaching/MyWallet';
 import TeachingDashboard from '~/components/features/teaching/TeachingDashboard';
 import TeachingSidebar from '~/components/features/teaching/TeachingSidebar';
@@ -40,6 +41,10 @@ const TeachingDashboardPage: NextPage = () => {
 
         <Case condition={router.asPath.includes(PATHS.MY_WALLET)}>
           <MyWallet />
+        </Case>
+
+        <Case condition={router.asPath.includes(PATHS.INSTRUCTIONS)}>
+          <Instructions />
         </Case>
 
         <Default>{null}</Default>
