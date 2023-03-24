@@ -107,7 +107,7 @@ function ChatContainer() {
           data.userIdOne === chat?.currentSession?.userTwo.id &&
           chat?.currentSession?.id === data.chatSessionId
         ) {
-          console.log('set tin nhan');
+          // console.log('set tin nhan');
 
           setMessages((msg) =>
             [
