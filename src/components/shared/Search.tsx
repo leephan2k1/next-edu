@@ -7,7 +7,7 @@ export default function Search() {
   return (
     <div
       onClick={() => setIsOpen(true)}
-      className="relative mx-auto flex w-full cursor-text space-x-2 rounded-full border border-gray-500 bg-white py-4 px-6 dark:border-2 dark:border-yellow-500 dark:bg-highlight md:w-[80%]"
+      className="relative mx-auto flex w-full cursor-text space-x-2 rounded-full bg-white py-4 px-6 dark:bg-highlight md:w-[80%]"
     >
       <p className="w-full dark:text-gray-400">Tìm kiếm...</p>
       <MagnifyingGlassIcon className="inline-block h-8 w-8" />
