@@ -57,7 +57,9 @@ export default function PublicProfile({ user }: PublicProfileProps) {
     <div className="flex w-full flex-col-reverse px-4 md:flex-row md:space-x-6">
       <div className="flex h-fit w-full flex-col space-y-8 md:w-[60%] lg:w-[70%]">
         <div className="flex flex-col space-y-2">
-          <h2 className="text-3xl font-bold text-gray-400">Giáo viên</h2>
+          <h2 className="text-3xl font-bold text-gray-400">
+            {user.role === 'INSTRUCTOR' ? 'Giáo viên' : 'Người dùng'}
+          </h2>
           <h1 className="text-4xl font-bold md:text-5xl">{user.name}</h1>
         </div>
 
