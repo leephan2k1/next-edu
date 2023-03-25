@@ -1,0 +1,51 @@
+{
+  "name": "Next Education",
+  "short_name": "Next Edu",
+  "start_url": "/",
+  "display": "standalone",
+  "description": "Next Edu là dự án mô phỏng lại cách học hướng đến tương lai",
+  "lang": " vi-vn",
+  "theme_color": "#fce36c",
+  "background_color": "#f8f3ef",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://i.ibb.co/n3TsZDp/next-edu-thumbnail.png",
+      "sizes": "1919x959",
+      "type": "image/png",
+      "description": "A screenshot of the home page"
+    }
+  ],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Next Edu",
+      "url": "/",
+      "description": "Next Education App"
+    }
+  ]
+}
