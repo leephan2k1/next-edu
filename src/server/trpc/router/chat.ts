@@ -62,25 +62,38 @@ export const chatRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { userIdOne, userIdTwo } = input;
 
-      const chatSession = await ctx.prisma.chatSession.upsert({
+      const existChatSession = await ctx.prisma.chatSession.findUnique({
         where: {
           pOne_pTwo: {
             pOne: userIdOne,
             pTwo: userIdTwo,
           },
         },
-        update: {
-          pOne: userIdOne,
-          pTwo: userIdTwo,
-          users: { connect: [{ id: userIdOne }, { id: userIdTwo }] },
-        },
-        create: {
-          pOne: userIdOne,
-          pTwo: userIdTwo,
-          users: { connect: [{ id: userIdOne }, { id: userIdTwo }] },
-        },
       });
 
-      return chatSession;
+      if (!existChatSession) {
+        const existSwappedSession = await ctx.prisma.chatSession.findUnique({
+          where: {
+            pOne_pTwo: {
+              pOne: userIdTwo,
+              pTwo: userIdOne,
+            },
+          },
+        });
+
+        if (!existSwappedSession) {
+          return await ctx.prisma.chatSession.create({
+            data: {
+              pOne: userIdOne,
+              pTwo: userIdTwo,
+              users: { connect: [{ id: userIdOne }, { id: userIdTwo }] },
+            },
+          });
+        } else {
+          return existSwappedSession;
+        }
+      } else {
+        return existChatSession;
+      }
     }),
 });
