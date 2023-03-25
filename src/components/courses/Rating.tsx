@@ -1,14 +1,16 @@
-import { memo, useState, useEffect } from 'react';
-import Image from 'next/image';
-import { StarIcon } from '@heroicons/react/24/solid';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import { useAutoAnimate } from '@formkit/auto-animate/react';
-import { Review } from '@prisma/client';
-import { TrashIcon } from '@heroicons/react/20/solid';
 import { useSession } from 'next-auth/react';
-import { trpc } from '~/utils/trpc';
+import Image from 'next/image';
+import { memo, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { MdOutlineSettingsBackupRestore } from 'react-icons/md';
+import { trpc } from '~/utils/trpc';
+
+import { useAutoAnimate } from '@formkit/auto-animate/react';
+import { TrashIcon } from '@heroicons/react/20/solid';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { StarIcon } from '@heroicons/react/24/solid';
+
+import type { Review } from '@prisma/client';
+import PublicLinkProfile from '../shared/PublicLinkProfile';
 
 interface RatingProps {
   review: Review;
@@ -51,18 +53,22 @@ function Rating({ review, refetchAllReviews }: RatingProps) {
     <li className="flex min-h-[15rem] w-full flex-col items-center justify-center rounded-2xl bg-light-background px-4 py-2 dark:bg-black">
       <div className="flex w-full space-x-4">
         <figure className="relative h-[5rem] w-[5rem] overflow-hidden rounded-full">
-          <Image
-            alt="user-avatar"
-            className="absolute bg-cover bg-center bg-no-repeat"
-            fill
-            src={review?.author?.image || ''}
-          />
+          <PublicLinkProfile userId={String(review?.author?.id)}>
+            <Image
+              alt="user-avatar"
+              className="absolute bg-cover bg-center bg-no-repeat"
+              fill
+              src={review?.author?.image || ''}
+            />
+          </PublicLinkProfile>
         </figure>
 
         <div className="flex flex-1 justify-between p-2">
           <div className="flex w-full flex-col">
             <h2 className="max-w-[40%] font-bold line-clamp-1">
-              {review?.author?.name}
+              <PublicLinkProfile userId={String(review?.author?.id)}>
+                {review?.author?.name}
+              </PublicLinkProfile>
             </h2>
 
             <div className="flex items-center space-x-4">

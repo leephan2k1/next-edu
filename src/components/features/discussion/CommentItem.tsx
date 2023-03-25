@@ -1,12 +1,15 @@
 import type { Discussion } from '@prisma/client';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { memo, useEffect, useState } from 'react';
-import useDiscussion from '~/contexts/DiscussionContext';
-import DiscussStandalone from './DiscussStandalone';
-import { TrashIcon, PencilIcon } from '@heroicons/react/24/solid';
-import { useSession } from 'next-auth/react';
-import { trpc } from '~/utils/trpc';
 import toast from 'react-hot-toast';
+import PublicLinkProfile from '~/components/shared/PublicLinkProfile';
+import useDiscussion from '~/contexts/DiscussionContext';
+import { trpc } from '~/utils/trpc';
+
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
+
+import DiscussStandalone from './DiscussStandalone';
 
 interface CommentItemProps {
   originalDiscussionId: string;
@@ -59,14 +62,16 @@ function CommentItem({ discussion, originalDiscussionId }: CommentItemProps) {
     <div className="flex w-full space-x-4 py-2 md:space-x-0">
       {!openEditComment ? (
         <div className="flex w-[15%] justify-center md:w-[10%]">
-          <figure className="relative h-16 w-16 overflow-hidden rounded-full md:h-20 md:min-h-[5rem] md:w-20 md:min-w-[5rem]">
-            <Image
-              fill
-              className="absolute rounded-full bg-cover bg-center bg-no-repeat"
-              alt="user-avatar"
-              src={discussion.author?.image || ''}
-            />
-          </figure>
+          <PublicLinkProfile userId={String(discussion.author.id)}>
+            <figure className="relative h-16 w-16 overflow-hidden rounded-full md:h-20 md:min-h-[5rem] md:w-20 md:min-w-[5rem]">
+              <Image
+                fill
+                className="absolute rounded-full bg-cover bg-center bg-no-repeat"
+                alt="user-avatar"
+                src={discussion.author?.image || ''}
+              />
+            </figure>
+          </PublicLinkProfile>
         </div>
       ) : (
         <div className="flex h-fit flex-1 flex-col space-y-2">
@@ -88,7 +93,9 @@ function CommentItem({ discussion, originalDiscussionId }: CommentItemProps) {
       {!openEditComment && (
         <div className="flex h-fit flex-1 flex-col space-y-2">
           <div className="flex items-center justify-between">
-            <h1 className="font-bold">{discussion.author.name}</h1>
+            <PublicLinkProfile userId={String(discussion.author.id)}>
+              <h1 className="font-bold">{discussion.author.name}</h1>
+            </PublicLinkProfile>
 
             {session && session?.user.id === discussion.author.id && (
               <div className="flex items-center space-x-4">

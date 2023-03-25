@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { memo } from 'react';
 import { BsStarFill } from 'react-icons/bs';
 import type { Review } from '@prisma/client';
+import PublicLinkProfile from './PublicLinkProfile';
 
 interface TestimonialCardProps {
   review: Review;
@@ -19,12 +20,14 @@ function TestimonialCard({ review }: TestimonialCardProps) {
             <div className="flex items-center justify-around p-4">
               <div className="avatar">
                 <div className="relative w-24 rounded-full">
-                  <Image
-                    alt="user-avtatar"
-                    className="absolute bg-cover bg-center bg-no-repeat"
-                    fill
-                    src={review?.author?.image || ''}
-                  />
+                  <PublicLinkProfile userId={String(review?.author?.id)}>
+                    <Image
+                      alt="user-avtatar"
+                      className="absolute bg-cover bg-center bg-no-repeat"
+                      fill
+                      src={review?.author?.image || ''}
+                    />
+                  </PublicLinkProfile>
                 </div>
               </div>
 
@@ -32,7 +35,9 @@ function TestimonialCard({ review }: TestimonialCardProps) {
             </div>
             {/* user info  */}
             <h3 className="px-6 font-bold line-clamp-2">
-              {review?.author?.name}
+              <PublicLinkProfile userId={String(review?.author?.id)}>
+                {review?.author?.name}
+              </PublicLinkProfile>
             </h3>
           </div>
 

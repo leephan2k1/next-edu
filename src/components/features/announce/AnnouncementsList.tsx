@@ -36,6 +36,7 @@ export default function AnnouncementsList({
               instructor={{
                 name: lectureCtx?.course?.instructor.name || '',
                 image: lectureCtx?.course?.instructor.image || '',
+                id: lectureCtx?.course?.instructor.id || '',
               }}
               announcement={announcement}
             />

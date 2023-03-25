@@ -7,11 +7,12 @@ import { trpc } from '~/utils/trpc';
 import Editor from '~/components/shared/Editor';
 import type QuillComponent from 'react-quill';
 import toast from 'react-hot-toast';
+import PublicLinkProfile from '~/components/shared/PublicLinkProfile';
 
 interface AnnouncementItemProps {
   announcement: Announcement;
   isOwner: boolean;
-  instructor: { name: string; image: string };
+  instructor: { name: string; image: string; id: string };
   refetch?: () => void;
 }
 
@@ -83,17 +84,23 @@ function AnnouncementItem({
     <li className="flex flex-col">
       <div className="flex space-x-4">
         <figure className="relative h-16 w-16 overflow-hidden rounded-full md:h-20 md:min-h-[5rem] md:w-20 md:min-w-[5rem]">
-          <Image
-            fill
-            className="absolute rounded-full bg-cover bg-center bg-no-repeat"
-            alt="user-avatar"
-            src={instructor.image}
-          />
+          <PublicLinkProfile userId={instructor.id}>
+            <Image
+              fill
+              className="absolute rounded-full bg-cover bg-center bg-no-repeat"
+              alt="user-avatar"
+              src={instructor.image}
+            />
+          </PublicLinkProfile>
         </figure>
 
         <div className="flex flex-1 justify-between">
           <div className="flex flex-col space-y-2">
-            <h2 className="font-medium md:text-3xl">{instructor.name}</h2>
+            <h2 className="font-medium md:text-3xl">
+              <PublicLinkProfile userId={instructor.id}>
+                {instructor.name}
+              </PublicLinkProfile>
+            </h2>
             <div className="flex space-x-2 text-xl">
               <span>Đã đăng thông báo · </span>
 
