@@ -15,7 +15,7 @@ export default function ReminderEmail({ message, time }: ReminderEmailParams) {
         <Container style={container}>
           <Text style={heading}>Next Edu</Text>
           <Text style={paragraph}>
-            Chào bạn, bạn có có nhắc nhở học tập lúc {time}
+            Chào bạn, bạn có nhắc nhở học tập lúc {time}
           </Text>
           <Text style={paragraph}>Thông điệp: {message}</Text>
         </Container>
