@@ -86,7 +86,6 @@ function PaymentItem({
                 style: 'currency',
                 currency: 'VND',
               }).format(course.coursePrice as number)}{' '}
-              vnđ
             </h4>
           </div>
         </div>
