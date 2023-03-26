@@ -16,7 +16,7 @@ export default function Header({ showCategories = true }: HeaderProps) {
     <header className="mx-auto w-full py-4 px-4  md:max-w-[720px] lg:max-w-[1200px]">
       <nav className="flex min-h-[50px] w-full items-center justify-between">
         {/* left header  */}
-        <div className="space-x-6">
+        <div className="flex items-center space-x-6">
           <Menu />
           <Logo />
         </div>

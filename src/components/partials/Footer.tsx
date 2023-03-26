@@ -10,7 +10,7 @@ export default function Footer() {
     <footer className="mt-10 flex flex-col items-center rounded bg-[#efeae6] px-10 py-20 text-2xl text-gray-600 dark:bg-dark-background dark:text-white/50 md:text-3xl">
       <Logo />
 
-      <small className="my-1 text-sm font-semibold">
+      <small className="mt-2 text-sm font-semibold">
         Powered by{' '}
         <a
           className="text-blue-400"

@@ -24,6 +24,9 @@
   .absolute-center {
     @apply flex items-center justify-center;
   }
+  .relative-center {
+    @apply top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+  }
   .full-size {
     @apply h-full w-full;
   }
