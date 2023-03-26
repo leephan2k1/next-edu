@@ -2,6 +2,7 @@ import { AiFillTwitterCircle, AiOutlineGithub } from 'react-icons/ai';
 import { BsFacebook } from 'react-icons/bs';
 import { inter } from '~/constants';
 import Balancer from 'react-wrap-balancer';
+import { webSlogan } from '~/constants';
 
 import Logo from './Logo';
 
@@ -56,9 +57,7 @@ export default function Footer() {
           fontFamily: inter.style.fontFamily,
         }}
       >
-        <Balancer>
-          Next Edu là dự án mô phỏng lại cách học hướng đến tương lai
-        </Balancer>
+        <Balancer>{webSlogan}</Balancer>
       </h1>
 
       <span className="my-4 text-base font-semibold">© NextEdu 2023</span>

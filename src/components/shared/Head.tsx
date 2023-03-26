@@ -1,6 +1,7 @@
 import NextHead from 'next/head';
 // import { WEBSITE_URL } from '~/constants';
 import { useRouter } from 'next/router';
+import { webSlogan } from '~/constants';
 
 interface HeadProps {
   title?: string;
@@ -10,8 +11,8 @@ interface HeadProps {
 
 export default function Head({
   title = 'Next Education',
-  description = 'Next Edu là dự án mô phỏng lại cách học hướng đến tương lai',
-  image = 'https://i.ibb.co/n3TsZDp/next-edu-thumbnail.png',
+  description = webSlogan,
+  image = 'https://i.ibb.co/HBDbZkh/nextedu-thumbnail.png',
 }: HeadProps) {
   const { asPath } = useRouter();
 
