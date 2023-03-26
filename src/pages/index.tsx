@@ -8,6 +8,7 @@ import TopCategories from '~/components/partials/TopCategories';
 import Container from '~/components/shared/Container';
 import { prisma } from '~/server/db/client';
 import Testimonial from '~/components/partials/Testimonial';
+import Head from '~/components/shared/Head';
 
 interface HomePageProps {
   topCategories: Category[];
@@ -30,6 +31,8 @@ const Home: NextPage<HomePageProps> = ({
 }) => {
   return (
     <>
+      <Head />
+
       <Banner />
 
       <Container>

@@ -2,6 +2,7 @@ import type { NextPage, GetServerSideProps } from 'next';
 import type { User } from '@prisma/client';
 import MainLayout from '~/components/layouts/MainLayout';
 import PublicProfile from '~/components/partials/PublicProfile';
+import Head from '~/components/shared/Head';
 
 interface PublicProfilePageProps {
   user: User;
@@ -9,9 +10,13 @@ interface PublicProfilePageProps {
 
 const PublicProfilePage: NextPage<PublicProfilePageProps> = ({ user }) => {
   return (
-    <div className="mx-auto flex min-h-screen flex-col pt-16 md:max-w-[720px] lg:max-w-[1200px]">
-      <PublicProfile user={user} />
-    </div>
+    <>
+      <Head title={`${user?.name || ''} - Next Edu`} />
+
+      <div className="mx-auto flex min-h-screen flex-col pt-16 md:max-w-[720px] lg:max-w-[1200px]">
+        <PublicProfile user={user} />
+      </div>
+    </>
   );
 };
 

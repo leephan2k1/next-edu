@@ -1,4 +1,5 @@
 import type { NextPage } from 'next';
+import dateFormat from 'dateformat';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
@@ -10,14 +11,14 @@ import LearningHeader from '~/components/features/learning/LearningHeader';
 import ListNoteModal from '~/components/features/note/ListNoteModal';
 import MainLayout from '~/components/layouts/MainLayout';
 import BlankLearningPage from '~/components/shared/BlankLearningPage';
+import Head from '~/components/shared/Head';
 import { PATHS } from '~/constants';
 import { LearningContextProvider } from '~/contexts/LearningContext';
+import useSocket from '~/contexts/SocketContext';
 import { prisma } from '~/server/db/client';
 import { trpc } from '~/utils/trpc';
-import dateFormat from 'dateformat';
 
 import type { ReactNode } from 'react';
-import useSocket from '~/contexts/SocketContext';
 import type { CourseType, Progress } from '~/types';
 
 interface LearningPageProps {
@@ -202,6 +203,8 @@ const LearningPage: NextPage<LearningPageProps> = ({ studentsEnrolled }) => {
 
   return (
     <>
+      <Head title="Học tập - Next Edu" />
+
       <LearningContextProvider
         course={course}
         allLecturesByChapters={allLecturesByChapters}

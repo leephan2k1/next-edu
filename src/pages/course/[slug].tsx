@@ -20,6 +20,7 @@ import usePreviousRoute from '~/contexts/HistoryRouteContext';
 import { prisma } from '~/server/db/client';
 import { trpc } from '~/utils/trpc';
 import BlankCoursePage from '~/components/shared/BlankCoursePage';
+import Head from '~/components/shared/Head';
 
 import type { CourseType } from '~/types';
 import type { GetServerSideProps, NextPage } from 'next';
@@ -27,11 +28,15 @@ import type { GetServerSideProps, NextPage } from 'next';
 interface CoursePageProps {
   courseHasPassword?: boolean;
   verified?: boolean;
+  courseImage?: string;
+  courseName?: string;
 }
 
 const CoursePage: NextPage = ({
   courseHasPassword,
   verified,
+  courseImage,
+  courseName,
 }: CoursePageProps) => {
   const courseCtx = useCourse();
   const router = useRouter();
@@ -182,67 +187,74 @@ const CoursePage: NextPage = ({
   }
 
   return (
-    <div className="min-h-screen">
-      <CourseHeader
-        wishlist={wishList || []}
-        isLoading={
-          addWishCourseStatus === 'loading' ||
-          deleteWishCourseStatus === 'loading'
-        }
-        handleDeleteWishCourse={handleDeleteWishCourse}
-        handleAddWishCourse={handleAddWishCourse}
-        course={course as CourseType}
-        ratingValue={ratingValue}
-      >
-        <CourseSidebar
-          handleDeleteWishCourse={handleDeleteWishCourse}
+    <>
+      <Head
+        title={courseName ? `${courseName} - Next Edu` : undefined}
+        image={courseImage ? courseImage : undefined}
+      />
+
+      <div className="min-h-screen">
+        <CourseHeader
+          wishlist={wishList || []}
           isLoading={
             addWishCourseStatus === 'loading' ||
             deleteWishCourseStatus === 'loading'
           }
-          wishlist={wishList || []}
+          handleDeleteWishCourse={handleDeleteWishCourse}
           handleAddWishCourse={handleAddWishCourse}
           course={course as CourseType}
-          totalVideoDuration={totalVideoDuration}
-          totalLectures={totalLectures || 0}
-        />
-      </CourseHeader>
-
-      {course ? (
-        <>
-          <CourseBody>
-            <CourseAchievement
-              targets={course.courseTargets.map((target) => ({
-                id: target.id,
-                content: target.content,
-              }))}
-            />
-            <CourseContent
-              course={course as CourseType}
-              totalLectures={totalLectures || 0}
-              totalVideoDuration={totalVideoDuration}
-            />
-            <CourseRequirements
-              requirements={course.courseRequirements.map((rq) => ({
-                id: rq.id,
-                content: rq.content,
-              }))}
-            />
-
-            <CourseDescription description={course.detailDescription || ''} />
-          </CourseBody>
-
-          <CourseFooter
+          ratingValue={ratingValue}
+        >
+          <CourseSidebar
+            handleDeleteWishCourse={handleDeleteWishCourse}
+            isLoading={
+              addWishCourseStatus === 'loading' ||
+              deleteWishCourseStatus === 'loading'
+            }
+            wishlist={wishList || []}
+            handleAddWishCourse={handleAddWishCourse}
             course={course as CourseType}
-            refetchCourse={refetchCourse}
+            totalVideoDuration={totalVideoDuration}
+            totalLectures={totalLectures || 0}
           />
+        </CourseHeader>
 
-          <CommentModal courseId={course?.id} />
+        {course ? (
+          <>
+            <CourseBody>
+              <CourseAchievement
+                targets={course.courseTargets.map((target) => ({
+                  id: target.id,
+                  content: target.content,
+                }))}
+              />
+              <CourseContent
+                course={course as CourseType}
+                totalLectures={totalLectures || 0}
+                totalVideoDuration={totalVideoDuration}
+              />
+              <CourseRequirements
+                requirements={course.courseRequirements.map((rq) => ({
+                  id: rq.id,
+                  content: rq.content,
+                }))}
+              />
 
-          <BuyOnly course={course as CourseType} ratingValue={ratingValue} />
-        </>
-      ) : null}
-    </div>
+              <CourseDescription description={course.detailDescription || ''} />
+            </CourseBody>
+
+            <CourseFooter
+              course={course as CourseType}
+              refetchCourse={refetchCourse}
+            />
+
+            <CommentModal courseId={course?.id} />
+
+            <BuyOnly course={course as CourseType} ratingValue={ratingValue} />
+          </>
+        ) : null}
+      </div>
+    </>
   );
 };
 
@@ -254,14 +266,19 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
   const course = await prisma?.course.findUnique({
     where: { slug: slug as string },
-    select: { password: true, verified: true },
+    select: { password: true, verified: true, thumbnail: true, name: true },
   });
 
   const courseHasPassword = course?.password !== null;
   const verified = course?.verified === 'APPROVED';
 
   return {
-    props: { courseHasPassword, verified },
+    props: {
+      courseHasPassword,
+      verified,
+      courseImage: course?.thumbnail,
+      courseName: course?.name,
+    },
   };
 };
 

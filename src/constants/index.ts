@@ -6,6 +6,9 @@ export const nunito = Nunito({ subsets: ['vietnamese'], weight: '400' });
 export const inter = Inter({ subsets: ['vietnamese'], weight: '700' });
 export const preahvihear = Preahvihear({ weight: '400' });
 
+export const webSlogan =
+  'Next Edu là dự án mô phỏng lại cách học mà tương lai sẽ hướng đến';
+
 export const dInVietnamese = new Map([
   [i18n.dayNames[1], 'Thứ 2'],
   [i18n.dayNames[2], 'Thứ 3'],

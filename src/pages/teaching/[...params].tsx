@@ -10,6 +10,7 @@ import CourseCreation from '~/components/partials/CourseCreation';
 import CourseSummary from '~/components/partials/CourseSummary';
 import { PATHS } from '~/constants';
 import { trpc } from '~/utils/trpc';
+import Head from '~/components/shared/Head';
 
 const TeachingDashboardPage: NextPage = () => {
   const router = useRouter();
@@ -18,38 +19,45 @@ const TeachingDashboardPage: NextPage = () => {
     trpc.user.findCoursesByInstructor.useQuery();
 
   return (
-    <div className="relative min-h-screen text-gray-600 dark:text-white md:pl-[16rem]">
-      <TeachingSidebar />
+    <>
+      <Head
+        title="Giảng dạy - Next Edu"
+        image="https://i.ibb.co/9TtXmW5/teaching.png"
+      />
 
-      <Switch>
-        <Case condition={router.asPath.includes(PATHS.COURSE)}>
-          <CourseSummary />
-        </Case>
+      <div className="relative min-h-screen text-gray-600 dark:text-white md:pl-[16rem]">
+        <TeachingSidebar />
 
-        <Case
-          condition={
-            router.asPath.includes(PATHS.CREATE_COURSE) ||
-            router.asPath.includes(PATHS.EDIT_COURSE)
-          }
-        >
-          <CourseCreation />
-        </Case>
+        <Switch>
+          <Case condition={router.asPath.includes(PATHS.COURSE)}>
+            <CourseSummary />
+          </Case>
 
-        <Case condition={router.asPath.includes(PATHS.DASHBOARD)}>
-          <TeachingDashboard courses={courses} status={status} />
-        </Case>
+          <Case
+            condition={
+              router.asPath.includes(PATHS.CREATE_COURSE) ||
+              router.asPath.includes(PATHS.EDIT_COURSE)
+            }
+          >
+            <CourseCreation />
+          </Case>
 
-        <Case condition={router.asPath.includes(PATHS.MY_WALLET)}>
-          <MyWallet />
-        </Case>
+          <Case condition={router.asPath.includes(PATHS.DASHBOARD)}>
+            <TeachingDashboard courses={courses} status={status} />
+          </Case>
 
-        <Case condition={router.asPath.includes(PATHS.INSTRUCTIONS)}>
-          <Instructions />
-        </Case>
+          <Case condition={router.asPath.includes(PATHS.MY_WALLET)}>
+            <MyWallet />
+          </Case>
 
-        <Default>{null}</Default>
-      </Switch>
-    </div>
+          <Case condition={router.asPath.includes(PATHS.INSTRUCTIONS)}>
+            <Instructions />
+          </Case>
+
+          <Default>{null}</Default>
+        </Switch>
+      </div>
+    </>
   );
 };
 
