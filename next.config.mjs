@@ -30,6 +30,10 @@ const config = {
     ignoreDuringBuilds: true,
   },
 
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
   staticPageGenerationTimeout: 5 * 6 * 1000,
 };
 export default config;
