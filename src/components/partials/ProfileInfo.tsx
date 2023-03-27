@@ -41,11 +41,20 @@ function ProfileMenu() {
     };
   }, [router]);
 
+  useEffect(() => {
+    console.log('router.query: ', router.query);
+    const selectedSection = document.querySelector(`#${router.query.section}`);
+
+    if (selectedSection) {
+      selectedSection.scrollIntoView({ block: 'nearest', inline: 'start' });
+    }
+  }, [router]);
+
   return (
     <ul className="flex w-full space-x-4 overflow-x-scroll md:flex-col md:space-x-0 md:space-y-8 md:px-4">
       {sections.map((sectionElement) => {
         return (
-          <li key={sectionElement.value}>
+          <li id={sectionElement.value} key={sectionElement.value}>
             <button
               onClick={() => {
                 handleMenuClick(sectionElement.value);
