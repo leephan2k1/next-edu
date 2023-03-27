@@ -54,7 +54,7 @@ function CoursesDraft() {
 
   if (isLoading) {
     return (
-      <div className="absolute-center w-full overflow-hidden">
+      <div className="absolute-center min-h-[25rem] w-full overflow-hidden">
         <Loading />
       </div>
     );

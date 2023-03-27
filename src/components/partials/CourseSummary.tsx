@@ -87,7 +87,7 @@ function CourseList({
       {children}
       <If condition={isLoading || !courses}>
         <Then>
-          <div className="full-size absolute-center h-[15rem]">
+          <div className="full-size absolute-center min-h-[25rem]">
             <Loading />
           </div>
         </Then>
