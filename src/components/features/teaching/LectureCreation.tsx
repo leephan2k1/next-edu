@@ -233,7 +233,9 @@ function LectureCreation({
                   ),
                 );
 
-                setShouldVideoUpload(false);
+                if (files.length > 0) {
+                  setShouldVideoUpload(false);
+                }
               }}
             >
               {({ onClick }) => (
