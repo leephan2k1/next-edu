@@ -3,6 +3,7 @@ import type { User } from '@prisma/client';
 import MainLayout from '~/components/layouts/MainLayout';
 import PublicProfile from '~/components/partials/PublicProfile';
 import Head from '~/components/shared/Head';
+import { prisma } from '~/server/db/client';
 
 interface PublicProfilePageProps {
   user: User;
@@ -26,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const { id } = query;
   if (!id) return { notFound: true };
 
-  const user = await prisma?.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id },
     include: {
       bio: { include: { socialContacts: true } },
