@@ -36,9 +36,19 @@ const MyLearningPage: NextPage = () => {
             )}
           </Then>
           <Else>
-            <div className="absolute-center min-h-[20rem]">
-              <Loading />
-            </div>
+            {status === 'loading' ? (
+              <div className="absolute-center min-h-screen">
+                <Loading />
+              </div>
+            ) : (
+              <div className="min-h-screen w-full pt-[7rem] md:pt-[5rem]">
+                <div className="mx-auto flex w-[90%] flex-col md:w-[80%]">
+                  <h1 className="flex space-x-4 text-3xl">
+                    Chưa có dữ liệu cho khoá học của bạn
+                  </h1>
+                </div>
+              </div>
+            )}
           </Else>
         </If>
       </div>
