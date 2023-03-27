@@ -168,7 +168,7 @@ function UserMenu({ show, setShow }: UserMenuProps) {
         <button
           onClick={() => {
             setShow(false);
-            signOut({ redirect: false });
+            signOut({ redirect: true, callbackUrl: '/' });
           }}
           className="smooth-effect flex w-full cursor-pointer items-center space-x-4 rounded-2xl p-3 hover:bg-gray-200 dark:hover:bg-black"
         >
