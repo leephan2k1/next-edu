@@ -41,7 +41,7 @@ export default function DashBoardSidebar({
             onClick={() => {
               setShowSidebar(false);
             }}
-            className="fixed inset-0 z-[100] bg-black bg-opacity-25"
+            className="fixed inset-0 z-[400] bg-black bg-opacity-25"
           />
         </Transition>
       </Teleport>
@@ -50,7 +50,7 @@ export default function DashBoardSidebar({
         ref={ref}
         className={`${
           showSidebar ? 'flex animate-in slide-in-from-left' : 'hidden'
-        } slide-out-from-right fixed left-0 top-0 z-[301] h-screen w-[15rem] flex-col items-center space-y-10 bg-white px-4  pt-10 dark:bg-dark-background md:flex`}
+        } slide-out-from-right fixed left-0 top-0 z-[401] h-screen w-[15rem] flex-col items-center space-y-10 bg-white px-4  pt-10 dark:bg-dark-background md:flex`}
       >
         <Logo customStyles="md:text-3xl" />
 
