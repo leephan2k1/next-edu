@@ -4,6 +4,8 @@ import type { ReactNode } from 'react';
 import { Fragment, useRef, useState } from 'react';
 import Teleport from '../shared/Teleport';
 import Logo from './Logo';
+import { useEffectOnce } from 'usehooks-ts';
+import { useRouter } from 'next/router';
 
 interface DashBoardSidebarSidebarProps {
   children: ReactNode;
@@ -12,8 +14,22 @@ interface DashBoardSidebarSidebarProps {
 export default function DashBoardSidebar({
   children,
 }: DashBoardSidebarSidebarProps) {
+  const router = useRouter();
   const ref = useRef<HTMLDivElement | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
+
+  //effect turn off the UI when user navigate
+  useEffectOnce(() => {
+    const handleRouteChange = () => {
+      setShowSidebar(false);
+    };
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  });
 
   return (
     <>
