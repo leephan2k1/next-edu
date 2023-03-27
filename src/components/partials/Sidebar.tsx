@@ -1,13 +1,15 @@
+import { useAtom } from 'jotai';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { Fragment } from 'react';
+import { useEffectOnce } from 'usehooks-ts';
+import { sidebarState } from '~/atoms/sidebarAtom';
+import { categories, categories_detail } from '~/constants';
 
 import { Dialog, Transition } from '@headlessui/react';
-import { useAtom } from 'jotai';
-import { sidebarState } from '~/atoms/sidebarAtom';
-import Logo from './Logo';
+
 import Collapse from '../shared/Collapse';
-import { categories, categories_detail } from '~/constants';
-import { useRouter } from 'next/router';
-import { useEffectOnce } from 'usehooks-ts';
+import Logo from './Logo';
 
 export default function Sidebar() {
   const [value, setValue] = useAtom(sidebarState);
@@ -80,7 +82,7 @@ export default function Sidebar() {
                         key={category.title}
                         className="p-2 text-left text-2xl"
                       >
-                        {category.title}
+                        <Link href={category.url}> {category.title}</Link>
                       </h2>
                     );
                   })}
