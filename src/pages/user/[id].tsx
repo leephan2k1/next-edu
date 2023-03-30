@@ -32,6 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
     include: {
       bio: { include: { socialContacts: true } },
       Course: {
+        where: { published: true, verified: 'APPROVED', publishMode: 'PUBLIC' },
         orderBy: { createdAt: 'desc' },
         include: { students: true, reviews: true },
       },
