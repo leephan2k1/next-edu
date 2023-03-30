@@ -9,25 +9,19 @@ const select_options = [
   {
     title: 'car',
     label: 'ô tô',
-    img: [
-      'https://i.ibb.co/KFbnrNq/car-1886.png',
-      'https://i.ibb.co/vJNC61y/car-2020-Custom.png',
-    ],
+    img: ['/images/car-1886.png', '/images/car-2020-Custom.png'],
   },
   {
     title: 'phone',
     label: 'điện thoại',
-    img: [
-      'https://i.ibb.co/zSp6Myn/phone-1876-Custom.jpg',
-      'https://i.ibb.co/Gnct16S/phone-2022-Custom.jpg',
-    ],
+    img: ['/images/phone-1876-Custom.jpg', '/images/phone-2022-Custom.jpg'],
   },
   {
     title: 'education',
     label: 'giáo dục',
     img: [
-      'https://i.ibb.co/1KFHrrw/education-1800s-2-Custom.jpg',
-      'https://i.ibb.co/HGCKCYd/education-now-Custom.jpg',
+      '/images/education-1800s-2-Custom.jpg',
+      '/images/education-now-Custom.jpg',
     ],
   },
 ];
