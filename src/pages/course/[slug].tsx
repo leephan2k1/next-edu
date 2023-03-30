@@ -24,6 +24,7 @@ import Head from '~/components/shared/Head';
 
 import type { CourseType } from '~/types';
 import type { GetServerSideProps, NextPage } from 'next';
+import { PATHS } from '~/constants';
 
 interface CoursePageProps {
   courseHasPassword?: boolean;
@@ -100,6 +101,11 @@ const CoursePage: NextPage = ({
   }, [courseCtx?.enrollStatus]);
 
   const handleAddWishCourse = () => {
+    if (status === 'loading' || status === 'unauthenticated') {
+      router.push(`/${PATHS.LOGIN}`);
+      return;
+    }
+
     if (!course || !course?.id) {
       toast.error('Oops! Có lỗi xảy ra, thử lại sau!');
       return;
