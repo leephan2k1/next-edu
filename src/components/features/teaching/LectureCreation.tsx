@@ -227,7 +227,7 @@ function LectureCreation({
                       return {
                         fileId: String(file.originalFile.lastModified),
                         fileName: file.originalFile.originalFileName as string,
-                        fileURL: file.fileUrl,
+                        fileURL: file.originalFile.fileUrl,
                       };
                     }),
                   ),
