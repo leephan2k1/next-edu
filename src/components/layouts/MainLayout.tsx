@@ -23,7 +23,7 @@ export default function MainLayout({
 }: MainLayoutProps) {
   return (
     <div
-      className={`${nunito.className} bg-light-background text-gray-600 dark:bg-black dark:text-white`}
+      className={`${nunito.className} overflow-x-hidden bg-light-background text-gray-600 dark:bg-black dark:text-white`}
     >
       <SearchModal />
 
