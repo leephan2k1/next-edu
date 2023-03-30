@@ -6,7 +6,8 @@ import {
 } from '@heroicons/react/24/outline';
 import type { Category } from '@prisma/client';
 import type { ReactNode } from 'react';
-import { inter } from '~/constants';
+import { inter, PATHS } from '~/constants';
+import Link from 'next/link';
 
 const palette_colors = ['#d2b6ff', '#abc5fe', '#ffbaaa', '#ffea9f'];
 const icons = [AcademicCapIcon, LightBulbIcon, FireIcon, SparklesIcon];
@@ -25,14 +26,16 @@ const TopCategoryItem = ({
       style={{ backgroundColor }}
       className="aspect-w-2 aspect-h-1 rounded-2xl border-2 border-gray-600 text-gray-600 dark:border-primary"
     >
-      <div className="full-size absolute-center">
-        <h1 className="max-w-[80%] text-2xl font-semibold capitalize line-clamp-1 md:text-3xl">
-          {label}
-        </h1>
-      </div>
-      <span className="absolute top-[85%] left-1/2 h-16 w-16 -translate-x-1/2 rounded-full bg-primary p-2">
-        {children}
-      </span>
+      <Link href={`/${PATHS.BROWSE}?category=${label}`}>
+        <div className="full-size absolute-center">
+          <h1 className="max-w-[80%] text-2xl font-semibold capitalize line-clamp-1 md:text-3xl">
+            {label}
+          </h1>
+        </div>
+        <span className="absolute top-[85%] left-1/2 h-16 w-16 -translate-x-1/2 rounded-full bg-primary p-2">
+          {children}
+        </span>
+      </Link>
     </div>
   );
 };
