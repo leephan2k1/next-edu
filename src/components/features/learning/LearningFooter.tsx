@@ -29,7 +29,7 @@ export default function LearningFooter({ course }: LearningFooterProps) {
           <h2 className="text-lg line-clamp-1 md:text-xl">{course.name}</h2>
         </div>
 
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 text-lg sm:text-xl">
           <button
             onClick={() => lectureCtx?.handleNavigateLecture('prev')}
             className="absolute-center flex-nowrap space-x-2 px-4 py-2"
