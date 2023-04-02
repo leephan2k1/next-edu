@@ -19,7 +19,9 @@ export default function Cart() {
 
   return (
     <div className="flex w-full flex-col px-4 md:px-6 lg:px-8">
-      <CheckoutOnly shouldShow={!Boolean(entry?.isIntersecting)} />
+      <CheckoutOnly
+        shouldShow={!Boolean(entry?.isIntersecting) && !!refBtnCheckout.current}
+      />
 
       <div className="flex space-x-4">
         <ShoppingCartIcon className="h-10 w-10" />
@@ -35,7 +37,12 @@ export default function Cart() {
             khoá học trong giỏ hàng
           </h2>
 
-          <If condition={cartCtx?.status === 'loading' || cartCtx?.addCourseToCartStatus === 'loading'}>
+          <If
+            condition={
+              cartCtx?.status === 'loading' ||
+              cartCtx?.addCourseToCartStatus === 'loading'
+            }
+          >
             <Then>
               <div className="absolute-center mt-10 h-full">
                 <Loading />
