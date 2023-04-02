@@ -35,7 +35,7 @@ export default function Cart() {
             khoá học trong giỏ hàng
           </h2>
 
-          <If condition={cartCtx?.status === 'loading'}>
+          <If condition={cartCtx?.status === 'loading' || cartCtx?.addCourseToCartStatus === 'loading'}>
             <Then>
               <div className="absolute-center mt-10 h-full">
                 <Loading />
