@@ -25,6 +25,7 @@ import type { Wishlist } from '@prisma/client';
 import useCart from '~/contexts/CartContext';
 import useIsAddToCart from '~/hooks/useIsAddToCart';
 import type { CourseType } from '~/types';
+import { useSession } from 'next-auth/react';
 interface CourseSidebarProps {
   course?: CourseType;
   totalVideoDuration: number;
@@ -55,6 +56,8 @@ function CourseSidebar({
 
   const isEnrolled = useIsEnrolled({ course });
   const isAddToCart = useIsAddToCart({ course });
+
+  const { status: sessionStatus } = useSession();
 
   useEffect(() => {
     setSidebarState(!!entry?.isIntersecting);
@@ -124,12 +127,18 @@ function CourseSidebar({
   };
 
   const handleAddCourseToCart = () => {
+    if (!cartCtx?.userWithCart && sessionStatus === 'unauthenticated') {
+      router.push(`/${PATHS.LOGIN}`);
+      return;
+    }
+
     if (
       !course ||
       !cartCtx?.userWithCart ||
       cartCtx?.addCourseToCartStatus === 'loading'
-    )
+    ) {
       return;
+    }
 
     if (isAddToCart) {
       router.push(`/${PATHS.CART}`);

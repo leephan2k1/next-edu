@@ -22,6 +22,7 @@ import type { ReactNode } from 'react';
 import useCart from '~/contexts/CartContext';
 import type { CourseType } from '~/types';
 import useIsEnrolled from '~/hooks/useIsEnrolled';
+import { useSession } from 'next-auth/react';
 
 interface CourseHeaderProps {
   course?: CourseType;
@@ -49,6 +50,8 @@ export default function CourseHeader({
 
   const isEnrolled = useIsEnrolled({ course });
 
+  const { status: sessionStatus } = useSession();
+
   const wishlistItem = useMemo(() => {
     if (course && wishlist) {
       return wishlist.find((fvCourse) => fvCourse.courseId === course?.id);
@@ -58,6 +61,11 @@ export default function CourseHeader({
   }, [course, wishlist]);
 
   const handleAddCourseToCart = () => {
+    if (sessionStatus === 'unauthenticated' && !cartCtx?.userWithCart) {
+      router.push(`/${PATHS.LOGIN}`);
+      return;
+    }
+
     if (
       !course ||
       !cartCtx?.userWithCart ||
