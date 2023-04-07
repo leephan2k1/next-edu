@@ -152,7 +152,7 @@ function ProfileForms() {
                 return error;
               });
             }}
-            styles="space-y-20 "
+            styles="space-y-24"
           />
         </div>
       </div>
