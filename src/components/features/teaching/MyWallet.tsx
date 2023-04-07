@@ -1,4 +1,8 @@
-import { ArrowsUpDownIcon, CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowsUpDownIcon,
+  CheckIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -39,10 +43,8 @@ export default function MyWallet() {
   const { data: successfulWithdrawals, status: successfulWithdrawalsStatus } =
     trpc.user.findWithdrawals.useQuery({ status: 'SUCCESS' });
 
-  const {
-    data: rejectedWithdrawals,
-    status: rejectedWithdrawalsStatus,
-  } = trpc.user.findWithdrawals.useQuery({ status: 'CANCEL' });
+  const { data: rejectedWithdrawals, status: rejectedWithdrawalsStatus } =
+    trpc.user.findWithdrawals.useQuery({ status: 'CANCEL' });
 
   const { mutate: withdrawMoney, status: withdrawStatus } =
     trpc.user.withdrawMoney.useMutation();
@@ -82,9 +84,9 @@ export default function MyWallet() {
       return;
     }
 
-    if (!withdrawAmount || withdrawAmount === 0) {
+    if (!withdrawAmount || Number(withdrawAmount) <= 0) {
       setError('withdrawAmount', {
-        message: 'Số tiền rút không được để trống hoặc bằng 0!',
+        message: 'Số tiền rút không được để trống hoặc nhỏ hơn bằng 0!',
       });
       return;
     }
