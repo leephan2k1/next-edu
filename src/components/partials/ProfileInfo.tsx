@@ -88,7 +88,7 @@ function ProfileInfo() {
         />
       </figure>
 
-      <h1 className="text-3xl">{auth?.user?.name}</h1>
+      <h1 className="text-center text-3xl">{auth?.user?.name}</h1>
       <h2 className="mb-6 text-xl">{auth?.user?.email}</h2>
 
       <ProfileMenu />
