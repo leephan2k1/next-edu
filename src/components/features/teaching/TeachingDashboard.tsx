@@ -200,7 +200,7 @@ export default function TeachingDashboard({
 
             <Else>
               {courses && courses.length > 0 ? (
-                <div className="absolute-center h-[30rem] max-h-[25rem] w-full md:max-h-[30rem] lg:max-h-[45rem]">
+                <div className="absolute-center h-fit w-full md:max-h-[50rem]">
                   <PieChart
                     labels={courses?.map((course) => course.name)}
                     datasets={[
@@ -250,7 +250,7 @@ export default function TeachingDashboard({
 
             <Else>
               {courses && courses.length > 0 ? (
-                <div className="absolute-center h-[30rem] w-full">
+                <div className="absolute-center h-fit max-h-[50rem] w-full">
                   <HorizontalBarChart
                     chartTitle="Số lượng đánh giá theo khoá học"
                     data={{
