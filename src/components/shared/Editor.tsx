@@ -19,6 +19,7 @@ interface EditorProps {
   handleCancel?: () => void;
   isLoadingSubmit?: boolean;
   removeMessage?: string;
+  spacing?: string;
 }
 
 function Editor({
@@ -30,6 +31,7 @@ function Editor({
   onSubmit,
   isLoadingSubmit,
   removeMessage,
+  spacing,
 }: EditorProps) {
   const [editorState, setEditorState] = useAtom(quillEditorState);
   const [value, setValue] = useState<string>(contents || '');
@@ -54,9 +56,9 @@ function Editor({
 
   return (
     <div
-      className={`${
-        styles ? styles : ''
-      } full-size flex flex-col items-end space-y-4 px-2`}
+      className={`${styles ? styles : ''} full-size flex flex-col items-end ${
+        spacing ? spacing : 'space-y-4'
+      }  px-2`}
     >
       <ReactQuill
         ref={quillRef}
