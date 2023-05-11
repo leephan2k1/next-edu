@@ -87,9 +87,7 @@ function Instructor({ instructorId }: InstructorProps) {
 
       <article
         ref={parent}
-        className={`prose-xl prose ${
-          disclosure.open && isOverflow ? 'h-fit' : 'h-[10rem]'
-        } min-h-fit min-w-full overflow-hidden overflow-x-hidden text-gray-600 prose-img:max-w-[60vw] prose-img:rounded-2xl dark:text-white/80 lg:prose-2xl`}
+        className={`prose-xl prose h-fit min-h-fit min-w-full overflow-hidden overflow-x-hidden text-gray-600 lg:prose-2xl prose-img:max-w-[60vw] prose-img:rounded-2xl dark:text-white/80`}
         dangerouslySetInnerHTML={{
           __html: instructor?.bio?.bioDescription || '',
         }}
